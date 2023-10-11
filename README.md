@@ -15,5 +15,8 @@ Installing NVM on Ubuntu:<br>
 `nvm --version` <br>
 `nvm install --lts` <br>
 
+Command to get gradle signing report: <br>
+`./gradlew signingReport`
+
 Things to keep in mind:<br>
 Does allowing location while using the app solve our purpose? Does it work in the background?

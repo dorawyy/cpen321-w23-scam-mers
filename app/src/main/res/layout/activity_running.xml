@@ -1,46 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <!-- Text Above Map -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="165dp"
-        android:gravity="center"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:text="Text Above the Map"
-        android:textSize="16sp" />
 
     <!-- Map Fragment -->
 
     <!-- Text Below Map -->
 
-    <fragment
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="53dp"
+        android:gravity="center"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:text="@string/text_above_the_map"
+        android:textSize="16sp"
+        map:layout_constraintBottom_toTopOf="@+id/map"
+        map:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="-3dp" />
+
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="402dp"
-        android:layout_weight="1"
-        tools:context=".RunningActivity" />
+        android:layout_height="0dp"
+        map:layout_constraintBottom_toTopOf="@+id/textView4"
+        map:layout_constraintTop_toBottomOf="@+id/textView2"
+        tools:context=".RunningActivity"
+        tools:layout_editor_absoluteX="15dp" />
 
     <TextView
+        android:id="@+id/textView4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Text Below the Map"
-        android:textSize="16sp"
         android:gravity="center"
         android:paddingTop="16dp"
-        android:paddingBottom="16dp"/>
+        android:paddingBottom="16dp"
+        android:text="@string/text_below_the_map"
+        android:textSize="16sp"
+        map:layout_constraintBottom_toTopOf="@+id/stop_activity_button"
+        map:layout_constraintTop_toBottomOf="@+id/map"
+        tools:layout_editor_absoluteX="-2dp" />
 
     <Button
         android:id="@+id/stop_activity_button"
-        android:layout_width="180dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/stop_activity_button_caption" />
+        android:text="@string/stop_activity_button_caption"
+        map:layout_constraintBottom_toBottomOf="parent"
+        map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintStart_toStartOf="parent"
+        map:layout_constraintTop_toBottomOf="@+id/textView4" />
 
-</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

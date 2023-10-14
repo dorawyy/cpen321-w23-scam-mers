@@ -37,4 +37,10 @@
         android:paddingTop="16dp"
         android:paddingBottom="16dp"/>
 
+    <Button
+        android:id="@+id/stop_activity_button"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:text="@string/stop_activity_button_caption" />
+
 </LinearLayout>

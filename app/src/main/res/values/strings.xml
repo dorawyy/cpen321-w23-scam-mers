@@ -4,4 +4,6 @@
     <string name="start_activity_button_caption">Start Activity</string>
     <string name="stop_activity_button_caption">Stop Activity</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="text_above_the_map">Text Above the Map</string>
+    <string name="text_below_the_map">Text Below the Map</string>
 </resources>

@@ -119,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
 
             // Send token to backend
             // Move to another activity
+            Intent homeIntent = new Intent(MainActivity.this, HomeActivity.class);
+            startActivity(homeIntent);
         }
     }
 

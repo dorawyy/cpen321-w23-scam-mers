@@ -16,20 +16,36 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.HttpResponse;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.NameValuePair;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.HttpClient;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.entity.UrlEncodedFormEntity;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.methods.HttpPost;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.impl.client.DefaultHttpClient;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.message.BasicNameValuePair;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     final static String TAG = "MainActivity";
     private Button locationButton;
     private GoogleSignInClient mGoogleSignInClient;
+
+    public static String photoUrlPublic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+               .requestIdToken("749392990960-mlcvsjnsc9l7n46i8ppqhmbm86auosoh.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
         // Build a GoogleSignInClient with the options specified by gso.
@@ -77,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
                     Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
                     handleSignInResult(task);
                 } else {
+                    Log.d(TAG, "Problem Signing In");
                     // Handle the unsuccessful sign-in here
                     // Add your logic for handling the failure
                 }
@@ -86,7 +104,24 @@ public class MainActivity extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
+//            String idToken = account.getIdToken();
+//            // TODO(developer): send ID Token to server and validate
+//            HttpClient httpClient = new DefaultHttpClient();
+//            HttpPost httpPost = new HttpPost("https://40.90.192.159/tokensignin");
+//
+//            try {
+//                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+//                nameValuePairs.add(new BasicNameValuePair("idToken", idToken));
+//                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+//
+//                HttpResponse response = httpClient.execute(httpPost);
+//                int statusCode = response.getStatusLine().getStatusCode();
+//                final String responseBody = EntityUtils.toString(response.getEntity());
+//                Log.i(TAG, "Signed in as: " + responseBody);
+//            } catch (IOException e) {
+//                Log.d(TAG, "Hello2");
+//                Log.e(TAG, "Error sending ID token to backend.", e);
+//            }
             // Signed in successfully, show authenticated UI.
             updateUI(account);
         } catch (ApiException e) {
@@ -111,11 +146,15 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "There is no user signed in");
         }
         else{
+            String photoUrl = String.valueOf(account.getPhotoUrl());
             Log.d(TAG, "Name: "+ account.getDisplayName());
             Log.d(TAG, "Email: "+ account.getEmail());
             Log.d(TAG, "Family Name: "+ account.getFamilyName());
             Log.d(TAG, "Given Name: "+ account.getGivenName());
-            Log.d(TAG, "Photo URL: "+ account.getPhotoUrl());
+            Log.d(TAG, "Photo URL: "+ photoUrl);
+
+            // Send photoUrl to other activities
+            photoUrlPublic = photoUrl;
 
             // Send token to backend
             // Move to another activity

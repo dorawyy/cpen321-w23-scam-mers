@@ -16,7 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RunIO"
         tools:targetApi="31">
-
+        <activity
+            android:name=".LobbiesActivity"
+            android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
@@ -30,7 +32,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="API KEY" />
+            android:value="YOUR_API_KEY" />
 
         <activity
             android:name=".RunningActivity"

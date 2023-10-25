@@ -53,8 +53,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Go to new activity page where activity is live
-                // TODO CHANGE ACTIVITY PROPERLY
-                Intent profileIntent = new Intent(HomeActivity.this, LobbiesActivity.class);
+                Intent profileIntent = new Intent(HomeActivity.this, ProfileActivity.class);
                 startActivity(profileIntent);
             }
         });

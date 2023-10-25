@@ -13,7 +13,7 @@
     <!--    Lobbies-->
     <string name="create_lobby_button_caption">New Lobby</string>
 
-<!--    NewLobby-->
+    <!--    NewLobby-->
     <string name="new_lobby_title">Create New Lobby</string>
     <string name="new_lobby_name_form_caption">New Lobby Name</string>
     <string name="new_lobby_submit_button_caption">Create Lobby</string>

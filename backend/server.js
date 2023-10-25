@@ -17,6 +17,32 @@ app.get("/", (req,res)=>{
     res.send("Welcome to RunIO")
 })
 
+app.post('/adduser', async (req, res) => {
+    try {
+      const { name, email } = req.body;
+  
+      if (!name || !email) {
+        return res.status(400).json({ error: 'name and email are required' });
+      }
+  
+      const usersCollection = client.db("runio").collection("users");
+      const newUser = {
+        name,
+        email,
+      };
+  
+      const result = await usersCollection.insertOne(newUser);
+  
+      if (result.insertedCount === 1) {
+        return res.status(201).json(newUser);
+      } else {
+        return res.status(500).json({ error: 'User could not be added' });
+      }
+    } catch (error) {
+      return res.status(500).json({ error: 'Server error' });
+    }
+  });
+
 async function run(){
     try{
         await client.connect()

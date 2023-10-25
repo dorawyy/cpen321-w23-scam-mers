@@ -18,30 +18,31 @@ app.get("/", (req,res)=>{
 })
 
 app.post('/adduser', async (req, res) => {
-    try {
-      const { name, email } = req.body;
-  
-      if (!name || !email) {
-        return res.status(400).json({ error: 'name and email are required' });
-      }
-  
-      const usersCollection = client.db("runio").collection("users");
-      const newUser = {
-        name,
-        email,
-      };
-  
-      const result = await usersCollection.insertOne(newUser);
-  
-      if (result.insertedCount === 1) {
-        return res.status(201).json(newUser);
-      } else {
-        return res.status(500).json({ error: 'User could not be added' });
-      }
-    } catch (error) {
-      return res.status(500).json({ error: 'Server error' });
+  try {
+    const player = req.body;
+
+    if (!player) {
+      return res.status(400).json({ error: 'Player object is required' });
     }
-  });
+
+    const usersCollection = client.db("runio").collection("users");
+
+    const result = await usersCollection.insertOne(player);
+
+    if (result.insertedCount === 1) {
+      return res.status(201).json(player);
+    } else {
+      return res.status(500).json({ error: 'User could not be added' });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.post('/tokensignin', async (req, res) => {
+  const tokenId = req.body;
+  console.log(tokenId);
+});
 
 async function run(){
     try{

@@ -13,10 +13,14 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
+import com.bumptech.glide.Glide;
+
 public class LobbiesActivity extends AppCompatActivity {
 
     private ImageButton homeActivityButton;
     private Button createLobbyButton;
+
+    private ImageButton profileActivityButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,18 @@ public class LobbiesActivity extends AppCompatActivity {
                 // Go to new activity page where activity is live
                 Intent runningIntent = new Intent(LobbiesActivity.this, HomeActivity.class);
                 startActivity(runningIntent);
+            }
+        });
+
+        profileActivityButton = findViewById(R.id.profile_image_button_lobbies);
+        String photoUrl = MainActivity.photoUrlPublic;
+        Glide.with(this).load(photoUrl).into(profileActivityButton);
+        profileActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Go to new activity page where activity is live
+                Intent profileIntent = new Intent(LobbiesActivity.this, ProfileActivity.class);
+                startActivity(profileIntent);
             }
         });
 

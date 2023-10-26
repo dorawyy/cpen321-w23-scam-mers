@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             JSONObject body = new JSONObject(responseBody);
                             currentPlayer = new Player(body.getString("playerEmail"), body.getString("playerDisplayName"), body.getString("playerPhotoUrl"));
-                            Log.d(TAG, "Player Class:" + currentPlayer.playerEmail + currentPlayer.playerPhotoUrl + currentPlayer.playerDisplayName);
+                            Log.d(TAG, "Player Class:" + currentPlayer.playerEmail + currentPlayer.playerPhotoUrl + currentPlayer.playerDisplayName + " lobbyIdArray: " + currentPlayer.lobbyIdArray);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }

@@ -1,4 +1,6 @@
 package com.scammers.runio;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -16,28 +18,35 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.HttpResponse;
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.NameValuePair;
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.HttpClient;
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.entity.UrlEncodedFormEntity;
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.methods.HttpPost;
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.impl.client.DefaultHttpClient;
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.message.BasicNameValuePair;
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.EntityUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
 
     public static String photoUrlPublic;
+
+    public OkHttpClient client;
+    public Player currentPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,22 +118,6 @@ public class MainActivity extends AppCompatActivity {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 //            String idToken = account.getIdToken();
 //            // TODO(developer): send ID Token to server and validate
-//            HttpClient httpClient = new DefaultHttpClient();
-//            HttpPost httpPost = new HttpPost("https://40.90.192.159/tokensignin");
-//
-//            try {
-//                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-//                nameValuePairs.add(new BasicNameValuePair("idToken", idToken));
-//                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-//
-//                HttpResponse response = httpClient.execute(httpPost);
-//                int statusCode = response.getStatusLine().getStatusCode();
-//                final String responseBody = EntityUtils.toString(response.getEntity());
-//                Log.i(TAG, "Signed in as: " + responseBody);
-//            } catch (IOException e) {
-//                Log.d(TAG, "Hello2");
-//                Log.e(TAG, "Error sending ID token to backend.", e);
-//            }
             // Signed in successfully, show authenticated UI.
             updateUI(account);
         } catch (ApiException e) {
@@ -155,6 +151,73 @@ public class MainActivity extends AppCompatActivity {
 
             // Send photoUrl to other activities
             photoUrlPublic = photoUrl;
+
+            // setup client for HTTP and trusting backend server certificate
+            setupHttpClient();
+
+            // GET request to check if user exists
+            String url = "https://40.90.192.159:8081/user/" + account.getEmail();
+            Request checkUser = new Request.Builder().url(url).build();
+            client.newCall(checkUser).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
+                }
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String responseBody = response.body().string();
+//                    Log.d(TAG, "response:" + response);
+//                    Log.d(TAG, "response.body():" + response.body());
+
+                    if(response.code() == 404){
+                        currentPlayer = new Player(account);
+                        // PUT to backend
+                        MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+                        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+                        String playerDataJSON = ow.writeValueAsString(currentPlayer);
+//                        Log.d(TAG, "player.tostring" + playerDataJSON);
+                        RequestBody requestBody = RequestBody.create(playerDataJSON, mediaType);
+//                        Log.d(TAG, "request bodyyyy" + requestBody.toString());
+                        Request request = new Request.Builder()
+                                .url(url)
+                                .put(requestBody) // Use PUT method
+                                .build();
+//                        Log.d(TAG, "after bulding" + request.body());
+                        client.newCall(request).enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                if (response.isSuccessful()) {
+                                    // Handle the successful response here
+                                    Log.d(TAG, "putting message" + response);
+                                } else {
+                                    // Handle the error response here
+                                    Log.d(TAG, "error putting message" + response);
+                                }
+                            }
+                        });
+                    } else if(response.code() == 200){
+                        try {
+                            JSONObject body = new JSONObject(responseBody);
+                            currentPlayer = new Player(body.getString("playerEmail"), body.getString("playerDisplayName"), body.getString("playerPhotoUrl"));
+                            Log.d(TAG, "Player Class:" + currentPlayer.playerEmail + currentPlayer.playerPhotoUrl + currentPlayer.playerDisplayName);
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else{
+                        throw new IOException("Unexpected code " + response);
+                    }
+//                        runOnUiThread(() -> {
+//                            TextView myName = findViewById(R.id.my_name);
+//                            myName.setText("My Name: " + responseBody);
+//                        });
+                }
+
+            });
 
             // Send token to backend
             // Move to another activity
@@ -194,6 +257,40 @@ public class MainActivity extends AppCompatActivity {
             else{
                 ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
+        }
+    }
+
+    private void setupHttpClient(){
+        // Load your self-signed certificate or CA certificate from a resource
+        InputStream certInputStream = getResources().openRawResource(R.raw.cert);
+
+        try {
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            Certificate ca;
+            ca = cf.generateCertificate(certInputStream);
+
+            // Create a KeyStore containing your certificate
+            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            keyStore.load(null, null);
+            keyStore.setCertificateEntry("ca", ca);
+
+            // Create a TrustManager that trusts the CAs in your KeyStore
+            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            trustManagerFactory.init(keyStore);
+
+            // Create an SSLContext with the custom TrustManager
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
+
+            // Set up your OkHttpClient to use the custom SSLContext
+            client = new OkHttpClient.Builder()
+                    .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustManagerFactory.getTrustManagers()[0])
+                    .hostnameVerifier((hostname, session) -> true) // Bypass hostname verification if needed
+                    .build();
+
+            // Use this client for your network requests
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

@@ -15,3 +15,6 @@
 local.properties
 backend/node_modules/
 .idea/
+backend/cert.pem
+backend/key.pem
+backend/package-lock.json

@@ -3,17 +3,18 @@ var app = express()
 const https = require('https')
 const fs = require('fs')
 const bodyParser = require('body-parser');
-
-const options = {
-    key: fs.readFileSync('key.pem'),
-    cert: fs.readFileSync('cert.pem'),
-    passphrase: 'password'
-};
-
-const {MongoClient} = require("mongodb");
+const {MongoClient, ObjectId} = require("mongodb");
 const { emit } = require("process");
+
+
 const uri = "mongodb://localhost:27017"
 const client = new MongoClient(uri)
+
+const options = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem'),
+  passphrase: 'password'
+};
 
 // app.use(express.json()); // Add this line to enable JSON body parsing
 app.use(bodyParser.json());
@@ -41,7 +42,7 @@ app.put('/user/:playerEmail', async (req, res) => {
       return res.status(200).json({message: "Updated existing user"});
     } else {
       const result = await usersCollection.insertOne(playerData)
-      return res.status(201).json({message: "Created new user"});
+      return res.status(201).json({message: "Created new user", _id: result.insertedId});
     }
   } catch (error) {
     console.log("server error:" + error);
@@ -69,7 +70,67 @@ app.get('/user/:playerEmail', async (req, res) => {
   }
 });
 
+app.post('/lobby', async (req, res) => {
+  try {
+    const lobbyData = req.body;
 
+    if (!lobbyData) {
+      return res.status(400).json({ error: 'Insufficient lobby data' });
+    }
+
+    const lobbiesCollection = client.db("runio").collection("lobbies");
+    const result = await lobbiesCollection.insertOne(lobbyData)
+    return res.status(201).json({message: "Created new lobby", _id: result.insertedId});
+    
+  } catch (error) {
+    console.log("server error:" + error);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.get('/lobby/:lobbyId', async (req, res) => {
+  try {
+    const { lobbyId } = req.params;
+
+    if (!lobbyId) {
+      return res.status(400).json({ error: 'Lobby Id is required' });
+    }
+    const lobbiesCollection = client.db("runio").collection("lobbies");
+    const existingLobby = await lobbiesCollection.findOne({ _id: new ObjectId(lobbyId) });
+    if (existingLobby) {
+      return res.status(200).json(existingLobby);
+    } else {
+      return res.status(404).json({ error: 'Lobby not found' });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
+  try {
+    const { lobbyId, playerId } = req.params;
+
+    if (!lobbyId || !playerId) {
+      return res.status(400).json({ error: 'Missing parameters' });
+    }
+
+    const usersCollection = client.db("runio").collection("players");
+    const existingUser = await usersCollection.findOne({ playerEmail: playerEmail });
+
+    if (existingUser) {
+      const result = await usersCollection.update({ _id: existingUser.id }, { $set: playerData });
+      return res.status(200).json({message: "Updated existing user"});
+    } else {
+      const result = await usersCollection.insertOne(playerData)
+      return res.status(201).json({message: "Created new user", _id: result.insertedId});
+    }
+  } catch (error) {
+    console.log("server error:" + error);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
 
 app.post('/tokensignin', async (req, res) => {
   const tokenId = req.body;

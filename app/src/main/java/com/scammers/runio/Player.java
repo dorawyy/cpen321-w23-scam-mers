@@ -22,12 +22,13 @@ public class Player {
     }
 
     // Called when retrieving an exiting player
-    public Player(String playerId, String playerEmail, String playerDisplayName, String playerPhotoUrl) {
+    public Player(String playerId, String playerEmail, String playerDisplayName, String playerPhotoUrl, HashSet<String> lobbySet) {
         this.playerEmail = playerEmail;
         this.playerPhotoUrl = playerPhotoUrl;
         this.playerDisplayName = playerDisplayName;
         // CHANGE ME OR NOTHING WILL WORK
         this.lobbySet = new HashSet<String>();
+        this.lobbySet = lobbySet;
         this.playerId = playerId;
     }
 

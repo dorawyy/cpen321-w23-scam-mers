@@ -27,6 +27,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,6 +36,7 @@ import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
+import java.util.HashSet;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -203,7 +205,19 @@ public class MainActivity extends AppCompatActivity {
                     } else if(response.code() == 200){
                         try {
                             JSONObject body = new JSONObject(responseBody);
-                            currentPlayer = new Player(body.getString("_id"), body.getString("playerEmail"), body.getString("playerDisplayName"), body.getString("playerPhotoUrl"));
+                            Log.d(TAG, "Lobbyset from DB: " + body.getJSONArray("lobbySet"));
+                            JSONArray jsonArray = body.getJSONArray("lobbySet");
+                            HashSet<String> lobbySet = new HashSet<String>();
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                try {
+                                    String element = jsonArray.getString(i);
+                                    lobbySet.add(element);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                    // Handle the exception according to your use case
+                                }
+                            }
+                            currentPlayer = new Player(body.getString("_id"), body.getString("playerEmail"), body.getString("playerDisplayName"), body.getString("playerPhotoUrl"), lobbySet);
                             Log.d(TAG, "Player Class:" + currentPlayer.playerEmail + currentPlayer.playerPhotoUrl + currentPlayer.playerDisplayName + " lobbySet: " + currentPlayer.lobbySet);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);

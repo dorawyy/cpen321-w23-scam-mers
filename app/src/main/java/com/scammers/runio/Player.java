@@ -16,11 +16,15 @@ public class Player {
         this.playerPhotoUrl = String.valueOf(account.getPhotoUrl());
         this.playerDisplayName = account.getDisplayName();
         this.lobbyIdArray = new int[MAX_LOBBYS];
+
+        // TODO: Assign unique ID to each Player created
     }
     public Player(String playerEmail, String playerDisplayName, String playerPhotoUrl) {
         this.playerEmail = playerEmail;
         this.playerPhotoUrl = playerPhotoUrl;
         this.playerDisplayName = playerDisplayName;
         this.lobbyIdArray = new int[MAX_LOBBYS];
+
+        // TODO: Assign unique ID to each Player created
     }
 }

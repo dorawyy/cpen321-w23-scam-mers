@@ -1,5 +1,6 @@
 package com.scammers.runio;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -9,8 +10,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class NewLobbyActivity extends AppCompatActivity {
     final static String TAG = "NewLobby";
+    final static String CREATE_LOBBY_URL = "https://40.90.192.159:8081/lobby/";
 
     EditText lobbyNameInput;
     String newLobbyName;
@@ -28,8 +43,42 @@ public class NewLobbyActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 newLobbyName = lobbyNameInput.getText().toString();
+                Lobby newLobby = new Lobby(newLobbyName, MainActivity.currentPlayer);
 
-                // TODO: Create new lobby in database
+                // TODO: Send new lobby to backend, where it will be added to db
+                MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+                ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+
+                try {
+                    String newLobbyJSON = ow.writeValueAsString(newLobby);
+                    RequestBody requestBody = RequestBody.create(newLobbyJSON, mediaType);
+
+                    Request createLobbyReq = new Request.Builder()
+                            .url(CREATE_LOBBY_URL)
+                            .post(requestBody)
+                            .build();
+
+                    // Can we reuse the OkHttpClient from MainActivity??
+                    MainActivity.client.newCall(createLobbyReq).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            if (response.isSuccessful()) {
+                                // Handle the successful response here
+                                Log.d(TAG, "Create lobby successful: " + response);
+                            } else {
+                                // Handle the error response here
+                                Log.d(TAG, "Error in creating lobby: " + response);
+                            }
+                        }
+                    });
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
 
                 Toast.makeText(NewLobbyActivity.this, "Created new lobby: " + newLobbyName, Toast.LENGTH_LONG).show();
 

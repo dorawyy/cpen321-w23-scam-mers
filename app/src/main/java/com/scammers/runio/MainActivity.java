@@ -56,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static String photoUrlPublic;
 
-    public OkHttpClient client;
-    public Player currentPlayer;
+    public static OkHttpClient client;
+    public static Player currentPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,19 +1,49 @@
 package com.scammers.runio;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 public class Lobby {
+
+    private String lobbyId = null;
     public final String lobbyName;
     public final String lobbyLeaderId;
     public HashSet<String> playerSet;
 
+    // Called when making a new lobby
     public Lobby(String lobbyName, String lobbyLeaderId) {
         this.lobbyName = lobbyName;
         this.lobbyLeaderId = lobbyLeaderId;
         this.playerSet = new HashSet<String>();
         this.playerSet.add(lobbyLeaderId);
+    }
+
+    // Called when retrieving an existing lobby
+    public Lobby(JSONObject lobbyJSON) throws JSONException {
+        this.lobbyId = lobbyJSON.getString("_id");
+        this.lobbyName = lobbyJSON.getString("lobbyName");
+        this.lobbyLeaderId = lobbyJSON.getString("lobbyLeaderId");
+
+        JSONArray jsonArray = lobbyJSON.getJSONArray("playerSet");
+        this.playerSet = new HashSet<String>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                String element = jsonArray.getString(i);
+                playerSet.add(element);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public String getLobbyId() {
+        return this.lobbyId;
     }
 
     // Deletes this lobby from db. Called when all players have left a lobby.

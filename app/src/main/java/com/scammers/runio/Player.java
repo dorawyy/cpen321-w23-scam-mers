@@ -2,6 +2,10 @@ package com.scammers.runio;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -21,15 +25,23 @@ public class Player {
         this.lobbySet = new HashSet<String>();
     }
 
-    // Called when retrieving an exiting player
-    public Player(String playerId, String playerEmail, String playerDisplayName, String playerPhotoUrl, HashSet<String> lobbySet) {
-        this.playerEmail = playerEmail;
-        this.playerPhotoUrl = playerPhotoUrl;
-        this.playerDisplayName = playerDisplayName;
-        // CHANGE ME OR NOTHING WILL WORK
+    // Called when retrieving an existing player
+    public Player(JSONObject playerJSON) throws JSONException {
+        this.playerEmail = playerJSON.getString("playerEmail");
+        this.playerPhotoUrl = playerJSON.getString("playerPhotoUrl");
+        this.playerDisplayName = playerJSON.getString("playerDisplayName");
+        this.playerId = playerJSON.getString("_id");
+
+        JSONArray jsonArray = playerJSON.getJSONArray("lobbySet");
         this.lobbySet = new HashSet<String>();
-        this.lobbySet = lobbySet;
-        this.playerId = playerId;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                String element = jsonArray.getString(i);
+                lobbySet.add(element);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public String getPlayerId() {

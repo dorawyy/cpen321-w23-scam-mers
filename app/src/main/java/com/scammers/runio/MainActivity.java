@@ -206,18 +206,7 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             JSONObject body = new JSONObject(responseBody);
                             Log.d(TAG, "Lobbyset from DB: " + body.getJSONArray("lobbySet"));
-                            JSONArray jsonArray = body.getJSONArray("lobbySet");
-                            HashSet<String> lobbySet = new HashSet<String>();
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                try {
-                                    String element = jsonArray.getString(i);
-                                    lobbySet.add(element);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                    // Handle the exception according to your use case
-                                }
-                            }
-                            currentPlayer = new Player(body.getString("_id"), body.getString("playerEmail"), body.getString("playerDisplayName"), body.getString("playerPhotoUrl"), lobbySet);
+                            currentPlayer = new Player(body);
                             Log.d(TAG, "Player Class:" + currentPlayer.playerEmail + currentPlayer.playerPhotoUrl + currentPlayer.playerDisplayName + " lobbySet: " + currentPlayer.lobbySet);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);

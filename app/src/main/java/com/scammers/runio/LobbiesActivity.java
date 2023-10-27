@@ -67,27 +67,36 @@ public class LobbiesActivity extends AppCompatActivity {
                             body = new JSONObject(responseBody);
 
                             // TODO Now display it
-                            Log.d(TAG, "Creating this Lobby Button: "+ body.getString("lobbyName"));
                             LinearLayout parentLayout = findViewById(R.id.lobbiesLinearLayout); // Replace with your parent layout ID
 
-                            String lobbyName = body.getString("lobbyName");
+                            Lobby lobby = new Lobby(body);
+                            Log.d(TAG, "Creating this Lobby Button: "+ lobby.lobbyName);
 
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     // Create a new Button
                                     Button button = new Button(LobbiesActivity.this);
-                                    button.setText(lobbyName);
+                                    button.setText(lobby.lobbyName);
 
                                     // Set any additional properties for the Button as needed
                                     // button.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
                                     // Add the Button to the parent layout
                                     parentLayout.addView(button);
+
+                                    //TODO ONCLICK FOR EACH BUTTON
+                                    button.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Intent lobbyIntent = new Intent(LobbiesActivity.this, LobbyActivity.class);
+                                            lobbyIntent.putExtra("lobbyId", lobby.getLobbyId());
+                                            startActivity(lobbyIntent);
+                                        }
+                                    });
                                 }
                             });
 
-                            //TODO ONCLICK FOR EACH BUTTON
 
                         } catch (JSONException e) {
                             throw new RuntimeException(e);

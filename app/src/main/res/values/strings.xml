@@ -18,6 +18,11 @@
     <string name="new_lobby_name_form_caption">New Lobby Name</string>
     <string name="new_lobby_submit_button_caption">Create Lobby</string>
 
+    <!--  AddPlayer-->
+    <string name="add_player_title">Add Player to Lobby</string>
+    <string name="add_player_email_form_caption">Player E-mail</string>
+    <string name="add_player_submit_button_caption">Add Player</string>
+
     <string name="title_activity_maps">MapsActivity</string>
     <string name="text_above_the_map">Text Above the Map</string>
     <string name="text_below_the_map">Text Below the Map</string>

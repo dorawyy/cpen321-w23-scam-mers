@@ -10,7 +10,7 @@ public class Player {
     public final String playerEmail;
     public final String playerPhotoUrl;
     public final String playerDisplayName;
-    HashSet<String> lobbySet;
+    public HashSet<String> lobbySet;
 
 
     // Called when making a new player
@@ -19,8 +19,6 @@ public class Player {
         this.playerPhotoUrl = String.valueOf(account.getPhotoUrl());
         this.playerDisplayName = account.getDisplayName();
         this.lobbySet = new HashSet<String>();
-        this.lobbySet.add("abc");
-        this.lobbySet.add("def");
     }
 
     // Called when retrieving an exiting player
@@ -31,5 +29,9 @@ public class Player {
         // CHANGE ME OR NOTHING WILL WORK
         this.lobbySet = new HashSet<String>();
         this.playerId = playerId;
+    }
+
+    public String getPlayerId() {
+        return this.playerId;
     }
 }

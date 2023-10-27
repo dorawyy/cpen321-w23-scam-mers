@@ -155,10 +155,10 @@ public class MainActivity extends AppCompatActivity {
             // setup client for HTTP and trusting backend server certificate
             setupHttpClient();
 
-            // GET request to check if user exists
-            String url = "https://40.90.192.159:8081/user/" + account.getEmail();
-            Request checkUser = new Request.Builder().url(url).build();
-            client.newCall(checkUser).enqueue(new Callback() {
+            // GET request to check if player exists
+            String url = "https://40.90.192.159:8081/player/" + account.getEmail();
+            Request checkPlayer = new Request.Builder().url(url).build();
+            client.newCall(checkPlayer).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
                     e.printStackTrace();

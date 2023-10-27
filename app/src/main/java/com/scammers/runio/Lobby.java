@@ -1,24 +1,19 @@
 package com.scammers.runio;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class Lobby {
-    private final String lobbyName;
-    private final Player lobbyLeader;
-    private List<Integer> playerList;
+    public final String lobbyName;
+    public final String lobbyLeaderId;
+    public HashSet<String> playerSet;
 
-    public Lobby(String lobbyName, Player lobbyLeader) {
+    public Lobby(String lobbyName, String lobbyLeaderId) {
         this.lobbyName = lobbyName;
-        this.lobbyLeader = lobbyLeader;
-        playerList = new ArrayList<Integer>();
-
-        // TODO: Assign unique ID to each Lobby created
-
-        // Add lobbyLeader ID to playerList
-//        playerList.add(lobbyLeader.playerId);
-
-        // TODO: Create lobby in db, with lobbyLeader as starting player
+        this.lobbyLeaderId = lobbyLeaderId;
+        this.playerSet = new HashSet<String>();
+        this.playerSet.add(lobbyLeaderId);
     }
 
     // Deletes this lobby from db. Called when all players have left a lobby.

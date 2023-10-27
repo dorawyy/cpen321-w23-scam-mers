@@ -6,7 +6,6 @@ const bodyParser = require('body-parser');
 const {MongoClient, ObjectId} = require("mongodb");
 const { emit } = require("process");
 
-
 const uri = "mongodb://localhost:27017"
 const client = new MongoClient(uri)
 
@@ -23,7 +22,7 @@ app.get("/", (req,res)=>{
     res.send("Welcome to RunIO")
 })
 
-app.put('/user/:playerEmail', async (req, res) => {
+app.put('/player/:playerEmail', async (req, res) => {
   try {
     const { playerEmail } = req.params;
     const playerData = req.body;
@@ -38,11 +37,12 @@ app.put('/user/:playerEmail', async (req, res) => {
     const existingUser = await usersCollection.findOne({ playerEmail: playerEmail });
 
     if (existingUser) {
-      const result = await usersCollection.update({ _id: existingUser.id }, { $set: playerData });
-      return res.status(200).json({message: "Updated existing user"});
+      // console.log("Existing player found:" + existingUser._id)
+      const result = await usersCollection.updateOne({ _id: new ObjectId(existingUser._id) }, { $set: playerData });
+      return res.status(200).json({message: "Updated existing player"});
     } else {
       const result = await usersCollection.insertOne(playerData)
-      return res.status(201).json({message: "Created new user", _id: result.insertedId});
+      return res.status(201).json({message: "Created new player", _id: result.insertedId});
     }
   } catch (error) {
     console.log("server error:" + error);
@@ -50,7 +50,7 @@ app.put('/user/:playerEmail', async (req, res) => {
   }
 });
 
-app.get('/user/:playerEmail', async (req, res) => {
+app.get('/player/:playerEmail', async (req, res) => {
   try {
     const { playerEmail } = req.params;
 
@@ -62,7 +62,7 @@ app.get('/user/:playerEmail', async (req, res) => {
     if (existingUser) {
       return res.status(200).json(existingUser);
     } else {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: 'player not found' });
     }
   } catch (error) {
     console.log(error);
@@ -121,10 +121,10 @@ app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
 
     if (existingUser) {
       const result = await usersCollection.update({ _id: existingUser.id }, { $set: playerData });
-      return res.status(200).json({message: "Updated existing user"});
+      return res.status(200).json({message: "Updated existing player"});
     } else {
       const result = await usersCollection.insertOne(playerData)
-      return res.status(201).json({message: "Created new user", _id: result.insertedId});
+      return res.status(201).json({message: "Created new player", _id: result.insertedId});
     }
   } catch (error) {
     console.log("server error:" + error);

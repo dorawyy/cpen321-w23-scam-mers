@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                         MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
                         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
                         String playerDataJSON = ow.writeValueAsString(currentPlayer);
-//                        Log.d(TAG, "player.tostring" + playerDataJSON);
+                        Log.d(TAG, "player.tostring" + playerDataJSON);
                         RequestBody requestBody = RequestBody.create(playerDataJSON, mediaType);
 //                        Log.d(TAG, "request bodyyyy" + requestBody.toString());
                         Request request = new Request.Builder()
@@ -203,8 +203,8 @@ public class MainActivity extends AppCompatActivity {
                     } else if(response.code() == 200){
                         try {
                             JSONObject body = new JSONObject(responseBody);
-                            currentPlayer = new Player(body.getString("playerEmail"), body.getString("playerDisplayName"), body.getString("playerPhotoUrl"));
-                            Log.d(TAG, "Player Class:" + currentPlayer.playerEmail + currentPlayer.playerPhotoUrl + currentPlayer.playerDisplayName + " lobbyIdArray: " + currentPlayer.lobbyIdArray);
+                            currentPlayer = new Player(body.getString("_id"), body.getString("playerEmail"), body.getString("playerDisplayName"), body.getString("playerPhotoUrl"));
+                            Log.d(TAG, "Player Class:" + currentPlayer.playerEmail + currentPlayer.playerPhotoUrl + currentPlayer.playerDisplayName + " lobbySet: " + currentPlayer.lobbySet);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }

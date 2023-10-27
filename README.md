@@ -3,9 +3,15 @@
 
 `sudo docker run -d -p 27017:27017 --name runio-db -v runio-data:/data/db mongo:latest`
 
+To restart mongodb:
+`sudo docker restart runio-db`
+
 To run server in background, run comand in backend directory:
 
 `pm2 start server.js`, `pm2 stop server.js`
+
+To run server:
+`node server.js` in backend directory
 
 Installing NVM on Ubuntu:<br>
 `sudo apt update`<br>

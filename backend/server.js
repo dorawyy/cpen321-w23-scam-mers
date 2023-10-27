@@ -26,22 +26,19 @@ app.put('/player/:playerEmail', async (req, res) => {
   try {
     const { playerEmail } = req.params;
     const playerData = req.body;
-    // console.log("email:" + playerEmail);
-    // console.log("body:" + JSON.stringify(playerData));
 
     if (!playerEmail || !playerData) {
       return res.status(400).json({ error: 'Insufficient player data fields' });
     }
 
-    const usersCollection = client.db("runio").collection("players");
-    const existingUser = await usersCollection.findOne({ playerEmail: playerEmail });
+    const playersCollection = client.db("runio").collection("players");
+    const existingPlayer = await playersCollection.findOne({ playerEmail: playerEmail });
 
-    if (existingUser) {
-      // console.log("Existing player found:" + existingUser._id)
-      const result = await usersCollection.updateOne({ _id: new ObjectId(existingUser._id) }, { $set: playerData });
+    if (existingPlayer) {
+      const result = await playersCollection.updateOne({ _id: new ObjectId(existingPlayer._id) }, { $set: playerData });
       return res.status(200).json({message: "Updated existing player"});
     } else {
-      const result = await usersCollection.insertOne(playerData)
+      const result = await playersCollection.insertOne(playerData)
       return res.status(201).json({message: "Created new player", _id: result.insertedId});
     }
   } catch (error) {
@@ -57,10 +54,10 @@ app.get('/player/:playerEmail', async (req, res) => {
     if (!playerEmail) {
       return res.status(400).json({ error: 'Email is required' });
     }
-    const usersCollection = client.db("runio").collection("players");
-    const existingUser = await usersCollection.findOne({ playerEmail: playerEmail });
-    if (existingUser) {
-      return res.status(200).json(existingUser);
+    const playersCollection = client.db("runio").collection("players");
+    const existingPlayer = await playersCollection.findOne({ playerEmail: playerEmail });
+    if (existingPlayer) {
+      return res.status(200).json(existingPlayer);
     } else {
       return res.status(404).json({ error: 'player not found' });
     }
@@ -78,9 +75,15 @@ app.post('/lobby', async (req, res) => {
       return res.status(400).json({ error: 'Insufficient lobby data' });
     }
 
+    // Create a new lobby document
     const lobbiesCollection = client.db("runio").collection("lobbies");
-    const result = await lobbiesCollection.insertOne(lobbyData)
-    return res.status(201).json({message: "Created new lobby", _id: result.insertedId});
+    const lobbyResult = await lobbiesCollection.insertOne(lobbyData);
+
+    // Update the creator's document to include the new lobby
+    const playersCollection = client.db("runio").collection("players");
+    const playerResult = await playersCollection.updateOne({ _id: new ObjectId(lobbyData.lobbyLeaderId) }, { $push: { lobbySet: lobbyResult.insertedId.toString()} });
+
+    return res.status(201).json({message: "Created new lobby", _id: lobbyResult.insertedId});
     
   } catch (error) {
     console.log("server error:" + error);
@@ -116,16 +119,24 @@ app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
       return res.status(400).json({ error: 'Missing parameters' });
     }
 
-    const usersCollection = client.db("runio").collection("players");
-    const existingUser = await usersCollection.findOne({ playerEmail: playerEmail });
+    const lobbiesCollection = client.db("runio").collection("lobbies");
+    const playersCollection = client.db("runio").collection("players");
 
-    if (existingUser) {
-      const result = await usersCollection.update({ _id: existingUser.id }, { $set: playerData });
-      return res.status(200).json({message: "Updated existing player"});
-    } else {
-      const result = await usersCollection.insertOne(playerData)
-      return res.status(201).json({message: "Created new player", _id: result.insertedId});
+    // Check to make sure both the lobby and player exist before modifying the collections
+    const player = await playersCollection.findOne({ _id: new ObjectId(playerId) });
+    const lobby = await lobbiesCollection.findOne({ _id: new ObjectId(lobbyId) });
+    if (!player || !lobby) {
+      return res.status(404).json({ error: 'Player or lobby not found' });
+    } 
+    
+    // Check to make sure the player is not already part of the lobby
+    if (lobby.playerSet.indexOf(playerId) != -1 || player.lobbySet.indexOf(lobbyId) != -1) {
+      return res.status(200).json({message: "This player is already a member of this lobby"});
     }
+
+    const lobbyResult = await lobbiesCollection.updateOne({ _id: new ObjectId(lobbyId) }, { $push: { playerSet: playerId} });
+    const playerResult = await playersCollection.updateOne({ _id: new ObjectId(playerId) }, { $push: { lobbySet: lobbyId} });
+    
   } catch (error) {
     console.log("server error:" + error);
     return res.status(500).json({ error: 'Server error' });

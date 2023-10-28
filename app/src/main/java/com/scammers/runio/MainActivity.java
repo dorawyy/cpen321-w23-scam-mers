@@ -1,6 +1,4 @@
 package com.scammers.runio;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -175,10 +173,12 @@ public class MainActivity extends AppCompatActivity {
                         currentPlayer = new Player(account);
                         // PUT to backend
                         MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
-                        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-                        String playerDataJSON = ow.writeValueAsString(currentPlayer);
-                        Log.d(TAG, "player.tostring" + playerDataJSON);
-                        RequestBody requestBody = RequestBody.create(playerDataJSON, mediaType);
+                        RequestBody requestBody = null;
+                        try {
+                            requestBody = RequestBody.create(currentPlayer.toJSON(), mediaType);
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
 //                        Log.d(TAG, "request bodyyyy" + requestBody.toString());
                         Request request = new Request.Builder()
                                 .url(url)

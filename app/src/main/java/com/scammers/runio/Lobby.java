@@ -64,4 +64,17 @@ public class Lobby {
 
         // Remove removedPlayer from lobby in db
     }
+
+    public String toJSON() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        JSONArray playerSetArray = new JSONArray();
+        for (String item : this.playerSet) {
+            playerSetArray.put(item);
+        }
+        jsonObject.put("lobbyName", this.lobbyName);
+        jsonObject.put("lobbyLeaderId", this.lobbyLeaderId);
+        jsonObject.put("playerSet", playerSetArray);
+        return jsonObject.toString();
+    }
+
 }

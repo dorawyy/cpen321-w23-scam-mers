@@ -47,4 +47,17 @@ public class Player {
     public String getPlayerId() {
         return this.playerId;
     }
+
+    public String toJSON() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        JSONArray lobbySetArray = new JSONArray();
+        for (String item : this.lobbySet) {
+            lobbySetArray.put(item);
+        }
+        jsonObject.put("lobbySet", lobbySetArray);
+        jsonObject.put("playerEmail", this.playerEmail);
+        jsonObject.put("playerDisplayName", this.playerDisplayName);
+        jsonObject.put("playerPhotoUrl", this.playerPhotoUrl);
+        return jsonObject.toString();
+    }
 }

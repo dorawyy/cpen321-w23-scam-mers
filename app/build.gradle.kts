@@ -46,6 +46,4 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation ("com.squareup.okhttp3:okhttp:4.9.1")
-    implementation ("com.fasterxml.jackson.core:jackson-core:2.13.0")
-    implementation ("com.fasterxml.jackson.core:jackson-databind:2.13.0")
 }

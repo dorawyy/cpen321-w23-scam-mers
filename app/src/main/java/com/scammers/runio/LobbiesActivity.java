@@ -48,7 +48,7 @@ public class LobbiesActivity extends AppCompatActivity {
         // Display player lobbies
         for (String lobbyId : MainActivity.currentPlayer.lobbySet) {
             // GET request to get Lobby info
-            String url = "https://40.90.192.159:8081/lobby/" + lobbyId;
+            String url = "https://40.90.192.159:8081/lobby/" + lobbyId + "/lobbyName";
             Request getLobby = new Request.Builder()
                     .url(url)
                     .build();
@@ -69,28 +69,26 @@ public class LobbiesActivity extends AppCompatActivity {
                             // TODO Now display it
                             LinearLayout parentLayout = findViewById(R.id.lobbiesLinearLayout); // Replace with your parent layout ID
 
-                            Lobby lobby = new Lobby(body);
-                            Log.d(TAG, "Creating this Lobby Button: "+ lobby.lobbyName);
+                            String lobbyName = body.getString("lobbyName");
+                            Log.d(TAG, "Creating this Lobby Button: "+ lobbyName);
 
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     // Create a new Button
                                     Button button = new Button(LobbiesActivity.this);
-                                    button.setText(lobby.lobbyName);
+                                    button.setText(lobbyName);
 
                                     // Set any additional properties for the Button as needed
                                     // button.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
                                     // Add the Button to the parent layout
                                     parentLayout.addView(button);
-
-                                    //TODO ONCLICK FOR EACH BUTTON
                                     button.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
                                             Intent lobbyIntent = new Intent(LobbiesActivity.this, LobbyActivity.class);
-                                            lobbyIntent.putExtra("lobbyId", lobby.getLobbyId());
+                                            lobbyIntent.putExtra("lobbyId", lobbyId);
                                             startActivity(lobbyIntent);
                                         }
                                     });

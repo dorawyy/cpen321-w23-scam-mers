@@ -64,6 +64,7 @@ public class RunningActivity extends FragmentActivity implements OnMapReadyCallb
                 if (run.isCompleteLoop()) {
                     //API Call
                     Log.d(TAG, "Completed a loop");
+                    run.end();
                 } else {
                     // Display lobby creator as popup
                     LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);

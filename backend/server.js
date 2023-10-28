@@ -47,15 +47,24 @@ app.put('/player/:playerEmail', async (req, res) => {
   }
 });
 
-app.get('/player/:playerEmail', async (req, res) => {
+app.get('/player/:player', async (req, res) => {
   try {
-    const { playerEmail } = req.params;
+    const { player } = req.params;
 
-    if (!playerEmail) {
-      return res.status(400).json({ error: 'Email is required' });
+    if (!player) {
+      return res.status(400).json({ error: 'Player email or ID is required' });
     }
+
     const playersCollection = client.db("runio").collection("players");
-    const existingPlayer = await playersCollection.findOne({ playerEmail: playerEmail });
+    
+    // Check if it is an email or _id
+    let existingPlayer;
+    if (player.indexOf('@') != -1) {
+      existingPlayer = await playersCollection.findOne({ playerEmail: player });
+    } else {
+      existingPlayer = await playersCollection.findOne({ _id: new ObjectId(player) });
+    }
+    
     if (existingPlayer) {
       return res.status(200).json(existingPlayer);
     } else {
@@ -66,6 +75,7 @@ app.get('/player/:playerEmail', async (req, res) => {
     return res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 app.post('/lobby', async (req, res) => {
   try {
@@ -100,6 +110,31 @@ app.get('/lobby/:lobbyId', async (req, res) => {
     }
     const lobbiesCollection = client.db("runio").collection("lobbies");
     const existingLobby = await lobbiesCollection.findOne({ _id: new ObjectId(lobbyId) });
+    if (existingLobby) {
+      return res.status(200).json(existingLobby);
+    } else {
+      return res.status(404).json({ error: 'Lobby not found' });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.get('/lobby/:lobbyId/lobbyName', async (req, res) => {
+  try {
+    const { lobbyId } = req.params;
+
+    if (!lobbyId) {
+      return res.status(400).json({ error: 'Lobby Id is required' });
+    }
+
+    const lobbiesCollection = client.db("runio").collection("lobbies");
+    const existingLobby = await lobbiesCollection.findOne(
+      { _id: new ObjectId(lobbyId) },
+      { projection: { lobbyName: true, _id: false } }
+    );
+
     if (existingLobby) {
       return res.status(200).json(existingLobby);
     } else {

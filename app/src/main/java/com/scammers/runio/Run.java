@@ -58,6 +58,10 @@ public class Run {
         *
         * This can send API call to backend with the path
         * */
+
+        // Connect path to starting point to complete polygon
+        this.path.add(path.get(0));
+
         String url = "https://40.90.192.159:8081/player/" + this.playerId + "/run";
         MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
         Gson gson = new Gson();

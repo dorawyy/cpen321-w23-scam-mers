@@ -1,10 +1,11 @@
-var express = require("express")
-var app = express()
-const https = require('https')
-const fs = require('fs')
-const bodyParser = require('body-parser');
-const {MongoClient, ObjectId} = require("mongodb");
-const { emit } = require("process");
+import express from "express";
+import * as https from "https";
+import * as fs from "fs";
+import bodyParser from "body-parser";
+import { MongoClient, ObjectId } from "mongodb";
+import { computeArea, computeLength } from "spherical-geometry-js";
+
+var app = express();
 
 const uri = "mongodb://localhost:27017"
 const client = new MongoClient(uri)
@@ -17,6 +18,7 @@ const options = {
 
 // app.use(express.json()); // Add this line to enable JSON body parsing
 app.use(bodyParser.json());
+//app.use(lobbyEndpoints(client));
 
 app.get("/", (req,res)=>{
     res.send("Welcome to RunIO")
@@ -172,6 +174,42 @@ app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
     const lobbyResult = await lobbiesCollection.updateOne({ _id: new ObjectId(lobbyId) }, { $push: { playerSet: playerId} });
     const playerResult = await playersCollection.updateOne({ _id: new ObjectId(playerId) }, { $push: { lobbySet: lobbyId} });
     
+  } catch (error) {
+    console.log("server error:" + error);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.post('/player/:playerId/run', async (req, res) => {
+  try {
+    const { playerId } = req.params;
+    const playerRun = req.body;
+
+    if (!playerId || !playerRun) {
+      return res.status(400).json({ error: 'Insufficient player run fields' });
+    }
+
+    console.log(playerRun);
+    // Analyze run and update statistics, maps, etc.
+    
+    const pathArea = computeArea(playerRun);
+    const pathDist = computeLength(playerRun);
+
+    // Go through lobbies of that player
+    // For each lobby, union player's existing land, subtract from opponent's land
+    // Recalculate area
+    // Update personal stats (distance and total area)
+
+    let updatedRun = req.body;
+    updatedRun["area"] = pathArea;
+    updatedRun["dist"] = pathDist;
+
+    const obj = JSON.stringify(playerRun);
+    console.log("OBJ: " + obj);
+
+    console.log("Response body is: " + res.body);
+
+    return res.status(200).json({ message: res.body });
   } catch (error) {
     console.log("server error:" + error);
     return res.status(500).json({ error: 'Server error' });

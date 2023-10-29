@@ -33,15 +33,11 @@ public class RunningActivity extends FragmentActivity implements OnMapReadyCallb
     private GoogleMap mMap;
     private ActivityRunningBinding binding;
     private LocationManager locationManager;
-
     private PolylineOptions polylineOptions;
-
     private Button stopActivityButton;
-
     private Button keepRunningButton;
     private Button confirmStopActivityButton;
     private final String TAG = "RunningActivity";
-
     private Run run;
 
     @Override
@@ -54,7 +50,7 @@ public class RunningActivity extends FragmentActivity implements OnMapReadyCallb
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.running_map);
         mapFragment.getMapAsync(this);
 
         stopActivityButton = findViewById(R.id.stop_activity_button);
@@ -62,11 +58,11 @@ public class RunningActivity extends FragmentActivity implements OnMapReadyCallb
             @Override
             public void onClick(View view) {
                 if (run.isCompleteLoop()) {
-                    //API Call
                     Log.d(TAG, "Completed a loop");
                     run.end();
+                    finish();
                 } else {
-                    // Display lobby creator as popup
+                    // Display stop warning as popup
                     LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                     View popupView = inflater.inflate(R.layout.activity_stop_warning, null);
 
@@ -116,8 +112,6 @@ public class RunningActivity extends FragmentActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Enable the My Location layer on the map
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -129,19 +123,7 @@ public class RunningActivity extends FragmentActivity implements OnMapReadyCallb
             return;
         }
         mMap.setMyLocationEnabled(true);
-
-        // Create a LocationManager to access the user's current location
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, this);
         polylineOptions = new PolylineOptions()
                 .width(10)

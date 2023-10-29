@@ -24,4 +24,5 @@
     <string name="stop_warning">You have not run a complete loop! Ending the activity now will result in your run being lost.  Are you sure you want to end the activity?</string>
     <string name="confirm_stop_activity_button_caption">Stop Activity</string>
     <string name="keep_running_button_caption">Keep Running!</string>
+    <string name="lobby_stats_button_caption">View Lobby Stats</string>
 </resources>

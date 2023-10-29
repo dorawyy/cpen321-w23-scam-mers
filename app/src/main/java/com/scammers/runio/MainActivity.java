@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-               .requestIdToken("749392990960-mlcvsjnsc9l7n46i8ppqhmbm86auosoh.apps.googleusercontent.com")
+                .requestIdToken("749392990960-mlcvsjnsc9l7n46i8ppqhmbm86auosoh.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
         // Build a GoogleSignInClient with the options specified by gso.
@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         signInLauncher.launch(signInIntent);
     }
+
     private ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -138,16 +139,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI(GoogleSignInAccount account) {
-        if (account == null){
+        if (account == null) {
             Log.d(TAG, "There is no user signed in");
-        }
-        else{
+        } else {
             String photoUrl = String.valueOf(account.getPhotoUrl());
-            Log.d(TAG, "Name: "+ account.getDisplayName());
-            Log.d(TAG, "Email: "+ account.getEmail());
-            Log.d(TAG, "Family Name: "+ account.getFamilyName());
-            Log.d(TAG, "Given Name: "+ account.getGivenName());
-            Log.d(TAG, "Photo URL: "+ photoUrl);
+            Log.d(TAG, "Name: " + account.getDisplayName());
+            Log.d(TAG, "Email: " + account.getEmail());
+            Log.d(TAG, "Family Name: " + account.getFamilyName());
+            Log.d(TAG, "Given Name: " + account.getGivenName());
+            Log.d(TAG, "Photo URL: " + photoUrl);
 
             // Send photoUrl to other activities
             photoUrlPublic = photoUrl;
@@ -163,13 +163,14 @@ public class MainActivity extends AppCompatActivity {
                 public void onFailure(Call call, IOException e) {
                     e.printStackTrace();
                 }
+
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     String responseBody = response.body().string();
 //                    Log.d(TAG, "response:" + response);
 //                    Log.d(TAG, "response.body():" + response.body());
 
-                    if(response.code() == 404){
+                    if (response.code() == 404) {
                         currentPlayer = new Player(account);
                         // PUT to backend
                         MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
@@ -195,6 +196,11 @@ public class MainActivity extends AppCompatActivity {
                             public void onResponse(Call call, Response response) throws IOException {
                                 if (response.isSuccessful()) {
                                     // Handle the successful response here
+                                    try {
+                                        currentPlayer.setPlayerId(new JSONObject(response.body().string()).getString("playerId"));
+                                    } catch (JSONException e) {
+                                        throw new RuntimeException(e);
+                                    }
                                     Log.d(TAG, "putting message" + response);
                                 } else {
                                     // Handle the error response here
@@ -202,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         });
-                    } else if(response.code() == 200){
+                    } else if (response.code() == 200) {
                         try {
                             JSONObject body = new JSONObject(responseBody);
                             Log.d(TAG, "Lobbyset from DB: " + body.getJSONArray("lobbySet"));
@@ -211,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
-                    } else{
+                    } else {
                         throw new IOException("Unexpected code " + response);
                     }
 //                        runOnUiThread(() -> {
@@ -229,15 +235,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void checkPermissions(){
-        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+    private void checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "We got location thanks!", Toast.LENGTH_LONG).show();
             return;
-        }
-        else{
-            if(ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
-                    || ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)){
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                    || ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
                 new AlertDialog.Builder(this)
                         .setTitle("Need Location Permissions")
                         .setMessage("We need location permissions to mark your location on map")
@@ -251,19 +256,18 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                ActivityCompat.requestPermissions(MainActivity.this, new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                                ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
                             }
                         })
                         .create()
                         .show();
-            }
-            else{
-                ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
         }
     }
 
-    private void setupHttpClient(){
+    private void setupHttpClient() {
         // Load your self-signed certificate or CA certificate from a resource
         InputStream certInputStream = getResources().openRawResource(R.raw.cert);
 

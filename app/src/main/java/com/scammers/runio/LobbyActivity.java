@@ -2,14 +2,28 @@ package com.scammers.runio;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,14 +36,23 @@ import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class LobbyActivity extends AppCompatActivity {
+public class LobbyActivity extends AppCompatActivity implements OnMapReadyCallback {
     private ImageButton homeActivityButton;
 
     private ImageButton profileActivityButton;
+    private Button lobby_stats_button;
+    private Lobby currentLobby;
+    private GoogleMap mMap;
+    private LocationManager locationManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby);
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.lobby_map);
+        mapFragment.getMapAsync(this);
 
         homeActivityButton = findViewById(R.id.home_button_lobby);
         homeActivityButton.setOnClickListener(new View.OnClickListener() {
@@ -53,6 +76,15 @@ public class LobbyActivity extends AppCompatActivity {
             }
         });
 
+        lobby_stats_button = findViewById(R.id.lobby_stats_button);
+        lobby_stats_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // Go to new lobby stats intent
+
+                    }
+                });
+
         // Retrieve the lobby ID from the intent's extras
         String lobbyId = getIntent().getStringExtra("lobbyId");
 
@@ -73,9 +105,9 @@ public class LobbyActivity extends AppCompatActivity {
                     throw new IOException("Unexpected code " + response);
                 }
                 try {
-                    Lobby lobby = new Lobby(new JSONObject(response.body().string()));
-
-
+                    currentLobby = new Lobby(new JSONObject(response.body().string()));
+                    TextView textView = findViewById(R.id.lobby_name); // Replace with the ID of your TextView
+                    textView.setText(currentLobby.lobbyName); // The text you want to set
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -113,5 +145,29 @@ public class LobbyActivity extends AppCompatActivity {
             });
         }
         return players;
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        mMap = googleMap;
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        // Zoom in on the user's current location
+        Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (lastLocation != null) {
+            LatLng userLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 13));
+        }
     }
 }

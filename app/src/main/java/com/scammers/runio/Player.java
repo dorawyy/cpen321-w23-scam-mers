@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class Player {
+
     private String playerId = null;
     public final String playerEmail;
     public final String playerPhotoUrl;
@@ -46,6 +47,9 @@ public class Player {
 
     public String getPlayerId() {
         return this.playerId;
+    }
+    public void setPlayerId(String playerId) {
+        this.playerId = playerId;
     }
 
     public String toJSON() throws JSONException {

@@ -7,6 +7,9 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -82,6 +85,12 @@ public class Run {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 Log.d("Run", "run response:" + response.body().string());
+//                try {
+//                    MainActivity.currentPlayer.totalAreaRan =  (new JSONObject(response.body().string()).getDouble("totalAreaRan"));
+//                    MainActivity.currentPlayer.totalDistanceRan =  (new JSONObject(response.body().string()).getDouble("totalDistanceRan"));
+//                } catch (JSONException e) {
+//                    throw new RuntimeException(e);
+//                }
             }
         });
 

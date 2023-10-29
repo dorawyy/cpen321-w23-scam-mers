@@ -44,6 +44,7 @@ public class NewLobbyActivity extends AppCompatActivity {
             public void onClick(View view) {
                 newLobbyName = lobbyNameInput.getText().toString();
                 Lobby newLobby = new Lobby(newLobbyName, MainActivity.currentPlayer.getPlayerId());
+                PlayerLobbyStats p = new PlayerLobbyStats();
 
                 // TODO: Send new lobby to backend, where it will be added to db
                 MediaType mediaType = MediaType.parse("application/json; charset=utf-8");

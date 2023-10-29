@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class Lobby {
     private String lobbyId = null;
     public final String lobbyName;
     public final String lobbyLeaderId;
+//    public HashMap<String, PlayerLobbyStats> playerMap;
     public HashSet<String> playerSet;
 
     // Called when making a new lobby

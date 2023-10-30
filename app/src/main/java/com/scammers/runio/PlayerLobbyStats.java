@@ -1,5 +1,7 @@
 package com.scammers.runio;
 
+import android.graphics.Color;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -8,56 +10,23 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class PlayerLobbyStats {
+    private static int ALPHA_MASK_100 = (100 << 24) | 0xFFFFFF;
     public final double distanceCovered;
     public final double totalArea;
+    public final int color;
     public final ArrayList<ArrayList<LatLng>> lands;
-
-//    public PlayerLobbyStats() {
-//        this.distanceCovered = 0.0;
-//        this.totalArea = 0.0;
-//        ArrayList<LatLng> list1 = new ArrayList<>();
-//        list1.add(new LatLng(1.0, 2.0));
-//        list1.add(new LatLng(3.0, 4.0));
-//        list1.add(new LatLng(5.0, 6.0));
-//
-//        ArrayList<LatLng> list2 = new ArrayList<>();
-//        list2.add(new LatLng(7.0, 8.0));
-//        list2.add(new LatLng(9.0, 10.0));
-//
-//        this.lands = new ArrayList<ArrayList<LatLng>>();
-//        this.lands.add(list1);
-//        this.lands.add(list2);
-//    }
-//    public PlayerLobbyStats(JSONObject lobbyJSON) throws JSONException {
-//        this.distanceCovered = lobbyJSON.getDouble("distanceCovered");
-//        this.totalArea = lobbyJSON.getDouble("totalArea");
-//
-//        JSONArray loops = lobbyJSON.getJSONArray("lands");
-//        this.lands = new ArrayList<ArrayList<LatLng>>();
-//        for (int i = 0; i < loops.length(); i++) {
-////            this.lands.add(new ArrayList<LatLng>());
-//            ArrayList<LatLng> newLoop = new ArrayList<LatLng>();
-//            JSONArray loop = loops.getJSONArray(i);
-//            for (int j = 0; j < loop.length(); j++) {
-//                try {
-//                    newLoop.add(new LatLng(loop.getJSONObject(j).getDouble("latitude"), loop.getJSONObject(j).getDouble("longitude")));
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            this.lands.add(newLoop);
-//        }
-//    }
 
     public PlayerLobbyStats() {
         this.distanceCovered = 0.0;
         this.totalArea = 0.0;
+        this.color = Color.WHITE;
         this.lands = new ArrayList<ArrayList<LatLng>>();
     }
 
     public PlayerLobbyStats(JSONObject playerStatsJSON) throws JSONException {
         this.distanceCovered = playerStatsJSON.getDouble("distanceCovered");
         this.totalArea = playerStatsJSON.getDouble("totalArea");
+        this.color = playerStatsJSON.getInt("color");
         this.lands = new ArrayList<>();
         JSONArray landsJSON = playerStatsJSON.getJSONArray("lands");
 
@@ -66,8 +35,8 @@ public class PlayerLobbyStats {
             ArrayList<LatLng> coordinates = new ArrayList<>();
             for (int j = 0; j < landArrayJSON.length(); j++) {
                 JSONObject coordinateJSON = landArrayJSON.getJSONObject(j);
-                int latitude = coordinateJSON.getInt("latitude");
-                int longitude = coordinateJSON.getInt("longitude");
+                double latitude = coordinateJSON.getDouble("latitude");
+                double longitude = coordinateJSON.getDouble("longitude");
                 coordinates.add(new LatLng(latitude, longitude));
             }
             lands.add(coordinates);
@@ -78,6 +47,7 @@ public class PlayerLobbyStats {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("distanceCovered", distanceCovered);
         jsonObject.put("totalArea", totalArea);
+        // intentionally left out color because it should be assigned by the backend.
 
         JSONArray landsArray = new JSONArray();
         for (ArrayList<LatLng> land : lands) {
@@ -95,4 +65,7 @@ public class PlayerLobbyStats {
         return jsonObject;
     }
 
+    public static int lowerAlpha(int color) {
+        return ALPHA_MASK_100 & color;
+    }
 }

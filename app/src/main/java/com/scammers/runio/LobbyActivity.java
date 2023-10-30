@@ -34,6 +34,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -41,8 +42,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class LobbyActivity extends AppCompatActivity implements OnMapReadyCallback {
+    final static String TAG = "LobbyActivity";
     private ImageButton homeActivityButton;
-
     private ImageButton profileActivityButton;
     private Button lobby_stats_button;
     private Lobby currentLobby;
@@ -174,22 +175,19 @@ public class LobbyActivity extends AppCompatActivity implements OnMapReadyCallba
         }
 
         // Add polygons to indicate areas on the map.
-
-        PolygonOptions polygonOptions = new PolygonOptions()
-                .add(
-                new LatLng(49.2648, -123.2528),
-                new LatLng(49.2653, -123.2528),
-                new LatLng(49.2653, -123.2533),
-                new LatLng(49.2648, -123.2533))
-                .strokeColor(Color.RED) // Stroke color
-                .strokeWidth(2)        // Stroke width
-                .fillColor(Color.argb(100, 255, 0, 0))
-                .geodesic(true); // Fill color
-//                .fillOpacity(0.5f);      // Fill opacity (0.0f for fully transparent, 1.0f for fully opaque)
-        Polygon polygon1 = googleMap.addPolygon(polygonOptions);
-// Store a data object with the polygon, used here to indicate an arbitrary type.
-        polygon1.setTag("alpha");
-//        polygon1.setFillColor(Color.RED);
-//        polygon1.setFilLOpacity(0.8);
+        for (String key : currentLobby.playerMap.keySet()) {
+            PlayerLobbyStats playerLobbyStats = currentLobby.playerMap.get(key);
+            assert playerLobbyStats != null;
+            for (ArrayList<LatLng> land : playerLobbyStats.lands) {
+                Log.d(TAG, land.toString());
+                PolygonOptions polygonOptions = new PolygonOptions()
+                        .addAll(land)
+                        .strokeColor(playerLobbyStats.color)
+                        .strokeWidth(5)
+                        .fillColor(PlayerLobbyStats.lowerAlpha(playerLobbyStats.color))
+                        .geodesic(true);
+                Polygon polygon1 = googleMap.addPolygon(polygonOptions);
+            }
+        }
     }
 }

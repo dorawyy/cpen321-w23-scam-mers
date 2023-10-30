@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -23,12 +24,15 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import okhttp3.Call;
@@ -115,37 +119,37 @@ public class LobbyActivity extends AppCompatActivity implements OnMapReadyCallba
         });
     }
 
-    private HashMap<String, Player> loadPlayerData(Lobby lobby) {
-        HashMap<String, Player> players = new HashMap<>();
-        for (String playerId : lobby.playerSet) {
-            // GET request for player info
-            String url = "https://40.90.192.159:8081/player/" + playerId;
-            Request getLobby = new Request.Builder()
-                    .url(url)
-                    .build();
-            MainActivity.client.newCall(getLobby).enqueue(new Callback() {
-                @Override
-                public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    e.printStackTrace();
-                }
-
-                @Override
-                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                    if(response.code() != 200){
-                        throw new IOException("Unexpected code " + response);
-                    }
-                    try {
-                        Player player = new Player(new JSONObject(response.body().string()));
-                        players.put(player.getPlayerId(), player);
-
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
-        }
-        return players;
-    }
+//    private HashMap<String, Player> loadPlayerData(Lobby lobby) {
+//        HashMap<String, Player> players = new HashMap<>();
+//        for (String playerId : lobby.playerSet) {
+//            // GET request for player info
+//            String url = "https://40.90.192.159:8081/player/" + playerId;
+//            Request getLobby = new Request.Builder()
+//                    .url(url)
+//                    .build();
+//            MainActivity.client.newCall(getLobby).enqueue(new Callback() {
+//                @Override
+//                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                @Override
+//                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+//                    if(response.code() != 200){
+//                        throw new IOException("Unexpected code " + response);
+//                    }
+//                    try {
+//                        Player player = new Player(new JSONObject(response.body().string()));
+//                        players.put(player.getPlayerId(), player);
+//
+//                    } catch (JSONException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }
+//            });
+//        }
+//        return players;
+//    }
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
@@ -168,5 +172,24 @@ public class LobbyActivity extends AppCompatActivity implements OnMapReadyCallba
             LatLng userLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 13));
         }
+
+        // Add polygons to indicate areas on the map.
+
+        PolygonOptions polygonOptions = new PolygonOptions()
+                .add(
+                new LatLng(49.2648, -123.2528),
+                new LatLng(49.2653, -123.2528),
+                new LatLng(49.2653, -123.2533),
+                new LatLng(49.2648, -123.2533))
+                .strokeColor(Color.RED) // Stroke color
+                .strokeWidth(2)        // Stroke width
+                .fillColor(Color.argb(100, 255, 0, 0))
+                .geodesic(true); // Fill color
+//                .fillOpacity(0.5f);      // Fill opacity (0.0f for fully transparent, 1.0f for fully opaque)
+        Polygon polygon1 = googleMap.addPolygon(polygonOptions);
+// Store a data object with the polygon, used here to indicate an arbitrary type.
+        polygon1.setTag("alpha");
+//        polygon1.setFillColor(Color.RED);
+//        polygon1.setFilLOpacity(0.8);
     }
 }

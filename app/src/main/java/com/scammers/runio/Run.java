@@ -19,8 +19,8 @@ import okhttp3.Response;
 
 public class Run {
     private String playerId;
-    private double NEW_COORD_THRESHOLD = 5.0 / 111139.0;
-    private double COMPLETE_LOOP_THRESHOLD = 40.0 / 111139.0;
+    private double NEW_COORD_THRESHOLD = 5;
+    private double COMPLETE_LOOP_THRESHOLD = 40;
     ArrayList<LatLng> path;
     public Run(String playerId) {
         this.playerId = playerId;
@@ -44,9 +44,35 @@ public class Run {
         return distance(start, end) < COMPLETE_LOOP_THRESHOLD;
     }
 
-    private double distance(LatLng start, LatLng end) {
-        return Math.sqrt(Math.pow(start.longitude - end.longitude, 2)
-                + Math.pow(start.latitude - end.latitude, 2));
+//    private double distance(LatLng start, LatLng end) {
+//        return Math.sqrt(Math.pow(start.longitude - end.longitude, 2)
+//                + Math.pow(start.latitude - end.latitude, 2));
+//    }
+
+    // Mean radius of the Earth in kilometers
+    private static final double EARTH_RADIUS_METERS = 6371000.0; // 6371 km * 1000 m/km
+
+    public static double distance(LatLng c1, LatLng c2) {
+        // Convert LatLng objects to radians
+        double lat1Rad = Math.toRadians(c1.latitude);
+        double lon1Rad = Math.toRadians(c1.longitude);
+        double lat2Rad = Math.toRadians(c2.latitude);
+        double lon2Rad = Math.toRadians(c2.longitude);
+
+        // Calculate differences in latitude and longitude
+        double deltaLat = lat2Rad - lat1Rad;
+        double deltaLon = lon2Rad - lon1Rad;
+
+        // Haversine formula
+        double a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+                Math.cos(lat1Rad) * Math.cos(lat2Rad) *
+                        Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        // Calculate the distance in meters
+        double distance = EARTH_RADIUS_METERS * c;
+
+        return distance;
     }
 
     public void end(){

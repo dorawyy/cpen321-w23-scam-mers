@@ -1,10 +1,45 @@
-var express = require("express")
-var app = express()
-const https = require('https')
-const fs = require('fs')
-const bodyParser = require('body-parser');
-const {MongoClient, ObjectId} = require("mongodb");
-const { emit } = require("process");
+import express from "express";
+import * as https from "https";
+import * as fs from "fs";
+import bodyParser from "body-parser";
+import { MongoClient, ObjectId } from "mongodb";
+import { computeArea, computeLength } from "spherical-geometry-js";
+import * as turf from "@turf/turf"
+
+// var express = require("express")
+// const https = require('https')
+// const fs = require('fs')
+// const bodyParser = require('body-parser');
+// const {MongoClient, ObjectId} = require("mongodb");
+// const { emit } = require("process");
+//const lobbyEndpoints = require('./lobbyEndpoints');
+
+function createColor(R, G, B) {
+  // Ensure that A, R, G, and B are within the 0-255 range
+
+  // A = Math.min(255, Math.max(0, A));
+  R = Math.min(255, Math.max(0, R));
+  G = Math.min(255, Math.max(0, G));
+  B = Math.min(255, Math.max(0, B));
+
+  // Create the color in the specified format
+  const color = (255 & 0xff) << 24 | (R & 0xff) << 16 | (G & 0xff) << 8 | (B & 0xff); // Always set Opacity to 255
+  return color;
+}
+
+const availableColors = []
+availableColors.push(createColor(0x7f,0x06,0x38)); //maroon
+availableColors.push(createColor(0x5e,0x4f,0xa2)); //purple
+availableColors.push(createColor(0x5c,0xb3,0x98)); //teal
+availableColors.push(createColor(0x3f,0x3f,0x3f)); //gray
+availableColors.push(createColor(0xf5,0xf2,0x47)); //yellow
+availableColors.push(createColor(0xf2,0x63,0x13)); //orange
+availableColors.push(createColor(0xe9,0x52,0xeb)); //pink
+availableColors.push(createColor(0x78,0xfa,0x66)); //green
+availableColors.push(createColor(0x32,0x88,0xbd)); //blue
+availableColors.push(createColor(0xdd,0x0e,0x26)); //red
+
+var app = express();
 
 const uri = "mongodb://localhost:27017"
 const client = new MongoClient(uri)
@@ -17,6 +52,7 @@ const options = {
 
 // app.use(express.json()); // Add this line to enable JSON body parsing
 app.use(bodyParser.json());
+//app.use(lobbyEndpoints(client));
 
 app.get("/", (req,res)=>{
     res.send("Welcome to RunIO")
@@ -85,9 +121,23 @@ app.post('/lobby', async (req, res) => {
       return res.status(400).json({ error: 'Insufficient lobby data' });
     }
 
+    // console.log("LobbyData: " + JSON.stringify(lobbyData));
+
+    // const playerId = lobbyData["playerSet"][0];
+
+    // lobbyData["playerSet"] = [{
+    //   "playerId": playerId, 
+    //   "distanceCovered": 0.0, 
+    //   "totalArea": 0.0, 
+    //   "lands": [], 
+    // }];
+
+    // console.log("LobbyData2: " + JSON.stringify(lobbyData));
+
     // Create a new lobby document
     const lobbiesCollection = client.db("runio").collection("lobbies");
-    const lobbyResult = await lobbiesCollection.insertOne(lobbyData);
+    lobbyData.playerSet[lobbyData.lobbyLeaderId].color = availableColors.pop();
+    const lobbyResult = await lobbiesCollection.insertOne({availableColors: availableColors, ...lobbyData});
 
     // Update the creator's document to include the new lobby
     const playersCollection = client.db("runio").collection("players");
@@ -148,6 +198,7 @@ app.get('/lobby/:lobbyId/lobbyName', async (req, res) => {
 
 app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
   try {
+    //TODO: support the availableColor stack
     const { lobbyId, playerId } = req.params;
 
     if (!lobbyId || !playerId) {
@@ -169,7 +220,14 @@ app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
       return res.status(200).json({message: "This player is already a member of this lobby"});
     }
 
-    const lobbyResult = await lobbiesCollection.updateOne({ _id: new ObjectId(lobbyId) }, { $push: { playerSet: playerId} });
+    const playerData = {
+      "playerId": playerId,
+      "distanceCovered": 0.0, 
+      "totalArea": 0.0, 
+      "lands": [], 
+    }
+
+    const lobbyResult = await lobbiesCollection.updateOne({ _id: new ObjectId(lobbyId) }, { $push: { playerSet: playerData} });
     const playerResult = await playersCollection.updateOne({ _id: new ObjectId(playerId) }, { $push: { lobbySet: lobbyId} });
     
   } catch (error) {
@@ -177,6 +235,185 @@ app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
     return res.status(500).json({ error: 'Server error' });
   }
 });
+
+app.post('/player/:playerId/run', async (req, res) => {
+  try {
+    const { playerId } = req.params;
+    const playerRun = req.body;
+
+    if (!playerId || !playerRun) {
+      return res.status(400).json({ error: 'Insufficient player run fields' });
+    }
+
+    // console.log("playerRun: " + playerRun);
+    // Analyze run and update statistics, maps, etc.
+
+    const pathArea = computeArea(playerRun);
+    const pathDist = computeLength(playerRun);
+
+    let lobbyId = new ObjectId("653fa844657cb626c2427d33");
+
+    let mapList = [playerRun]
+    updateMapInLobby(playerId, mapList, lobbyId)
+
+    // Go through lobbies of that player
+    // For each lobby, 
+    //    union player's existing land, 
+    //    subtract from opponent's land
+    // Recalculate area
+
+    // updateLobbyMaps(playerId, playerRun);
+
+    // Update personal stats (distance and total area)
+    const updatedPlayerStats = await updatePlayerStats(playerId, pathArea, pathDist);
+    
+
+    let updatedRun = req.body;
+    updatedRun["area"] = pathArea;
+    updatedRun["dist"] = pathDist;
+
+    // console.log("Response body is: " + res.body);
+
+    if (updatedPlayerStats){
+      const responseMessage = {
+        "areaRan": pathArea,
+        "distRan": pathDist,
+        "totalAreaRan": updatedPlayerStats["totalAreaRan"],
+        "totalDistanceRan": updatedPlayerStats["totalDistanceRan"]
+      }
+      // return res.status(200).json(responseMessage);
+    }
+    
+
+    return res.status(200).json({ message: res.body });
+  } catch (error) {
+    console.log("server error:" + error);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
+function pathToPolygon(playerRun) {
+  let pointList = [];
+
+  for (let point in playerRun) {
+    // console.log(JSON.stringify(playerRun[point]));
+    if (playerRun[point]["latitude"] && playerRun[point]["longitude"]) {
+      let lat = JSON.stringify(playerRun[point]["latitude"]);
+      let long = JSON.stringify(playerRun[point]["longitude"]);
+      pointList.push([lat, long]);
+    }
+  }
+  pointList = [pointList];
+
+  // console.log(pointList);
+
+  let pathPolygon = turf.polygon(pointList);
+  // console.log("PATH POLYGON" + JSON.stringify(pathPolygon));
+  return pathPolygon;
+}
+
+async function updateLobbyMaps(playerId, addedLand) {
+  const playersCollection = client.db("runio").collection("players");
+  const lobbiesCollection = client.db("runio").collection("lobbies");
+  const player = await playersCollection.findOne({ _id: new ObjectId(playerId) });
+
+  if (player) {
+    const playerLobbies = player["lobbySet"];
+
+
+    for (let i in playerLobbies) {
+      // console.log("LOBBY ID: " + playerLobbies[lobbyId]);
+      let newLand;
+
+      let lobbyId = new ObjectId(playerLobbies[i]);
+      let lobby = await lobbiesCollection.findOne({ _id: lobbyId });
+      // console.log("LOBBY: " + JSON.stringify(lobby["playerSet"]));
+      let oldLand = lobby["playerSet"][playerId];
+      // console.log("OLD LAND: " + oldLand);
+
+      newLand = unionLand(oldLand, addedLand);
+      // console.log("UNION: " + JSON.stringify(union["geometry"]["coordinates"][0]));
+
+      subtractLand(newLand, lobby, playerId);
+    }
+  } else {
+    console.log("Player not found.");
+    return null; // throw/ catch exception??
+  }
+}
+
+function unionLand(oldLand, newLand) {
+  // console.log("OLD: " + JSON.stringify(oldLand));
+  // console.log("NEW: " + JSON.stringify(newLand));
+  if (!oldLand) {
+    return pathToPolygon(newLand);
+  }
+  
+  let updatedLand = [];
+  for (let i in oldLand) {
+    let oldPoly = pathToPolygon(oldLand[i]);
+    let newPoly = pathToPolygon(newLand);
+
+    let union = turf.union(oldPoly, newPoly);
+
+    if (typeof(union) == "MultiPolygon") {
+      // If two polygons are not intersecting, union returns two polygons
+      updatedLand.push(union[0]);
+      updatedLand.push(union[1]);
+    } else {
+      updatedLand.push(union);
+    }
+  }
+
+  // console.log("UPDATED LAND: " + updatedLand);
+  return updatedLand;
+}
+
+function subtractLand(addedLand, lobby, playerId) {
+  for (let opp in lobby["playerSet"]) {
+    let oppLand = lobby["playerSet"][opp]["lands"];
+    if (oppLand && playerId != lobby["playerSet"][opp]) {
+      // console.log("OPP: " + JSON.stringify(oppLand));
+      turf.difference(oldLand, addedLand);
+    }
+  };
+
+  return;
+}
+
+async function updatePlayerStats(playerId, pathArea, pathDist){
+  const playersCollection = client.db("runio").collection("players");
+  const player = await playersCollection.findOne({ _id: new ObjectId(playerId) });
+  if (player){
+    player.totalAreaRan += pathArea;
+    player.totalDistanceRan += pathDist;
+    const result = await playersCollection.updateOne(
+      { _id: player._id }, { $set: { totalAreaRan: player.totalAreaRan, totalDistanceRan: player.totalDistanceRan } });
+    if (result.modifiedCount === 1) {
+      console.log("Player stats updated");
+      return { totalAreaRan: player.totalAreaRan, totalDistanceRan: player.totalDistanceRan };
+    } else {
+        console.log("Player stats not updated");
+        return null; // throw/ catch exception??
+    }
+  } 
+  else {
+    console.log("Player not found.");
+    return null; // throw/ catch exception??
+  }
+}
+
+// Helper function for updating a player's map in a specified lobby.
+// playerId: Id of player who's map will be updated.
+// newMap: The map which will replace the existing one. Stored as an array of shapes made up of coordinates.
+// lobbyId: Id of lobby where map will be updated
+async function updateMapInLobby(playerId, newMap, lobbyId) {
+  const lobbiesCollection = client.db("runio").collection("lobbies");
+  await lobbiesCollection.updateOne(
+    { _id: new ObjectId(lobbyId),  "playerSet.playerId": playerId },
+    { $set: { "playerSet.$[].lands": newMap }}, 
+  );
+}
 
 app.post('/tokensignin', async (req, res) => {
   const tokenId = req.body;

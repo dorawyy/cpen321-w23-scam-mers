@@ -16,6 +16,8 @@ public class Player {
     public final String playerPhotoUrl;
     public final String playerDisplayName;
     public HashSet<String> lobbySet;
+    public double totalAreaRan;
+    public double totalDistanceRan;
 
 
     // Called when making a new player
@@ -24,6 +26,8 @@ public class Player {
         this.playerPhotoUrl = String.valueOf(account.getPhotoUrl());
         this.playerDisplayName = account.getDisplayName();
         this.lobbySet = new HashSet<String>();
+        this.totalAreaRan = 0.0;
+        this.totalDistanceRan = 0.0;
     }
 
     // Called when retrieving an existing player
@@ -32,6 +36,8 @@ public class Player {
         this.playerPhotoUrl = playerJSON.getString("playerPhotoUrl");
         this.playerDisplayName = playerJSON.getString("playerDisplayName");
         this.playerId = playerJSON.getString("_id");
+        this.totalAreaRan = playerJSON.getDouble("totalAreaRan");
+        this.totalDistanceRan = playerJSON.getDouble("totalDistanceRan");
 
         JSONArray jsonArray = playerJSON.getJSONArray("lobbySet");
         this.lobbySet = new HashSet<String>();
@@ -62,6 +68,9 @@ public class Player {
         jsonObject.put("playerEmail", this.playerEmail);
         jsonObject.put("playerDisplayName", this.playerDisplayName);
         jsonObject.put("playerPhotoUrl", this.playerPhotoUrl);
+        jsonObject.put("totalAreaRan", this.totalAreaRan);
+        jsonObject.put("totalDistanceRan", this.totalDistanceRan);
+
         return jsonObject.toString();
     }
 }

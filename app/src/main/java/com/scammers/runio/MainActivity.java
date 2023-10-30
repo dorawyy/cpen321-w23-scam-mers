@@ -171,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
 //                    Log.d(TAG, "response.body():" + response.body());
 
                     if (response.code() == 404) {
+                        Log.d(TAG, "HEEHEHREEE");
                         currentPlayer = new Player(account);
                         // PUT to backend
                         MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
@@ -197,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (response.isSuccessful()) {
                                     // Handle the successful response here
                                     try {
-                                        currentPlayer.setPlayerId(new JSONObject(response.body().string()).getString("playerId"));
+                                        currentPlayer.setPlayerId(new JSONObject(response.body().string()).getString("_id"));
                                     } catch (JSONException e) {
                                         throw new RuntimeException(e);
                                     }
@@ -213,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject body = new JSONObject(responseBody);
                             Log.d(TAG, "Lobbyset from DB: " + body.getJSONArray("lobbySet"));
                             currentPlayer = new Player(body);
-                            Log.d(TAG, "Player Class:" + currentPlayer.playerEmail + currentPlayer.playerPhotoUrl + currentPlayer.playerDisplayName + " lobbySet: " + currentPlayer.lobbySet);
+                            Log.d(TAG, "Player Class:" + currentPlayer.playerEmail + currentPlayer.playerPhotoUrl + currentPlayer.playerDisplayName + " lobbySet: " + currentPlayer.lobbySet + "distance:" + currentPlayer.totalDistanceRan + "area:" + currentPlayer.totalAreaRan);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }

@@ -24,6 +24,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.installations.FirebaseInstallations;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +50,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+
 public class MainActivity extends AppCompatActivity {
 
     final static String TAG = "MainActivity";
@@ -63,7 +66,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        FirebaseApp.initializeApp(this);
+        FirebaseInstallations.getInstance().getToken(false)
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        // Handle the error
+                        return;
+                    }
+                    // Get the FCM token
+                    String token = task.getResult().getToken();
+                    Log.d(TAG, "HERERERE");
+                    Log.d(TAG, "Token:" + token);
+                });
+//        Log.d(TAG, "TOKEN Without listener: "+ FirebaseInstallations.getInstance().getToken(false).toString());
         locationButton = findViewById(R.id.location_button);
         locationButton.setOnClickListener(new View.OnClickListener() {
             @Override

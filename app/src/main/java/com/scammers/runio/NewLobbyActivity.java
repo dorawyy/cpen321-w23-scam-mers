@@ -10,10 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,14 +44,14 @@ public class NewLobbyActivity extends AppCompatActivity {
             public void onClick(View view) {
                 newLobbyName = lobbyNameInput.getText().toString();
                 Lobby newLobby = new Lobby(newLobbyName, MainActivity.currentPlayer.getPlayerId());
+                PlayerLobbyStats p = new PlayerLobbyStats();
 
                 // TODO: Send new lobby to backend, where it will be added to db
                 MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
-                ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+//                ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
                 try {
-                    String newLobbyJSON = ow.writeValueAsString(newLobby);
-                    RequestBody requestBody = RequestBody.create(newLobbyJSON, mediaType);
+                    RequestBody requestBody = RequestBody.create(newLobby.toJSON(), mediaType);
 
                     Request createLobbyReq = new Request.Builder()
                             .url(CREATE_LOBBY_URL)
@@ -78,9 +74,9 @@ public class NewLobbyActivity extends AppCompatActivity {
 //                                    Log.d(TAG, "Create lobby successful, Response: " + resBody.getString("_id"));
                                     MainActivity.currentPlayer.lobbySet.add(resBody.getString("_id"));
 
-                                    String updatedPlayerJSON = ow.writeValueAsString(MainActivity.currentPlayer);
-                                    Log.d(TAG, "New player JSON is: " + updatedPlayerJSON);
-                                    RequestBody requestBody = RequestBody.create(updatedPlayerJSON, mediaType);
+//                                    String updatedPlayerJSON = ow.writeValueAsString(MainActivity.currentPlayer);
+//                                    Log.d(TAG, "New player JSON is: " + updatedPlayerJSON);
+                                    RequestBody requestBody = RequestBody.create(MainActivity.currentPlayer.toJSON(), mediaType);
 
                                     Request addLobbyReq = new Request.Builder()
                                             .url(PLAYER_ADD_LOBBY_URL + MainActivity.currentPlayer.playerEmail)
@@ -107,7 +103,7 @@ public class NewLobbyActivity extends AppCompatActivity {
                             }
                         }
                     });
-                } catch (JsonProcessingException e) {
+                } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
 

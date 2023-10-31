@@ -22,8 +22,15 @@
     <string name="add_player_title">Add Player to Lobby</string>
     <string name="add_player_email_form_caption">Player E-mail</string>
     <string name="add_player_submit_button_caption">Add Player</string>
+  
+    <!--    LobbyStatsActivity-->
+    <string name="lobby_stats_add_player_button_text">Add Player</string>
 
     <string name="title_activity_maps">MapsActivity</string>
     <string name="text_above_the_map">Text Above the Map</string>
     <string name="text_below_the_map">Text Below the Map</string>
+    <string name="stop_warning">You have not run a complete loop! Ending the activity now will result in your run being lost.  Are you sure you want to end the activity?</string>
+    <string name="confirm_stop_activity_button_caption">Stop Activity</string>
+    <string name="keep_running_button_caption">Keep Running!</string>
+    <string name="lobby_stats_button_caption">View Lobby Stats</string>
 </resources>

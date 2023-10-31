@@ -1,22 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LobbiesActivity">
+    tools:context=".LobbyStatsActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/lobbiesConstraintLayout"
+        android:id="@+id/lobbyStatsConstraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/lobbiesLinearLayout"
+        app:layout_constraintBottom_toTopOf="@+id/lobbyStatsLinearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <TextView
+            android:id="@+id/lobby_name_lobby_stats"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:text=""
+            android:gravity="center"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="1sp"
+            app:autoSizeMaxTextSize="100sp"
+            app:autoSizeStepGranularity="2sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/profile_image_button_lobby_stats"
+            app:layout_constraintStart_toEndOf="@+id/home_button_lobby_stats"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <ImageButton
-            android:id="@+id/home_button_lobbies"
+            android:id="@+id/home_button_lobby_stats"
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:scaleType="fitCenter"
@@ -26,7 +42,7 @@
             app:srcCompat="@drawable/home_icon" />
 
         <ImageButton
-            android:id="@+id/profile_image_button_lobbies"
+            android:id="@+id/profile_image_button_lobby_stats"
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:scaleType="fitCenter"
@@ -37,24 +53,24 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/create_lobby_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:text="@string/create_lobby_button_caption"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-
     <LinearLayout
-        android:id="@+id/lobbiesLinearLayout"
-        android:layout_width="409dp"
-        android:layout_height="558dp"
+        android:id="@+id/lobbyStatsLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/create_lobby_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lobbiesConstraintLayout"></LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/lobbyStatsConstraintLayout">
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/add_player_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lobby_stats_add_player_button_text"
+        map:layout_constraintBottom_toBottomOf="parent"
+        map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

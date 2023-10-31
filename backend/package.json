@@ -1,6 +1,9 @@
 {
+    "type": "module",
     "dependencies": {
+        "area-polygon": "^1.0.1",
         "express": "^4.18.2",
-        "mongodb": "^6.1.0"
+        "mongodb": "^6.1.0",
+        "spherical-geometry-js": "^3.0.0"
     }
 }

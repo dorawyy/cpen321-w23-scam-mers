@@ -81,17 +81,19 @@ public class LobbyActivity extends AppCompatActivity implements OnMapReadyCallba
             }
         });
 
+        // Retrieve the lobby ID from the intent's extras
+        String lobbyId = getIntent().getStringExtra("lobbyId");
+
         lobby_stats_button = findViewById(R.id.lobby_stats_button);
         lobby_stats_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         // Go to new lobby stats intent
-
+                        Intent lobbyStatsIntent = new Intent(LobbyActivity.this, LobbyStatsActivity.class);
+                        lobbyStatsIntent.putExtra("lobbyStatsId", lobbyId);
+                        startActivity(lobbyStatsIntent);
                     }
                 });
-
-        // Retrieve the lobby ID from the intent's extras
-        String lobbyId = getIntent().getStringExtra("lobbyId");
 
         // GET request to get Lobby info
         String url = "https://40.90.192.159:8081/lobby/" + lobbyId;

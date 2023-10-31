@@ -8,18 +8,65 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class RunIOMessagingService extends FirebaseMessagingService {
+    private String TAG = "Notification";
+
+    public static void updateToken() {
+        if (MainActivity.currentPlayer == null ||
+                MainActivity.fcmToken == null ||
+                MainActivity.client == null) {
+            return;
+        }
+        String fcmUrl = "https://40.90.192.159:8081/player/" + MainActivity.currentPlayer.getPlayerId() + "/fcmToken/" + MainActivity.fcmToken;
+        MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+        RequestBody requestBody = RequestBody.create("", mediaType);
+        Request updateFcmToken = new Request.Builder().url(fcmUrl).put(requestBody).build();
+
+        MainActivity.client.newCall(updateFcmToken).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.code() != 200) {
+                    throw new RuntimeException("Unable to update FCM Token. Response: " + response.toString());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onNewToken(@NonNull String token) {
+        Log.d(TAG, "Refreshed token: " + token);
+        MainActivity.fcmToken = token;
+        // If you want to send messages to this application instance or
+        // manage this apps subscriptions on the server side, send the
+        // FCM registration token to your app server.
+        updateToken();
+    }
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Log.d("Notification", "HERE in on message");
-        // Get the notification data from the remote messagex`
-        String title = remoteMessage.getNotification().getTitle();
-        String body = remoteMessage.getNotification().getBody();
+        Log.d(TAG, "Notification Received: " + remoteMessage.getData().toString());
+        String title = remoteMessage.getData().get("title");
+        String body = remoteMessage.getData().get("body");
 
         // Create a unique notification ID (you can use a random number or a unique identifier)
         int notificationId = (int) System.currentTimeMillis();

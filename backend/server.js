@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import { MongoClient, ObjectId } from "mongodb";
 import { computeArea, computeLength } from "spherical-geometry-js";
 import * as turf from "@turf/turf"
+import request from "request";
 
 // var express = require("express")
 // const https = require('https')
@@ -13,6 +14,33 @@ import * as turf from "@turf/turf"
 // const {MongoClient, ObjectId} = require("mongodb");
 // const { emit } = require("process");
 //const lobbyEndpoints = require('./lobbyEndpoints');
+
+import admin from "firebase-admin";
+import serviceAccount from './runio-401718-firebase-adminsdk-ezjsi-797731a4a0.js';
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+function sendNotification(){
+  const registrationToken = 'eNVBrb_dSDK50wdoS1oOZF:APA91bETz82TWyQmwiNHMpYfmvMPf8erwOQj-VLfuflpGiwViTJsdqWHyJZFJnscSLCOCsBNc5CBc366WxJdZO_nYDXUjVRw4w5VlwoEdBZtSYImdWsI3aJGR-69oPc4mDDFakxQFmYl';
+  const message = {
+      data: {
+          title: 'Hiii',
+          body: 'YESSSSS!!!',
+      },
+      token: registrationToken,
+  };
+
+  admin
+      .messaging()
+      .send(message)
+      .then((response) => {
+          console.log('Successfully sent message:', response);
+      })
+      .catch((error) => {
+          console.error('Error sending message:', error);
+      });
+}
 
 function createColor(R, G, B) {
   // Ensure that A, R, G, and B are within the 0-255 range
@@ -44,6 +72,9 @@ var app = express();
 const uri = "mongodb://localhost:27017"
 const client = new MongoClient(uri)
 
+const playersCollection = client.db("runio").collection("players");
+const lobbiesCollection = client.db("runio").collection("lobbies");
+
 const options = {
   key: fs.readFileSync('key.pem'),
   cert: fs.readFileSync('cert.pem'),
@@ -67,7 +98,6 @@ app.put('/player/:playerEmail', async (req, res) => {
       return res.status(400).json({ error: 'Insufficient player data fields' });
     }
 
-    const playersCollection = client.db("runio").collection("players");
     const existingPlayer = await playersCollection.findOne({ playerEmail: playerEmail });
 
     if (existingPlayer) {
@@ -83,6 +113,28 @@ app.put('/player/:playerEmail', async (req, res) => {
   }
 });
 
+app.put('/player/:playerId/fcmToken/:fcmToken', async (req, res) => {
+  try {
+    const { playerId, fcmToken } = req.params;
+
+    if (!playerId || !fcmToken) {
+      return res.status(400).json({ error: 'Insufficient player data fields' });
+    }
+
+    const existingPlayer = await playersCollection.findOne({ _id: new ObjectId(playerId) });
+
+    if (existingPlayer) {
+      const result = await playersCollection.updateOne({ _id: new ObjectId(existingPlayer._id) }, { $set: {"fcmToken" : fcmToken} });
+      return res.status(200).json({message: "Updated player fcmToken"});
+    } else {
+      return res.status(404).json({ error: 'player not found' });
+    }
+  } catch (error) {
+    console.log("server error:" + error);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
 app.get('/player/:player', async (req, res) => {
   try {
     const { player } = req.params;
@@ -90,8 +142,6 @@ app.get('/player/:player', async (req, res) => {
     if (!player) {
       return res.status(400).json({ error: 'Player email or ID is required' });
     }
-
-    const playersCollection = client.db("runio").collection("players");
     
     // Check if it is an email or _id
     let existingPlayer;
@@ -125,8 +175,10 @@ app.post('/lobby', async (req, res) => {
 
     // const playerId = lobbyData["playerSet"][0];
 
+    // const cloneAvailableColors = [...availableColors];
     // lobbyData["playerSet"] = [{
-    //   "playerId": playerId, 
+    //   "playerId": lobbyData.lobbyLeaderId, 
+    //   "color": cloneAvailableColors.pop(),
     //   "distanceCovered": 0.0, 
     //   "totalArea": 0.0, 
     //   "lands": [], 
@@ -136,15 +188,14 @@ app.post('/lobby', async (req, res) => {
 
     // Create a new lobby document
     const lobbiesCollection = client.db("runio").collection("lobbies");
-    lobbyData.playerSet[lobbyData.lobbyLeaderId].color = availableColors.pop();
-    const lobbyResult = await lobbiesCollection.insertOne({availableColors: availableColors, ...lobbyData});
+    lobbyData.playerSet[lobbyData.lobbyLeaderId].color = availableColors[availableColors.length - 1];
+    const lobbyResult = await lobbiesCollection.insertOne({availableColors: availableColors.slice(0, -1), ...lobbyData});
 
     // Update the creator's document to include the new lobby
-    const playersCollection = client.db("runio").collection("players");
     const playerResult = await playersCollection.updateOne({ _id: new ObjectId(lobbyData.lobbyLeaderId) }, { $push: { lobbySet: lobbyResult.insertedId.toString()} });
 
     return res.status(201).json({message: "Created new lobby", _id: lobbyResult.insertedId});
-    
+
   } catch (error) {
     console.log("server error:" + error);
     return res.status(500).json({ error: 'Server error' });
@@ -206,7 +257,6 @@ app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
     }
 
     const lobbiesCollection = client.db("runio").collection("lobbies");
-    const playersCollection = client.db("runio").collection("players");
 
     // Check to make sure both the lobby and player exist before modifying the collections
     const player = await playersCollection.findOne({ _id: new ObjectId(playerId) });
@@ -216,7 +266,10 @@ app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
     } 
     
     // Check to make sure the player is not already part of the lobby
-    if (lobby.playerSet.indexOf(playerId) != -1 || player.lobbySet.indexOf(lobbyId) != -1) {
+    // if (lobby.playerSet.indexOf(playerId) != -1 || player.lobbySet.indexOf(lobbyId) != -1) {
+    //   return res.status(200).json({message: "This player is already a member of this lobby"});
+    // }
+    if (lobby.playerSet[playerId] != undefined || player.lobbySet[lobbyId] != undefined) {
       return res.status(200).json({message: "This player is already a member of this lobby"});
     }
 
@@ -251,8 +304,8 @@ app.post('/player/:playerId/run', async (req, res) => {
     const pathArea = computeArea(playerRun);
     const pathDist = computeLength(playerRun);
 
-    let lobbyId = new ObjectId("653fa844657cb626c2427d33");
-
+    // Hard coded lobbyId to test updateMapInLobby
+    let lobbyId = new ObjectId("65402a7fb817ae35bda08720");   // CHRIS LOBBY
     let mapList = [playerRun]
     updateMapInLobby(playerId, mapList, lobbyId)
 
@@ -313,8 +366,6 @@ function pathToPolygon(playerRun) {
 }
 
 async function updateLobbyMaps(playerId, addedLand) {
-  const playersCollection = client.db("runio").collection("players");
-  const lobbiesCollection = client.db("runio").collection("lobbies");
   const player = await playersCollection.findOne({ _id: new ObjectId(playerId) });
 
   if (player) {
@@ -373,7 +424,7 @@ function subtractLand(addedLand, lobby, playerId) {
   for (let opp in lobby["playerSet"]) {
     let oppLand = lobby["playerSet"][opp]["lands"];
     if (oppLand && playerId != lobby["playerSet"][opp]) {
-      // console.log("OPP: " + JSON.stringify(oppLand));
+      console.log("OPP: " + JSON.stringify(oppLand));
       turf.difference(oldLand, addedLand);
     }
   };
@@ -382,7 +433,6 @@ function subtractLand(addedLand, lobby, playerId) {
 }
 
 async function updatePlayerStats(playerId, pathArea, pathDist){
-  const playersCollection = client.db("runio").collection("players");
   const player = await playersCollection.findOne({ _id: new ObjectId(playerId) });
   if (player){
     player.totalAreaRan += pathArea;
@@ -409,9 +459,11 @@ async function updatePlayerStats(playerId, pathArea, pathDist){
 // lobbyId: Id of lobby where map will be updated
 async function updateMapInLobby(playerId, newMap, lobbyId) {
   const lobbiesCollection = client.db("runio").collection("lobbies");
+  let query = "playerSet." + playerId;
+  let setTarget = "playerSet." + playerId + ".lands"
   await lobbiesCollection.updateOne(
-    { _id: new ObjectId(lobbyId),  "playerSet.playerId": playerId },
-    { $set: { "playerSet.$[].lands": newMap }}, 
+    { _id: new ObjectId(lobbyId),  [query]: {$exists: true} },
+    { $set: { [setTarget]: newMap }}, 
   );
 }
 
@@ -443,3 +495,4 @@ async function run(){
 }
 
 run()
+// sendNotification()

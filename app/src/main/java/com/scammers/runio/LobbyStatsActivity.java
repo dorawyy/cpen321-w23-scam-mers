@@ -65,6 +65,8 @@ public class LobbyStatsActivity extends AppCompatActivity {
         // Retrieve the lobby ID from the intent's extras
         String lobbyId = getIntent().getStringExtra("lobbyStatsId");
 
+        //TODO: Show playerStats in LinearLayout
+
         // GET request to get Lobby info
         String url = "https://40.90.192.159:8081/lobby/" + lobbyId;
         Request getLobby = new Request.Builder()
@@ -86,6 +88,7 @@ public class LobbyStatsActivity extends AppCompatActivity {
                     JSONObject responseBody = new JSONObject(response.body().string());
                     String lobbyName = responseBody.getString("lobbyName");
                     String lobbyLeaderId = responseBody.getString("lobbyLeaderId");
+//                    String lobbyId = responseBody.getString("_id");
                     TextView textView = findViewById(R.id.lobby_name_lobby_stats); // Replace with the ID of your TextView
                     textView.setText(lobbyName); // The text you want to set
 
@@ -93,7 +96,14 @@ public class LobbyStatsActivity extends AppCompatActivity {
                         addPlayerButton.setVisibility(View.INVISIBLE);
                     } else {
                         // TODO SET ON CLICK LISTENER FOR ADDPLAYERBUTTON!
-
+                        addPlayerButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent addPlayerIntent = new Intent(LobbyStatsActivity.this, AddPlayerActivity.class);
+                                addPlayerIntent.putExtra("lobbyIdAddPlayer", lobbyId);
+                                startActivity(addPlayerIntent);
+                            }
+                        });
                     }
 
 //                    currentLobby = new Lobby(new JSONObject(response.body().string()));

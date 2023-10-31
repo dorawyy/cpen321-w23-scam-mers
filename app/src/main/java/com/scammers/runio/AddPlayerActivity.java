@@ -10,9 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
+//import com.fasterxml.jackson.core.JsonProcessingException;
+//import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.databind.ObjectWriter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,7 +51,7 @@ public class AddPlayerActivity extends AppCompatActivity {
 
                 // TODO: Send invitedPLayerEmail to backend, where it will be added to db
                 MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
-                ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+//                ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
                 // GET request to check if player exists
                 String url = "https://40.90.192.159:8081/player/" + invitedPlayerEmail;
@@ -71,20 +71,20 @@ public class AddPlayerActivity extends AppCompatActivity {
                             Toast.makeText(AddPlayerActivity.this, "E-Mail not registered: " + invitedPlayerEmail, Toast.LENGTH_LONG).show();
                         } else if(response.code() == 200) {
                             String responseBody = response.body().string();
-                            JSONObject body = null;
                             try {
-                                body = new JSONObject(responseBody);
-                                String newPlayerJSON = ow.writeValueAsString(body);
-                                Log.d(TAG, "GET Player response: " + body.getString("_id") + body.getString("playerEmail")
-                                        + body.getString("playerDisplayName") + body.getString("playerPhotoUrl"));
+                                Player invitedPlayer = new Player(new JSONObject(responseBody));
+                                Log.d(TAG, "MarcID: = " + invitedPlayer.getPlayerId());
+                                Log.d(TAG, "playerJSON: = " + invitedPlayer.toJSON());
 
-                                //TODO
-                                // After getting playerId,
-                                // Use given lobbyId to get Lobby then
-                                // put it in lobby
-                                RequestBody requestBody = RequestBody.create(newPlayerJSON, mediaType);
+                                //app.put('/lobby/:lobbyId/player/:playerId')
+
+                                // Retrieve the lobby ID from the intent's extras
+                                String lobbyId = getIntent().getStringExtra("lobbyIdAddPlayer");
+                                String putPlayerUrl = "https://40.90.192.159:8081/lobby/" + lobbyId + "/player/" + invitedPlayer.getPlayerId();
+
+                                RequestBody requestBody = RequestBody.create(invitedPlayer.toJSON(), mediaType);
                                 Request addPlayerReq = new Request.Builder()
-                                        .url(ADD_PLAYER_URL)
+                                        .url(putPlayerUrl)
                                         .put(requestBody)
                                         .build();
                                 MainActivity.client.newCall(addPlayerReq).enqueue(new Callback() {
@@ -97,10 +97,11 @@ public class AddPlayerActivity extends AppCompatActivity {
                                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                                         if (response.isSuccessful()) {
                                             // Handle the successful response here
-
+                                            //player was added :)
+                                            Log.d(TAG, "Player added");
                                         } else {
                                             // Handle the error response here
-                                            Log.d(TAG, "Error in creating lobby: " + response);
+                                            Log.d(TAG, "Error inviting player: " + response);
                                         }
                                     }
                                 });
@@ -113,7 +114,7 @@ public class AddPlayerActivity extends AppCompatActivity {
                     }
                 });
 
-                Toast.makeText(AddPlayerActivity.this, "Created new lobby: " + invitedPlayerEmail, Toast.LENGTH_LONG).show();
+                Toast.makeText(AddPlayerActivity.this, "Added player: " + invitedPlayerEmail, Toast.LENGTH_LONG).show();
 
                 // Close add player activity once finished
                 finish();

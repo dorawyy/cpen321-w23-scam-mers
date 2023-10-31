@@ -19,3 +19,4 @@ backend/cert.pem
 backend/key.pem
 backend/package-lock.json
 backend/runio-401718-firebase-adminsdk-ezjsi-797731a4a0.js
+app/google-services.json

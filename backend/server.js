@@ -17,6 +17,7 @@ import request from "request";
 
 import admin from "firebase-admin";
 import serviceAccount from './runio-401718-firebase-adminsdk-ezjsi-797731a4a0.js';
+import path from "path";
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
@@ -154,6 +155,7 @@ app.get('/player/:player', async (req, res) => {
     if (existingPlayer) {
       return res.status(200).json(existingPlayer);
     } else {
+      console.log("player not found");
       return res.status(404).json({ error: 'player not found' });
     }
   } catch (error) {
@@ -251,38 +253,38 @@ app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
   try {
     //TODO: support the availableColor stack
     const { lobbyId, playerId } = req.params;
+    const playerStats = req.body;
 
-    if (!lobbyId || !playerId) {
+    if (!lobbyId || !playerId || !playerStats) {
       return res.status(400).json({ error: 'Missing parameters' });
     }
 
-    const lobbiesCollection = client.db("runio").collection("lobbies");
 
     // Check to make sure both the lobby and player exist before modifying the collections
     const player = await playersCollection.findOne({ _id: new ObjectId(playerId) });
     const lobby = await lobbiesCollection.findOne({ _id: new ObjectId(lobbyId) });
     if (!player || !lobby) {
       return res.status(404).json({ error: 'Player or lobby not found' });
-    } 
-    
-    // Check to make sure the player is not already part of the lobby
-    // if (lobby.playerSet.indexOf(playerId) != -1 || player.lobbySet.indexOf(lobbyId) != -1) {
-    //   return res.status(200).json({message: "This player is already a member of this lobby"});
-    // }
+    }
+
     if (lobby.playerSet[playerId] != undefined || player.lobbySet[lobbyId] != undefined) {
+      console.log("Player already in lobby");
       return res.status(200).json({message: "This player is already a member of this lobby"});
     }
 
-    const playerData = {
-      "playerId": playerId,
-      "distanceCovered": 0.0, 
-      "totalArea": 0.0, 
-      "lands": [], 
-    }
-
-    const lobbyResult = await lobbiesCollection.updateOne({ _id: new ObjectId(lobbyId) }, { $push: { playerSet: playerData} });
-    const playerResult = await playersCollection.updateOne({ _id: new ObjectId(playerId) }, { $push: { lobbySet: lobbyId} });
+    playerStats["color"] = lobby.availableColors.pop();
+    lobby.playerSet[playerId] = playerStats;
     
+    const lobbyResult = await lobbiesCollection.updateOne({ _id: new ObjectId(lobbyId) }, 
+                              { $set: 
+                                { 
+                                  playerSet: lobby.playerSet, 
+                                  availableColors:lobby.availableColors
+                                } 
+                              });
+    const playerResult = await playersCollection.updateOne({ _id: new ObjectId(playerId) }, { $push: { lobbySet: lobbyId} });
+
+    return res.status(200).json({message: "Player added"});
   } catch (error) {
     console.log("server error:" + error);
     return res.status(500).json({ error: 'Server error' });
@@ -298,24 +300,42 @@ app.post('/player/:playerId/run', async (req, res) => {
       return res.status(400).json({ error: 'Insufficient player run fields' });
     }
 
-    // console.log("playerRun: " + playerRun);
-    // Analyze run and update statistics, maps, etc.
+    // console.log("playerRun: " + JSON.stringify(playerRun));
 
+    // Analyze run and update statistics, maps, etc.
     const pathArea = computeArea(playerRun);
     const pathDist = computeLength(playerRun);
 
-    // Hard coded lobbyId to test updateMapInLobby
-    let lobbyId = new ObjectId("65402a7fb817ae35bda08720");   // CHRIS LOBBY
-    let mapList = [playerRun]
-    updateMapInLobby(playerId, mapList, lobbyId)
+    // let lobbyId = new ObjectId("6540c12fd40fa749d5839e05");   // CHRIS LOBBY (Hard coded lobbyId to test updateMapInLobby)
+    // let mapList = [playerRun]
+    // updateMapInLobby(playerId, mapList, lobbyId)
 
-    // Go through lobbies of that player
-    // For each lobby, 
-    //    union player's existing land, 
-    //    subtract from opponent's land
-    // Recalculate area
+    let testExistingLand = [[
+      {"latitude": 49.26246, "longitude": -123.25537}, 
+      {"latitude": 49.26257, "longitude": -123.25502}, 
+      {"latitude": 49.26237, "longitude": -123.25485}, 
+      {"latitude": 49.26226, "longitude": -123.25523}, 
+      {"latitude": 49.26246, "longitude": -123.25537}, 
+    ]]; 
 
-    // updateLobbyMaps(playerId, playerRun);
+    let testAddingLand = [
+      {"latitude": 49.26239, "longitude": -123.25517}, 
+      {"latitude": 49.2621, "longitude": -123.25497}, 
+      {"latitude": 49.26197, "longitude": -123.25534}, 
+      {"latitude": 49.26224, "longitude": -123.25558}, 
+      {"latitude": 49.26239, "longitude": -123.25517}, 
+    ];
+
+    // let lobby = await lobbiesCollection.findOne({ _id: new ObjectId("6540c12fd40fa749d5839e05") });
+
+
+
+    // const player = await playersCollection.findOne({ _id: new ObjectId(playerId) });
+
+    // TEST FOR updateLobbyMaps
+    // updateLobbyMaps(playerId, testAddingLand);
+
+    updateLobbyMaps(playerId, playerRun);
 
     // Update personal stats (distance and total area)
     const updatedPlayerStats = await updatePlayerStats(playerId, pathArea, pathDist);
@@ -345,32 +365,33 @@ app.post('/player/:playerId/run', async (req, res) => {
   }
 });
 
-function pathToPolygon(playerRun) {
+function pathToPolygon(path) {
   let pointList = [];
-
-  for (let point in playerRun) {
-    // console.log(JSON.stringify(playerRun[point]));
-    if (playerRun[point]["latitude"] && playerRun[point]["longitude"]) {
-      let lat = JSON.stringify(playerRun[point]["latitude"]);
-      let long = JSON.stringify(playerRun[point]["longitude"]);
+  // console.log(`PATH TO POLY INPUT PATH: ${JSON.stringify(path)}`)
+  for (let point in path) {
+    // console.log(JSON.stringify(path[point]));
+    if (path[point]["latitude"] && path[point]["longitude"]) {
+      let lat = path[point]["latitude"];
+      let long = path[point]["longitude"];
       pointList.push([lat, long]);
     }
   }
   pointList = [pointList];
 
-  // console.log(pointList);
+  // console.log(`INPUT PATH: ${JSON.stringify(path)}`);
+  // console.log(`POINT LIST: ${pointList}`);
 
   let pathPolygon = turf.polygon(pointList);
   // console.log("PATH POLYGON" + JSON.stringify(pathPolygon));
   return pathPolygon;
 }
 
+// TODO: Test updateLobbyMaps
 async function updateLobbyMaps(playerId, addedLand) {
   const player = await playersCollection.findOne({ _id: new ObjectId(playerId) });
-
+  // console.log(`INPUT LAND: ${addedLand}`);
   if (player) {
     const playerLobbies = player["lobbySet"];
-
 
     for (let i in playerLobbies) {
       // console.log("LOBBY ID: " + playerLobbies[lobbyId]);
@@ -378,14 +399,15 @@ async function updateLobbyMaps(playerId, addedLand) {
 
       let lobbyId = new ObjectId(playerLobbies[i]);
       let lobby = await lobbiesCollection.findOne({ _id: lobbyId });
+
       // console.log("LOBBY: " + JSON.stringify(lobby["playerSet"]));
-      let oldLand = lobby["playerSet"][playerId];
-      // console.log("OLD LAND: " + oldLand);
+      let oldLand = lobby["playerSet"][playerId]["lands"];
+      // console.log("OLD LAND: " + JSON.stringify(oldLand));
 
-      newLand = unionLand(oldLand, addedLand);
-      // console.log("UNION: " + JSON.stringify(union["geometry"]["coordinates"][0]));
+      unionLand(oldLand, addedLand, player);
+      // console.log("NEW LAND: " + JSON.stringify(newLand));
 
-      subtractLand(newLand, lobby, playerId);
+      subtractLand(addedLand, lobby, playerId);
     }
   } else {
     console.log("Player not found.");
@@ -393,43 +415,89 @@ async function updateLobbyMaps(playerId, addedLand) {
   }
 }
 
-function unionLand(oldLand, newLand) {
+function unionLand(oldLand, newLand, player) {
   // console.log("OLD: " + JSON.stringify(oldLand));
   // console.log("NEW: " + JSON.stringify(newLand));
   if (!oldLand) {
     return pathToPolygon(newLand);
   }
   
-  let updatedLand = [];
+  let updatedLandSet = [];
   for (let i in oldLand) {
+    // console.log(`OLD LAND ${i}: ${JSON.stringify(oldLand[i])}`);
     let oldPoly = pathToPolygon(oldLand[i]);
     let newPoly = pathToPolygon(newLand);
 
+    // console.log(`OLD POLY: ${JSON.stringify(oldPoly)}`);
+    // console.log(`NEW POLY: ${JSON.stringify(newPoly)}`);
+
     let union = turf.union(oldPoly, newPoly);
+    // console.log("UNION: " + JSON.stringify(union));
 
     if (typeof(union) == "MultiPolygon") {
-      // If two polygons are not intersecting, union returns two polygons
-      updatedLand.push(union[0]);
-      updatedLand.push(union[1]);
+      // If two polygons are not intersecting, union returns a MultiPolygon
+      for (i in union) {
+        updatedLandSet.push(polygonToLand(union[i]));
+      }
     } else {
-      updatedLand.push(union);
+      updatedLandSet.push(polygonToLand(union));
     }
   }
 
-  // console.log("UPDATED LAND: " + updatedLand);
-  return updatedLand;
+  let playerLobbies = player.lobbySet;
+  
+  for (let lobby in playerLobbies) {
+    updateMapInLobby(player._id, updatedLandSet, playerLobbies[lobby]);
+  }
+
+  return updatedLandSet;
+}
+
+function polygonToLand(poly) {
+  let land = [];
+  for (let i in poly.geometry.coordinates[0]) {
+    let coordObj = {
+      "latitude": poly.geometry.coordinates[0][i][0],
+      "longitude": poly.geometry.coordinates[0][i][1],
+    }
+    // console.log(`COORD OBJ: ${JSON.stringify(coordObj)}`);
+    land.push(coordObj);
+  }
+  return land;
 }
 
 function subtractLand(addedLand, lobby, playerId) {
-  for (let opp in lobby["playerSet"]) {
-    let oppLand = lobby["playerSet"][opp]["lands"];
-    if (oppLand && playerId != lobby["playerSet"][opp]) {
-      console.log("OPP: " + JSON.stringify(oppLand));
-      turf.difference(oldLand, addedLand);
+  // console.log(`NOW IN ${lobby.lobbyName}`);
+  for (let [oppId, oppData] of Object.entries(lobby["playerSet"])) {
+    // console.log(`oppId: ${oppId}, playerId: ${playerId}`);
+    if (oppId != playerId) {
+      let oppLandSet = oppData["lands"];
+
+      // console.log(`oppLandSet: ${JSON.stringify(oppLandSet)}`);
+
+      let updatedLandSet = [];
+      for (let i in oppLandSet) {
+        let oppLand = oppLandSet[i];
+        let oldPoly = pathToPolygon(oppLand);
+        // console.log(`OLD POLY: ${JSON.stringify(oldPoly)}`);
+        let newPoly = pathToPolygon(addedLand)
+        // console.log(`NEW POLY: ${JSON.stringify(newPoly)}`);
+        let updatedOppPoly = turf.difference(oldPoly, newPoly);
+        // console.log(`DIFFERENCE: ${JSON.stringify(updatedOppPoly)}`);
+
+        if (typeof(updatedOppPoly) == "MultiPolygon") {
+          // If difference results in multiple polygons, difference returns a MultiPolygon
+          for (i in updatedOppPoly) {
+            updatedLandSet.push(polygonToLand(updatedOppPoly[i]));
+          }
+          
+        } else {
+          updatedLandSet.push(polygonToLand(updatedOppPoly));
+        }
+      }
+      updateMapInLobby(oppId, updatedLandSet, lobby._id);
     }
   };
-
-  return;
 }
 
 async function updatePlayerStats(playerId, pathArea, pathDist){

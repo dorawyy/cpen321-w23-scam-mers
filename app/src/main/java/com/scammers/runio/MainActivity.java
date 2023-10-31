@@ -2,6 +2,7 @@ package com.scammers.runio;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -23,7 +24,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.installations.FirebaseInstallations;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +53,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+
 public class MainActivity extends AppCompatActivity {
 
     final static String TAG = "MainActivity";
@@ -59,11 +65,26 @@ public class MainActivity extends AppCompatActivity {
     public static OkHttpClient client;
     public static Player currentPlayer;
 
+    public static String fcmToken;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                @Override
+                public void onComplete(@NonNull Task<String> task) {
+                    if (!task.isSuccessful()) {
+                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                        return;
+                    }
 
+                    // Get new FCM registration token
+                    fcmToken = task.getResult();
+                    Log.d(TAG, "FCM Token: " + fcmToken);
+                }
+            });
         locationButton = findViewById(R.id.location_button);
         locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -214,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject body = new JSONObject(responseBody);
                             Log.d(TAG, "Lobbyset from DB: " + body.getJSONArray("lobbySet"));
                             currentPlayer = new Player(body);
+                            RunIOMessagingService.updateToken();
                             Log.d(TAG, "Player Class:" + currentPlayer.playerEmail + currentPlayer.playerPhotoUrl + currentPlayer.playerDisplayName + " lobbySet: " + currentPlayer.lobbySet + "distance:" + currentPlayer.totalDistanceRan + "area:" + currentPlayer.totalAreaRan);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);

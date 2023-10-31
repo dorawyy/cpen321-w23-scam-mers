@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -31,7 +32,6 @@ public class LobbyStatsActivity extends AppCompatActivity {
     private ImageButton profileActivityButton;
     private ImageButton homeActivityButton;
     private Button addPlayerButton;
-    private Lobby currentLobby;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +65,6 @@ public class LobbyStatsActivity extends AppCompatActivity {
         // Retrieve the lobby ID from the intent's extras
         String lobbyId = getIntent().getStringExtra("lobbyStatsId");
 
-        //TODO: Show playerStats in LinearLayout
-
         // GET request to get Lobby info
         String url = "https://40.90.192.159:8081/lobby/" + lobbyId;
         Request getLobby = new Request.Builder()
@@ -84,18 +82,13 @@ public class LobbyStatsActivity extends AppCompatActivity {
                     throw new IOException("Unexpected code " + response);
                 }
                 try {
-//                    currentLobby = new Lobby(new JSONObject(response.body().string()));
                     JSONObject responseBody = new JSONObject(response.body().string());
-                    String lobbyName = responseBody.getString("lobbyName");
-                    String lobbyLeaderId = responseBody.getString("lobbyLeaderId");
-//                    String lobbyId = responseBody.getString("_id");
+                    Lobby currentLobby = new Lobby(responseBody);
                     TextView textView = findViewById(R.id.lobby_name_lobby_stats); // Replace with the ID of your TextView
-                    textView.setText(lobbyName); // The text you want to set
-
-                    if (!lobbyLeaderId.equals(MainActivity.currentPlayer.getPlayerId())) {
+                    textView.setText(currentLobby.lobbyName); // The text you want to set
+                    if (!currentLobby.lobbyLeaderId.equals(MainActivity.currentPlayer.getPlayerId())) {
                         addPlayerButton.setVisibility(View.INVISIBLE);
                     } else {
-                        // TODO SET ON CLICK LISTENER FOR ADDPLAYERBUTTON!
                         addPlayerButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -106,9 +99,41 @@ public class LobbyStatsActivity extends AppCompatActivity {
                         });
                     }
 
-//                    currentLobby = new Lobby(new JSONObject(response.body().string()));
-//                    TextView textView = findViewById(R.id.lobby_name); // Replace with the ID of your TextView
-//                    textView.setText(currentLobby.lobbyName); // The text you want to set
+                    //TODO get Player from API call using entry.getKey() -> which gives you playerID
+
+                    //Display playerStats in screen
+                    for(Map.Entry<String, PlayerLobbyStats> entry: currentLobby.playerMap.entrySet()) {
+                        PlayerLobbyStats playerLobbyStats = entry.getValue();
+                        double distanceCovered = playerLobbyStats.distanceCovered;
+                        double totalArea = playerLobbyStats.totalArea;
+                        int color = PlayerLobbyStats.lowerAlpha(playerLobbyStats.color);
+
+                        LinearLayout parentLayout = findViewById(R.id.lobbyStatsLinearLayout);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Create a new TextView
+                                TextView textView = new TextView(LobbyStatsActivity.this);
+
+                                // Set text properties
+                                textView.setText("Kilometers ran: " + distanceCovered/1000 + "km\nArea Claimed: " + totalArea + "m^2");
+                                textView.setTextSize(20); // Set text size
+
+                                // Set background color
+                                textView.setBackgroundColor(color); // Set your desired background color
+
+                                // Set padding
+                                int paddingInDp = 16; // Convert your padding in dp to pixels
+                                float scale = getResources().getDisplayMetrics().density;
+                                int paddingInPixels = (int) (paddingInDp * scale + 0.5f);
+                                textView.setPadding(paddingInPixels, paddingInPixels, paddingInPixels, paddingInPixels);
+
+                                // Add the TextView to your layout
+                                parentLayout.addView(textView);
+                            }
+                        });
+
+                    }
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }

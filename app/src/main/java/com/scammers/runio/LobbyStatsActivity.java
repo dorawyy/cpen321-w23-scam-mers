@@ -30,6 +30,7 @@ public class LobbyStatsActivity extends AppCompatActivity {
     final static String TAG = "LobbyStatsActivity";
     private ImageButton profileActivityButton;
     private ImageButton homeActivityButton;
+    private Button addPlayerButton;
     private Lobby currentLobby;
 
     @Override
@@ -59,8 +60,7 @@ public class LobbyStatsActivity extends AppCompatActivity {
             }
         });
 
-        //TODO -> check if owner == currentPlayer
-        //        if so, create button "ADD PLAYER"
+        addPlayerButton = findViewById(R.id.add_player_button);
 
         // Retrieve the lobby ID from the intent's extras
         String lobbyId = getIntent().getStringExtra("lobbyStatsId");
@@ -82,25 +82,18 @@ public class LobbyStatsActivity extends AppCompatActivity {
                     throw new IOException("Unexpected code " + response);
                 }
                 try {
-                    String lobbyLeaderId = new JSONObject(response.body().string()).getString("lobbyLeaderId");
-                    if (lobbyLeaderId.equals(MainActivity.currentPlayer.getPlayerId())) {
-                        ConstraintLayout parentLayout = findViewById(R.id.lobbyStatsConstraintLayout);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Button addPlayerButton = new Button(LobbyStatsActivity.this);
-                                addPlayerButton.setText(getResources().getString(R.string.add_player_button_text));
-                                // Add the Button to the parent layout
-                                parentLayout.addView(addPlayerButton);
-                                addPlayerButton.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        // TODO: add player activity or pop-up TBD!
+//                    currentLobby = new Lobby(new JSONObject(response.body().string()));
+                    JSONObject responseBody = new JSONObject(response.body().string());
+                    String lobbyName = responseBody.getString("lobbyName");
+                    String lobbyLeaderId = responseBody.getString("lobbyLeaderId");
+                    TextView textView = findViewById(R.id.lobby_name_lobby_stats); // Replace with the ID of your TextView
+                    textView.setText(lobbyName); // The text you want to set
 
-                                    }
-                                });
-                            }
-                        });
+                    if (!lobbyLeaderId.equals(MainActivity.currentPlayer.getPlayerId())) {
+                        addPlayerButton.setVisibility(View.INVISIBLE);
+                    } else {
+                        // TODO SET ON CLICK LISTENER FOR ADDPLAYERBUTTON!
+
                     }
 
 //                    currentLobby = new Lobby(new JSONObject(response.body().string()));
@@ -111,9 +104,5 @@ public class LobbyStatsActivity extends AppCompatActivity {
                 }
             }
         });
-
-        String lobbyLeaderId = "";
-
-        // TODO MainActivity.currentPlayer.getPlayerId()
     }
 }

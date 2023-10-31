@@ -18,6 +18,11 @@
     <string name="new_lobby_name_form_caption">New Lobby Name</string>
     <string name="new_lobby_submit_button_caption">Create Lobby</string>
 
+    <!--  AddPlayer-->
+    <string name="add_player_title">Add Player to Lobby</string>
+    <string name="add_player_email_form_caption">Player E-mail</string>
+    <string name="add_player_submit_button_caption">Add Player</string>
+  
     <!--    LobbyStatsActivity-->
     <string name="lobby_stats_add_player_button_text">Add Player</string>
 

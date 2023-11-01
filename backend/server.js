@@ -12,6 +12,7 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
+// ChatGPT usage: YES
 function sendNotification(token, title, body){
   const message = {
       data: {
@@ -32,6 +33,7 @@ function sendNotification(token, title, body){
       });
 }
 
+// ChatGPT usage: NO
 function createColor(R, G, B) {
   // Ensure that A, R, G, and B are within the 0-255 range
 
@@ -65,6 +67,7 @@ const client = new MongoClient(uri)
 const playersCollection = client.db("runio").collection("players");
 const lobbiesCollection = client.db("runio").collection("lobbies");
 
+// ChatGPT usage: YES
 const options = {
   key: fs.readFileSync('key.pem'),
   cert: fs.readFileSync('cert.pem'),
@@ -73,10 +76,12 @@ const options = {
 
 app.use(bodyParser.json()); // Add this line to enable JSON body parsing
 
+// ChatGPT usage: PARTIAL
 app.get("/", (req,res)=>{
     res.send("Welcome to RunIO")
 })
 
+// ChatGPT usage: PARTIAL
 app.put('/player/:playerEmail', async (req, res) => {
   try {
     const { playerEmail } = req.params;
@@ -101,6 +106,7 @@ app.put('/player/:playerEmail', async (req, res) => {
   }
 });
 
+// ChatGPT usage: NO
 app.put('/player/:playerId/fcmToken/:fcmToken', async (req, res) => {
   try {
     const { playerId, fcmToken } = req.params;
@@ -123,6 +129,7 @@ app.put('/player/:playerId/fcmToken/:fcmToken', async (req, res) => {
   }
 });
 
+// ChatGPT usage: NO
 app.get('/player/:player', async (req, res) => {
   try {
     const { player } = req.params;
@@ -151,7 +158,7 @@ app.get('/player/:player', async (req, res) => {
   }
 });
 
-
+// ChatGPT usage: NO
 app.post('/lobby', async (req, res) => {
   try {
     const lobbyData = req.body;
@@ -176,6 +183,7 @@ app.post('/lobby', async (req, res) => {
   }
 });
 
+// ChatGPT usage: NO
 app.get('/lobby/:lobbyId', async (req, res) => {
   try {
     const { lobbyId } = req.params;
@@ -196,6 +204,7 @@ app.get('/lobby/:lobbyId', async (req, res) => {
   }
 });
 
+// ChatGPT usage: NO
 app.get('/lobby/:lobbyId/lobbyName', async (req, res) => {
   try {
     const { lobbyId } = req.params;
@@ -221,6 +230,7 @@ app.get('/lobby/:lobbyId/lobbyName', async (req, res) => {
   }
 });
 
+// ChatGPT usage: NO
 app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
   try {
     //TODO: support the availableColor stack
@@ -263,6 +273,7 @@ app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
   }
 });
 
+// ChatGPT usage: NO
 async function notifyLobby(playerId) {
   const runner = await playersCollection.findOne({ _id: new ObjectId(playerId) });
   // const everyone = await playersCollection.find();
@@ -271,7 +282,7 @@ async function notifyLobby(playerId) {
   // Filter out the player with playerId from the everyone array
   const filteredEveryone = everyone.filter(player => player._id.toString() !== playerId);
   try{
-    sendNotification(runner.fcmToken, "CONGRATULATIONS!!", "You just completed a run! Keep it up! 🏆");
+    sendNotification(runner.fcmToken, "CONGRATULATIONS!!", "You just completed a run! Keep it up! 🏆");  
   } catch{
   }
   for (const player of filteredEveryone) {
@@ -282,6 +293,7 @@ async function notifyLobby(playerId) {
   }
 }
 
+// ChatGPT usage: NO
 app.post('/player/:playerId/run', async (req, res) => {
   try {
     const { playerId } = req.params;
@@ -341,6 +353,7 @@ app.post('/player/:playerId/run', async (req, res) => {
   }
 });
 
+// ChatGPT usage: NO
 function pathToPolygon(path) {
   // console.log("IN pathToPolygon\n");
   let pointList = [];
@@ -363,7 +376,7 @@ function pathToPolygon(path) {
   return pathPolygon;
 }
 
-// TODO: Test updateLobbyMaps
+// ChatGPT usage: NO
 async function updateLobbyMaps(playerId, addedLand) {
   const player = await playersCollection.findOne({ _id: new ObjectId(playerId) });
   // console.log(`INPUT LAND: ${addedLand}`);
@@ -393,6 +406,7 @@ async function updateLobbyMaps(playerId, addedLand) {
   }
 }
 
+// ChatGPT usage: NO
 function unionLand(oldLand, newLand, player, lobby) {
   if (!oldLand || oldLand.length === 0) {
     let updatedLandSet = [];
@@ -420,13 +434,14 @@ function unionLand(oldLand, newLand, player, lobby) {
   }
   // Finally push the union
   updatedLandSet.push(polygonToLand(union));
-
+  
   console.log("UPDATED LAND SET: " + JSON.stringify(updatedLandSet));
   updateMapInLobby(player._id, updatedLandSet, lobby._id);
 
   return updatedLandSet;
 }
 
+// ChatGPT usage: NO
 function polygonToLand(poly) {
 
   let land = [];
@@ -441,6 +456,7 @@ function polygonToLand(poly) {
   return land;
 }
 
+// ChatGPT usage: NO
 function polygonToLand2(poly) {
 
   let land = [];
@@ -458,6 +474,7 @@ function polygonToLand2(poly) {
   return land;
 }
 
+// ChatGPT usage: NO
 function subtractLand(addedLand, lobby, playerId) {
   console.log("IN SUBTRACT LAND\n");
   // console.log(JSON.stringify(lobby) + "player: "+ playerId);
@@ -502,6 +519,7 @@ function subtractLand(addedLand, lobby, playerId) {
   };
 }
 
+// ChatGPT usage: NO
 async function updatePlayerStats(playerId, pathArea, pathDist){
   const player = await playersCollection.findOne({ _id: new ObjectId(playerId) });
   if (player){
@@ -535,6 +553,7 @@ async function updatePlayerStats(playerId, pathArea, pathDist){
   }
 }
 
+// ChatGPT usage: NO
 async function updatePlayerLobbyStats(lobbyId, playerId, pathArea, pathDist) {
   const lobby = await lobbiesCollection.findOne({ _id: new ObjectId(lobbyId) });
 
@@ -576,6 +595,7 @@ async function updatePlayerLobbyStats(lobbyId, playerId, pathArea, pathDist) {
 // playerId: Id of player who's map will be updated.
 // newMap: The map which will replace the existing one. Stored as an array of shapes made up of coordinates.
 // lobbyId: Id of lobby where map will be updated
+// ChatGPT usage: NO
 async function updateMapInLobby(playerId, newMap, lobbyId) {
   console.log("IN UPDATE MAP IN LOBBY\n");
   console.log("neqMAP:" + JSON.stringify(newMap) + "\n");
@@ -590,20 +610,17 @@ async function updateMapInLobby(playerId, newMap, lobbyId) {
   );
 }
 
+// ChatGPT usage: NO
 app.post('/tokensignin', async (req, res) => {
   const tokenId = req.body;
   console.log(tokenId);
 });
 
+// ChatGPT usage: NO
 async function run(){
     try{
         await client.connect()
         console.log('Successfully Connected to MongoDB')
-        // var server = app.listen(8081, (req, res) => {
-        //     var host = server.address().address
-        //     var port = server.address().port
-        //     console.log("RunIO Server Running on: http://%s:%s", host, port)
-        // })
         const server = https.createServer(options, app); // Use HTTPS server here
         server.listen(8081, () => { // Listen on the default HTTPS port (443)
             var host = server.address().address
@@ -618,4 +635,3 @@ async function run(){
 }
 
 run()
-// sendNotification()

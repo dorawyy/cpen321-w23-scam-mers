@@ -2,7 +2,6 @@ package com.scammers.runio;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -43,7 +42,6 @@ public class LobbyStatsActivity extends AppCompatActivity {
         homeActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Go to new activity page where activity is live
                 Intent runningIntent = new Intent(LobbyStatsActivity.this, HomeActivity.class);
                 startActivity(runningIntent);
             }
@@ -55,7 +53,6 @@ public class LobbyStatsActivity extends AppCompatActivity {
         profileActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Go to new activity page where activity is live
                 Intent profileIntent = new Intent(LobbyStatsActivity.this, ProfileActivity.class);
                 startActivity(profileIntent);
             }
@@ -77,6 +74,7 @@ public class LobbyStatsActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+            // ChatGPT usage: Partial
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.code() != 200){
@@ -85,8 +83,8 @@ public class LobbyStatsActivity extends AppCompatActivity {
                 try {
                     JSONObject responseBody = new JSONObject(response.body().string());
                     Lobby currentLobby = new Lobby(responseBody);
-                    TextView textView = findViewById(R.id.lobby_name_lobby_stats); // Replace with the ID of your TextView
-                    textView.setText(currentLobby.lobbyName); // The text you want to set
+                    TextView textView = findViewById(R.id.lobby_name_lobby_stats);
+                    textView.setText(currentLobby.lobbyName);
                     if (!currentLobby.lobbyLeaderId.equals(MainActivity.currentPlayer.getPlayerId())) {
                         addPlayerButton.setVisibility(View.INVISIBLE);
                     } else {
@@ -100,8 +98,6 @@ public class LobbyStatsActivity extends AppCompatActivity {
                         });
                     }
 
-                    //TODO get Player from API call using entry.getKey() -> which gives you playerID
-
                     //Display playerStats in screen
                     for(Map.Entry<String, PlayerLobbyStats> entry: currentLobby.playerMap.entrySet()) {
                         PlayerLobbyStats playerLobbyStats = entry.getValue();
@@ -112,6 +108,7 @@ public class LobbyStatsActivity extends AppCompatActivity {
 
                         LinearLayout parentLayout = findViewById(R.id.lobbyStatsLinearLayout);
                         runOnUiThread(new Runnable() {
+                            // ChatGPT usage: YES
                             @Override
                             public void run() {
                                 // Create a new TextView
@@ -119,10 +116,8 @@ public class LobbyStatsActivity extends AppCompatActivity {
 
                                 // Set text properties
                                 textView.setText("Area Claimed: " + df.format(totalArea) + "km²\nKilometers ran: " + df.format( distanceCovered) + "km");
-                                textView.setTextSize(20); // Set text size
-
-                                // Set background color
-                                textView.setBackgroundColor(color); // Set your desired background color
+                                textView.setTextSize(20);
+                                textView.setBackgroundColor(color);
 
                                 // Set padding
                                 int paddingInDp = 16; // Convert your padding in dp to pixels
@@ -130,7 +125,6 @@ public class LobbyStatsActivity extends AppCompatActivity {
                                 int paddingInPixels = (int) (paddingInDp * scale + 0.5f);
                                 textView.setPadding(paddingInPixels, paddingInPixels, paddingInPixels, paddingInPixels);
 
-                                // Add the TextView to your layout
                                 parentLayout.addView(textView);
                             }
                         });

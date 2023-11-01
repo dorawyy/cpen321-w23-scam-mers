@@ -72,10 +72,6 @@ public class ProfileActivity extends AppCompatActivity {
                 String responseBody = response.body().string();
                 try {
                     JSONObject playerJSON = new JSONObject(responseBody);
-//                    double totalAreaRanDouble = Double.valueOf(playerJSON.getString("totalAreaRan"));
-//                    String totalAreaRan = String.valueOf((int) totalAreaRanDouble);
-//                    double totalDistanceRanDouble = (Double.valueOf(playerJSON.getString("totalDistanceRan")));
-//                    String totalDistanceRan = String.valueOf((int) totalDistanceRanDouble);
                     double totalAreaRanDouble = Double.valueOf(playerJSON.getString("totalAreaRan"));
                     double totalDistanceRanDouble = Double.valueOf(playerJSON.getString("totalDistanceRan"));
                     DecimalFormat df = new DecimalFormat("0.00");

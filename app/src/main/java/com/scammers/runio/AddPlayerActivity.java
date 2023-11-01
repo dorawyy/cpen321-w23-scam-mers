@@ -10,10 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-//import com.fasterxml.jackson.core.JsonProcessingException;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.fasterxml.jackson.databind.ObjectWriter;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,13 +24,11 @@ import okhttp3.Response;
 
 public class AddPlayerActivity extends AppCompatActivity {
     final static String TAG = "AddPlayerActivity";
-    final static String ADD_PLAYER_URL = "https://40.90.192.159:8081/lobby/"; //TODO CHANGE THESE
-//    final static String PLAYER_ADD_LOBBY_URL = "https://40.90.192.159:8081/player/";
-
     EditText playerEmailInput;
     String invitedPlayerEmail;
     Button addPlayerSubmitButton;
 
+    // ChatGPT usage: NO
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,11 +41,8 @@ public class AddPlayerActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 invitedPlayerEmail = playerEmailInput.getText().toString();
-                //Lobby newLobby = new Lobby(invitedPlayerEmail, MainActivity.currentPlayer.getPlayerId());
                 Log.d(TAG, "invited player: " + invitedPlayerEmail);
-                // TODO: Send invitedPLayerEmail to backend, where it will be added to db
                 MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
-//                ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
                 // GET request to check if player exists
                 String url = "https://40.90.192.159:8081/player/" + invitedPlayerEmail;
@@ -84,11 +75,8 @@ public class AddPlayerActivity extends AppCompatActivity {
                             Log.d(TAG, "Response player: " + responseBody);
                             try {
                                 Player invitedPlayer = new Player(new JSONObject(responseBody));
-                                Log.d(TAG, "MarcID: = " + invitedPlayer.getPlayerId());
-                                Log.d(TAG, "playerJSON: = " + invitedPlayer.toJSON());
 
                                 //app.put('/lobby/:lobbyId/player/:playerId')
-
                                 // Retrieve the lobby ID from the intent's extras
                                 String lobbyId = getIntent().getStringExtra("lobbyIdAddPlayer");
                                 String putPlayerUrl = "https://40.90.192.159:8081/lobby/" + lobbyId + "/player/" + invitedPlayer.getPlayerId();
@@ -110,8 +98,6 @@ public class AddPlayerActivity extends AppCompatActivity {
                                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                                         if (response.isSuccessful()) {
                                             // Handle the successful response here
-                                            // also make sure to toast if player was already added
-                                            //player was added :)
                                             Log.d(TAG, "Player added");
                                             runOnUiThread(new Runnable() {
                                                 @Override

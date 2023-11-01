@@ -220,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
                                     // Handle the successful response here
                                     try {
                                         currentPlayer.setPlayerId(new JSONObject(response.body().string()).getString("_id"));
+                                        RunIOMessagingService.updateToken();
                                     } catch (JSONException e) {
                                         throw new RuntimeException(e);
                                     }

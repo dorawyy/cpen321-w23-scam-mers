@@ -5,19 +5,9 @@ import bodyParser from "body-parser";
 import { MongoClient, ObjectId } from "mongodb";
 import { computeArea, computeLength } from "spherical-geometry-js";
 import * as turf from "@turf/turf"
-import request from "request";
-
-// var express = require("express")
-// const https = require('https')
-// const fs = require('fs')
-// const bodyParser = require('body-parser');
-// const {MongoClient, ObjectId} = require("mongodb");
-// const { emit } = require("process");
-//const lobbyEndpoints = require('./lobbyEndpoints');
 
 import admin from "firebase-admin";
 import serviceAccount from './runio-401718-firebase-adminsdk-ezjsi-797731a4a0.js';
-import path from "path";
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
@@ -171,21 +161,6 @@ app.post('/lobby', async (req, res) => {
       return res.status(400).json({ error: 'Insufficient lobby data' });
     }
 
-    // console.log("LobbyData: " + JSON.stringify(lobbyData));
-
-    // const playerId = lobbyData["playerSet"][0];
-
-    // const cloneAvailableColors = [...availableColors];
-    // lobbyData["playerSet"] = [{
-    //   "playerId": lobbyData.lobbyLeaderId,
-    //   "color": cloneAvailableColors.pop(),
-    //   "distanceCovered": 0.0,
-    //   "totalArea": 0.0,
-    //   "lands": [],
-    // }];
-
-    // console.log("LobbyData2: " + JSON.stringify(lobbyData));
-
     // Create a new lobby document
     const lobbiesCollection = client.db("runio").collection("lobbies");
     lobbyData.playerSet[lobbyData.lobbyLeaderId].color = availableColors[availableColors.length - 1];
@@ -332,27 +307,12 @@ app.post('/player/:playerId/run', async (req, res) => {
 
     updateLobbyMaps(playerId, playerRun);
 
-    // Update personal stats (distance and total area)
-    // const updatedPlayerStats = await updatePlayerStats(playerId, pathArea, pathDist);
+    // Update personal stats and lobby stats(distance and total area)
     updatePlayerStats(playerId, pathArea, pathDist);
 
-
-    let updatedRun = req.body;
-    updatedRun["area"] = pathArea;
-    updatedRun["dist"] = pathDist;
-
-    // console.log("Response body is: " + res.body);
-
-    // if (updatedPlayerStats){
-    //   const responseMessage = {
-    //     "areaRan": pathArea,
-    //     "distRan": pathDist,
-    //     "totalAreaRan": updatedPlayerStats["totalAreaRan"],
-    //     "totalDistanceRan": updatedPlayerStats["totalDistanceRan"]
-    //   }
-    //   // return res.status(200).json(responseMessage);
-    // }
-
+    // let updatedRun = req.body;
+    // updatedRun["area"] = pathArea;
+    // updatedRun["dist"] = pathDist;
 
     // return res.status(200).json({ message: res.body });
     return res.status(200).json({ message: "Run seccessfully recorded" });
@@ -363,7 +323,7 @@ app.post('/player/:playerId/run', async (req, res) => {
 });
 
 function pathToPolygon(path) {
-  console.log("IN pathToPolygon\n");
+  // console.log("IN pathToPolygon\n");
   let pointList = [];
   // console.log(`PATH TO POLY INPUT PATH: ${JSON.stringify(path)}`)
   for (let point in path) {
@@ -376,11 +336,11 @@ function pathToPolygon(path) {
   }
   pointList = [pointList];
 
-  console.log(`INPUT PATH: ${JSON.stringify(path)}\n`);
-  console.log(`POINT LIST: ${pointList}\n`);
+  // console.log(`INPUT PATH: ${JSON.stringify(path)}\n`);
+  // console.log(`POINT LIST: ${pointList}\n`);
 
   let pathPolygon = turf.polygon(pointList);
-  console.log("PATH POLYGON" + JSON.stringify(pathPolygon) + "\n");
+  // console.log("PATH POLYGON" + JSON.stringify(pathPolygon) + "\n");
   return pathPolygon;
 }
 
@@ -390,21 +350,21 @@ async function updateLobbyMaps(playerId, addedLand) {
   // console.log(`INPUT LAND: ${addedLand}`);
   if (player) {
     const playerLobbies = player["lobbySet"];
-    console.log("Player lobbies:" + JSON.stringify(playerLobbies) +"\n");
+    // console.log("Player lobbies:" + JSON.stringify(playerLobbies) +"\n");
     for (let i in playerLobbies) {
       // console.log("LOBBY ID: " + playerLobbies[lobbyId]);
       let newLand;
 
       let lobbyId = new ObjectId(playerLobbies[i]);
       let lobby = await lobbiesCollection.findOne({ _id: lobbyId });
-      console.log("Lobby: " + JSON.stringify(lobby) + "\n");
+      // console.log("Lobby: " + JSON.stringify(lobby) + "\n");
       // console.log("LOBBY: " + JSON.stringify(lobby["playerSet"]));
       // let oldLand = lobby["playerSet"][playerId]["lands"];
       let oldLand = lobby.playerSet[playerId]["lands"];
-      console.log("OLD LAND: " + JSON.stringify(oldLand)+ "\n");
+      // console.log("OLD LAND: " + JSON.stringify(oldLand)+ "\n");
 
       newLand = unionLand(oldLand, addedLand, player, lobby);
-      console.log("NEW LAND: " + JSON.stringify(newLand)+ "\n");
+      // console.log("NEW LAND: " + JSON.stringify(newLand)+ "\n");
 
       subtractLand(addedLand, lobby, playerId);
     }
@@ -415,48 +375,34 @@ async function updateLobbyMaps(playerId, addedLand) {
 }
 
 function unionLand(oldLand, newLand, player, lobby) {
-  console.log("IN UNION LAND FUNCTION\n");
-  console.log("OLD: " + JSON.stringify(oldLand)+ "\n");
-  console.log("NEW: " + JSON.stringify(newLand)+ "\n");
-  if (!oldLand || oldLand.length ===0) { // UPDATE LAND IF PLAYERS DOESNT PREVIOUSLY OWN LAND
+  if (!oldLand || oldLand.length === 0) {
     let updatedLandSet = [];
-    updatedLandSet.push(polygonToLand(pathToPolygon(newLand))); // can we just add the new land???
-    console.log("IN IF CONDITION\n")
+    updatedLandSet.push(polygonToLand(pathToPolygon(newLand)));
     updateMapInLobby(player._id, updatedLandSet, lobby._id);
     return updatedLandSet;
   }
 
   let updatedLandSet = [];
+  let union = pathToPolygon(newLand);
   for (let i in oldLand) {
-    // console.log(`OLD LAND ${i}: ${JSON.stringify(oldLand[i])}`);
     let oldPoly = pathToPolygon(oldLand[i]);
-    let newPoly = pathToPolygon(newLand);
 
-    // console.log(`OLD POLY: ${JSON.stringify(oldPoly)}`);
-    // console.log(`NEW POLY: ${JSON.stringify(newPoly)}`);
-
-    let union = turf.union(oldPoly, newPoly);
-    // console.log("UNION: " + JSON.stringify(union));
-    // console.log("UNION RESULT in unionland: " + JSON.stringify(union)+ "\n");
-    // console.log("UNION type of: " + union.geometry["type"]+ "\n");
-    if (union.geometry["type"] == "MultiPolygon") {
-      // If two polygons are not intersecting, union returns a MultiPolygon
-      for (i in union.geometry.coordinates) {
-        // updatedLandSet.push(polygonToLand(union[i])); // problem in this or in polygonToLand. or problem in typeof() method
-        updatedLandSet.push(polygonToLand2(union.geometry.coordinates[i])); // problem in this or in polygonToLand. or problem in typeof() method
-      }
+    let temp = turf.union(oldPoly, union);
+    // If the union is one polygon update union
+    if (temp.geometry["type"] == "Polygon") {
+      union = temp;
+    } else if (turf.difference(oldPoly, union) == null) {
+      // do nothing;
+    } else if (turf.difference(union, oldPoly) == null) {
+      union = oldPoly;
     } else {
-      // console.log("IN else condition\n");
-      updatedLandSet.push(polygonToLand(union)); // NOTE: check if this causes problem for method
+      updatedLandSet.push(oldLand[i]);
     }
   }
+  // Finally push the union
+  updatedLandSet.push(polygonToLand(union));
 
-  // let playerLobbies = player.lobbySet;
-  // console.log("PLAYER LOBBIES: " + playerLobbies);
   console.log("UPDATED LAND SET: " + JSON.stringify(updatedLandSet));
-  // for (let lobby in playerLobbies) {
-  //   updateMapInLobby(player._id, updatedLandSet, playerLobbies[lobby]);
-  // }
   updateMapInLobby(player._id, updatedLandSet, lobby._id);
 
   return updatedLandSet;
@@ -479,8 +425,8 @@ function polygonToLand(poly) {
 function polygonToLand2(poly) {
 
   let land = [];
-  console.log("POLY TO LAND FUNCTION 2: "+ JSON.stringify(poly));
-  console.log("POLY TO LAND FUNCTION 2: "+ JSON.stringify(poly[0]));
+  // console.log("POLY TO LAND FUNCTION 2: "+ JSON.stringify(poly));
+  // console.log("POLY TO LAND FUNCTION 2: "+ JSON.stringify(poly[0]));
 
   for (let i in poly[0]) {
     let coordObj = {

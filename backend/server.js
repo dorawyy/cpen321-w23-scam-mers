@@ -323,17 +323,17 @@ app.post('/player/:playerId/run', async (req, res) => {
     // TEST FOR updateLobbyMaps
     // updateLobbyMaps(playerId, testAddingLand);
 
-    updateLobbyMaps(playerId, playerRun);
+    await updateLobbyMaps(playerId, playerRun);
 
     // Update personal stats and lobby stats(distance and total area)
-    updatePlayerStats(playerId, pathArea, pathDist);
+    await updatePlayerStats(playerId, pathArea, pathDist);
 
     // let updatedRun = req.body;
     // updatedRun["area"] = pathArea;
     // updatedRun["dist"] = pathDist;
 
     // return res.status(200).json({ message: res.body });
-    notifyLobby(playerId);
+    await notifyLobby(playerId);
     return res.status(200).json({ message: "Run seccessfully recorded" });
   } catch (error) {
     console.log("server error:" + error);

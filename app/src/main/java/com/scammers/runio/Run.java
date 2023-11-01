@@ -25,19 +25,20 @@ public class Run {
     private double NEW_COORD_THRESHOLD = 5;
     private double COMPLETE_LOOP_THRESHOLD = 100;
     ArrayList<LatLng> path;
+    // ChatGPT usage: NO
     public Run(String playerId) {
         this.playerId = playerId;
         this.path = new ArrayList<LatLng>();
     }
-
+    // ChatGPT usage: NO
     public void addCoordinate(LatLng coord) {
         path.add(coord);
     }
-
+    // ChatGPT usage: NO
     public boolean isNewCoord(LatLng coord) {
         return path.size() == 0 || distance(path.get(path.size() - 1), coord) > NEW_COORD_THRESHOLD;
     }
-
+    // ChatGPT usage: NO
     public boolean isCompleteLoop() {
         if (path.size() <= 1) {
             return false;
@@ -74,7 +75,7 @@ public class Run {
 
         return distance;
     }
-
+    // ChatGPT usage: NO
     public void end(){
         /*
         * This method will check if the player has run a valid loop and if so,

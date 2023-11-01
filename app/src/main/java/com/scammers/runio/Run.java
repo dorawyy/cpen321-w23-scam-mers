@@ -23,7 +23,7 @@ import okhttp3.Response;
 public class Run {
     private String playerId;
     private double NEW_COORD_THRESHOLD = 5;
-    private double COMPLETE_LOOP_THRESHOLD = 40;
+    private double COMPLETE_LOOP_THRESHOLD = 100;
     ArrayList<LatLng> path;
     public Run(String playerId) {
         this.playerId = playerId;

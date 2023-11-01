@@ -1,5 +1,8 @@
 package com.scammers.runio;
 
+import static com.scammers.runio.MainActivity.client;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -10,6 +13,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -40,9 +53,37 @@ public class ProfileActivity extends AppCompatActivity {
 
         totalArea = findViewById(R.id.profile_area_text);
         totalDistance = findViewById(R.id.profile_distance_text);
-        totalArea.setText("Total Area Claimed: " + MainActivity.currentPlayer.totalAreaRan + "m^2");
-        totalDistance.setText("Total Distance Ran: " + MainActivity.currentPlayer.totalDistanceRan + "m");
 
+        // GET request to check if player exists
+        String url = "https://40.90.192.159:8081/player/" + MainActivity.currentPlayer.playerEmail;
+        Request checkPlayer = new Request.Builder().url(url).build();
+        client.newCall(checkPlayer).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                String responseBody = response.body().string();
+                try {
+                    JSONObject playerJSON = new JSONObject(responseBody);
+                    double totalAreaRanDouble = Double.valueOf(playerJSON.getString("totalAreaRan"));
+                    String totalAreaRan = String.valueOf((int) totalAreaRanDouble);
+                    double totalDistanceRanDouble = (Double.valueOf(playerJSON.getString("totalDistanceRan")));
+                    String totalDistanceRan = String.valueOf((int) totalDistanceRanDouble);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            totalArea.setText("Total Area Claimed: " + totalAreaRan + "m^2");
+                            totalDistance.setText("Total Distance Ran: " + totalDistanceRan + "m");
+                        }
+                    });
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
     }
 }

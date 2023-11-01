@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Map;
 
 import okhttp3.Call;
@@ -106,6 +107,7 @@ public class LobbyStatsActivity extends AppCompatActivity {
                         PlayerLobbyStats playerLobbyStats = entry.getValue();
                         double distanceCovered = playerLobbyStats.distanceCovered;
                         double totalArea = playerLobbyStats.totalArea;
+                        DecimalFormat df = new DecimalFormat("0.00");
                         int color = PlayerLobbyStats.lowerAlpha(playerLobbyStats.color);
 
                         LinearLayout parentLayout = findViewById(R.id.lobbyStatsLinearLayout);
@@ -116,7 +118,7 @@ public class LobbyStatsActivity extends AppCompatActivity {
                                 TextView textView = new TextView(LobbyStatsActivity.this);
 
                                 // Set text properties
-                                textView.setText("Kilometers ran: " + distanceCovered/1000 + "km\nArea Claimed: " + totalArea + "m^2");
+                                textView.setText("Area Claimed: " + df.format(totalArea) + "km²\nKilometers ran: " + df.format( distanceCovered) + "km");
                                 textView.setTextSize(20); // Set text size
 
                                 // Set background color

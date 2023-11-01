@@ -24,6 +24,9 @@ import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import java.text.DecimalFormat;
+
+
 public class ProfileActivity extends AppCompatActivity {
 
     private ImageButton homeActivityButton;
@@ -68,15 +71,20 @@ public class ProfileActivity extends AppCompatActivity {
                 String responseBody = response.body().string();
                 try {
                     JSONObject playerJSON = new JSONObject(responseBody);
+//                    double totalAreaRanDouble = Double.valueOf(playerJSON.getString("totalAreaRan"));
+//                    String totalAreaRan = String.valueOf((int) totalAreaRanDouble);
+//                    double totalDistanceRanDouble = (Double.valueOf(playerJSON.getString("totalDistanceRan")));
+//                    String totalDistanceRan = String.valueOf((int) totalDistanceRanDouble);
                     double totalAreaRanDouble = Double.valueOf(playerJSON.getString("totalAreaRan"));
-                    String totalAreaRan = String.valueOf((int) totalAreaRanDouble);
-                    double totalDistanceRanDouble = (Double.valueOf(playerJSON.getString("totalDistanceRan")));
-                    String totalDistanceRan = String.valueOf((int) totalDistanceRanDouble);
+                    double totalDistanceRanDouble = Double.valueOf(playerJSON.getString("totalDistanceRan"));
+                    DecimalFormat df = new DecimalFormat("0.00");
+                    String totalAreaRan = df.format(totalAreaRanDouble);
+                    String totalDistanceRan = df.format(totalDistanceRanDouble);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            totalArea.setText("Total Area Claimed: " + totalAreaRan + "m^2");
-                            totalDistance.setText("Total Distance Ran: " + totalDistanceRan + "m");
+                            totalArea.setText("Total Area Claimed: " + totalAreaRan + "km²");
+                            totalDistance.setText("Total Distance Ran: " + totalDistanceRan + "km");
                         }
                     });
                 } catch (JSONException e) {

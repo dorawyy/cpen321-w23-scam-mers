@@ -12,14 +12,13 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
-function sendNotification(){
-  const registrationToken = 'eNVBrb_dSDK50wdoS1oOZF:APA91bETz82TWyQmwiNHMpYfmvMPf8erwOQj-VLfuflpGiwViTJsdqWHyJZFJnscSLCOCsBNc5CBc366WxJdZO_nYDXUjVRw4w5VlwoEdBZtSYImdWsI3aJGR-69oPc4mDDFakxQFmYl';
+function sendNotification(token, title, body){
   const message = {
       data: {
-          title: 'Hiii',
-          body: 'YESSSSS!!!',
+          title: title,
+          body: body,
       },
-      token: registrationToken,
+      token: token,
   };
 
   admin
@@ -264,6 +263,25 @@ app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
   }
 });
 
+async function notifyLobby(playerId) {
+  const runner = await playersCollection.findOne({ _id: new ObjectId(playerId) });
+  // const everyone = await playersCollection.find();
+  const everyoneCursor = await playersCollection.find();
+  const everyone = await everyoneCursor.toArray();
+  // Filter out the player with playerId from the everyone array
+  const filteredEveryone = everyone.filter(player => player._id.toString() !== playerId);
+  try{
+    sendNotification(runner.fcmToken, "CONGRATULATIONS!!", "You just completed a run! Keep it up! 🏆");
+  } catch{
+  }
+  for (const player of filteredEveryone) {
+    try {
+      sendNotification(player.fcmToken, runner.playerDisplayName + " just completed a run!", "Keep running to catch up. 🏃🔥");
+    } catch {
+    }
+  }
+}
+
 app.post('/player/:playerId/run', async (req, res) => {
   try {
     const { playerId } = req.params;
@@ -315,6 +333,7 @@ app.post('/player/:playerId/run', async (req, res) => {
     // updatedRun["dist"] = pathDist;
 
     // return res.status(200).json({ message: res.body });
+    notifyLobby(playerId);
     return res.status(200).json({ message: "Run seccessfully recorded" });
   } catch (error) {
     console.log("server error:" + error);

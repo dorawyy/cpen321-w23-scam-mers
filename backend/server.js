@@ -82,9 +82,7 @@ const options = {
   passphrase: 'password'
 };
 
-// app.use(express.json()); // Add this line to enable JSON body parsing
-app.use(bodyParser.json());
-//app.use(lobbyEndpoints(client));
+app.use(bodyParser.json()); // Add this line to enable JSON body parsing
 
 app.get("/", (req,res)=>{
     res.send("Welcome to RunIO")
@@ -143,7 +141,7 @@ app.get('/player/:player', async (req, res) => {
     if (!player) {
       return res.status(400).json({ error: 'Player email or ID is required' });
     }
-    
+
     // Check if it is an email or _id
     let existingPlayer;
     if (player.indexOf('@') != -1) {
@@ -151,7 +149,7 @@ app.get('/player/:player', async (req, res) => {
     } else {
       existingPlayer = await playersCollection.findOne({ _id: new ObjectId(player) });
     }
-    
+
     if (existingPlayer) {
       return res.status(200).json(existingPlayer);
     } else {
@@ -179,11 +177,11 @@ app.post('/lobby', async (req, res) => {
 
     // const cloneAvailableColors = [...availableColors];
     // lobbyData["playerSet"] = [{
-    //   "playerId": lobbyData.lobbyLeaderId, 
+    //   "playerId": lobbyData.lobbyLeaderId,
     //   "color": cloneAvailableColors.pop(),
-    //   "distanceCovered": 0.0, 
-    //   "totalArea": 0.0, 
-    //   "lands": [], 
+    //   "distanceCovered": 0.0,
+    //   "totalArea": 0.0,
+    //   "lands": [],
     // }];
 
     // console.log("LobbyData2: " + JSON.stringify(lobbyData));
@@ -272,15 +270,15 @@ app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
       return res.status(200).json({message: "This player is already a member of this lobby"});
     }
 
-    playerStats["color"] = lobby.availableColors.pop();
+    playerStats["color"] = lobby.availableColors.pop(); // check if lobby full or not
     lobby.playerSet[playerId] = playerStats;
-    
-    const lobbyResult = await lobbiesCollection.updateOne({ _id: new ObjectId(lobbyId) }, 
-                              { $set: 
-                                { 
-                                  playerSet: lobby.playerSet, 
+
+    const lobbyResult = await lobbiesCollection.updateOne({ _id: new ObjectId(lobbyId) },
+                              { $set:
+                                {
+                                  playerSet: lobby.playerSet,
                                   availableColors:lobby.availableColors
-                                } 
+                                }
                               });
     const playerResult = await playersCollection.updateOne({ _id: new ObjectId(playerId) }, { $push: { lobbySet: lobbyId} });
 
@@ -303,33 +301,30 @@ app.post('/player/:playerId/run', async (req, res) => {
     // console.log("playerRun: " + JSON.stringify(playerRun));
 
     // Analyze run and update statistics, maps, etc.
-    const pathArea = computeArea(playerRun);
-    const pathDist = computeLength(playerRun);
+    const pathArea = computeArea(playerRun) / 1000000; // Update this in every lobby player is in. Lobbyarea += area
+    const pathDist = computeLength(playerRun) / 1000; // Update this in every lobby player is in. LobbyDist += dist
 
     // let lobbyId = new ObjectId("6540c12fd40fa749d5839e05");   // CHRIS LOBBY (Hard coded lobbyId to test updateMapInLobby)
     // let mapList = [playerRun]
     // updateMapInLobby(playerId, mapList, lobbyId)
 
     let testExistingLand = [[
-      {"latitude": 49.26246, "longitude": -123.25537}, 
-      {"latitude": 49.26257, "longitude": -123.25502}, 
-      {"latitude": 49.26237, "longitude": -123.25485}, 
-      {"latitude": 49.26226, "longitude": -123.25523}, 
-      {"latitude": 49.26246, "longitude": -123.25537}, 
-    ]]; 
+      {"latitude": 49.26246, "longitude": -123.25537},
+      {"latitude": 49.26257, "longitude": -123.25502},
+      {"latitude": 49.26237, "longitude": -123.25485},
+      {"latitude": 49.26226, "longitude": -123.25523},
+      {"latitude": 49.26246, "longitude": -123.25537},
+    ]];
 
     let testAddingLand = [
-      {"latitude": 49.26239, "longitude": -123.25517}, 
-      {"latitude": 49.2621, "longitude": -123.25497}, 
-      {"latitude": 49.26197, "longitude": -123.25534}, 
-      {"latitude": 49.26224, "longitude": -123.25558}, 
-      {"latitude": 49.26239, "longitude": -123.25517}, 
+      {"latitude": 49.26239, "longitude": -123.25517},
+      {"latitude": 49.2621, "longitude": -123.25497},
+      {"latitude": 49.26197, "longitude": -123.25534},
+      {"latitude": 49.26224, "longitude": -123.25558},
+      {"latitude": 49.26239, "longitude": -123.25517},
     ];
 
     // let lobby = await lobbiesCollection.findOne({ _id: new ObjectId("6540c12fd40fa749d5839e05") });
-
-
-
     // const player = await playersCollection.findOne({ _id: new ObjectId(playerId) });
 
     // TEST FOR updateLobbyMaps
@@ -338,8 +333,9 @@ app.post('/player/:playerId/run', async (req, res) => {
     updateLobbyMaps(playerId, playerRun);
 
     // Update personal stats (distance and total area)
-    const updatedPlayerStats = await updatePlayerStats(playerId, pathArea, pathDist);
-    
+    // const updatedPlayerStats = await updatePlayerStats(playerId, pathArea, pathDist);
+    updatePlayerStats(playerId, pathArea, pathDist);
+
 
     let updatedRun = req.body;
     updatedRun["area"] = pathArea;
@@ -347,18 +343,19 @@ app.post('/player/:playerId/run', async (req, res) => {
 
     // console.log("Response body is: " + res.body);
 
-    if (updatedPlayerStats){
-      const responseMessage = {
-        "areaRan": pathArea,
-        "distRan": pathDist,
-        "totalAreaRan": updatedPlayerStats["totalAreaRan"],
-        "totalDistanceRan": updatedPlayerStats["totalDistanceRan"]
-      }
-      // return res.status(200).json(responseMessage);
-    }
-    
+    // if (updatedPlayerStats){
+    //   const responseMessage = {
+    //     "areaRan": pathArea,
+    //     "distRan": pathDist,
+    //     "totalAreaRan": updatedPlayerStats["totalAreaRan"],
+    //     "totalDistanceRan": updatedPlayerStats["totalDistanceRan"]
+    //   }
+    //   // return res.status(200).json(responseMessage);
+    // }
 
-    return res.status(200).json({ message: res.body });
+
+    // return res.status(200).json({ message: res.body });
+    return res.status(200).json({ message: "Run seccessfully recorded" });
   } catch (error) {
     console.log("server error:" + error);
     return res.status(500).json({ error: 'Server error' });
@@ -366,6 +363,7 @@ app.post('/player/:playerId/run', async (req, res) => {
 });
 
 function pathToPolygon(path) {
+  console.log("IN pathToPolygon\n");
   let pointList = [];
   // console.log(`PATH TO POLY INPUT PATH: ${JSON.stringify(path)}`)
   for (let point in path) {
@@ -378,11 +376,11 @@ function pathToPolygon(path) {
   }
   pointList = [pointList];
 
-  // console.log(`INPUT PATH: ${JSON.stringify(path)}`);
-  // console.log(`POINT LIST: ${pointList}`);
+  console.log(`INPUT PATH: ${JSON.stringify(path)}\n`);
+  console.log(`POINT LIST: ${pointList}\n`);
 
   let pathPolygon = turf.polygon(pointList);
-  // console.log("PATH POLYGON" + JSON.stringify(pathPolygon));
+  console.log("PATH POLYGON" + JSON.stringify(pathPolygon) + "\n");
   return pathPolygon;
 }
 
@@ -392,20 +390,21 @@ async function updateLobbyMaps(playerId, addedLand) {
   // console.log(`INPUT LAND: ${addedLand}`);
   if (player) {
     const playerLobbies = player["lobbySet"];
-
+    console.log("Player lobbies:" + JSON.stringify(playerLobbies) +"\n");
     for (let i in playerLobbies) {
       // console.log("LOBBY ID: " + playerLobbies[lobbyId]);
       let newLand;
 
       let lobbyId = new ObjectId(playerLobbies[i]);
       let lobby = await lobbiesCollection.findOne({ _id: lobbyId });
-
+      console.log("Lobby: " + JSON.stringify(lobby) + "\n");
       // console.log("LOBBY: " + JSON.stringify(lobby["playerSet"]));
-      let oldLand = lobby["playerSet"][playerId]["lands"];
-      // console.log("OLD LAND: " + JSON.stringify(oldLand));
+      // let oldLand = lobby["playerSet"][playerId]["lands"];
+      let oldLand = lobby.playerSet[playerId]["lands"];
+      console.log("OLD LAND: " + JSON.stringify(oldLand)+ "\n");
 
-      unionLand(oldLand, addedLand, player);
-      // console.log("NEW LAND: " + JSON.stringify(newLand));
+      newLand = unionLand(oldLand, addedLand, player, lobby);
+      console.log("NEW LAND: " + JSON.stringify(newLand)+ "\n");
 
       subtractLand(addedLand, lobby, playerId);
     }
@@ -415,13 +414,18 @@ async function updateLobbyMaps(playerId, addedLand) {
   }
 }
 
-function unionLand(oldLand, newLand, player) {
-  // console.log("OLD: " + JSON.stringify(oldLand));
-  // console.log("NEW: " + JSON.stringify(newLand));
-  if (!oldLand) {
-    return pathToPolygon(newLand);
+function unionLand(oldLand, newLand, player, lobby) {
+  console.log("IN UNION LAND FUNCTION\n");
+  console.log("OLD: " + JSON.stringify(oldLand)+ "\n");
+  console.log("NEW: " + JSON.stringify(newLand)+ "\n");
+  if (!oldLand || oldLand.length ===0) { // UPDATE LAND IF PLAYERS DOESNT PREVIOUSLY OWN LAND
+    let updatedLandSet = [];
+    updatedLandSet.push(polygonToLand(pathToPolygon(newLand))); // can we just add the new land???
+    console.log("IN IF CONDITION\n")
+    updateMapInLobby(player._id, updatedLandSet, lobby._id);
+    return updatedLandSet;
   }
-  
+
   let updatedLandSet = [];
   for (let i in oldLand) {
     // console.log(`OLD LAND ${i}: ${JSON.stringify(oldLand[i])}`);
@@ -433,27 +437,33 @@ function unionLand(oldLand, newLand, player) {
 
     let union = turf.union(oldPoly, newPoly);
     // console.log("UNION: " + JSON.stringify(union));
-
-    if (typeof(union) == "MultiPolygon") {
+    // console.log("UNION RESULT in unionland: " + JSON.stringify(union)+ "\n");
+    // console.log("UNION type of: " + union.geometry["type"]+ "\n");
+    if (union.geometry["type"] == "MultiPolygon") {
       // If two polygons are not intersecting, union returns a MultiPolygon
-      for (i in union) {
-        updatedLandSet.push(polygonToLand(union[i]));
+      for (i in union.geometry.coordinates) {
+        // updatedLandSet.push(polygonToLand(union[i])); // problem in this or in polygonToLand. or problem in typeof() method
+        updatedLandSet.push(polygonToLand2(union.geometry.coordinates[i])); // problem in this or in polygonToLand. or problem in typeof() method
       }
     } else {
-      updatedLandSet.push(polygonToLand(union));
+      // console.log("IN else condition\n");
+      updatedLandSet.push(polygonToLand(union)); // NOTE: check if this causes problem for method
     }
   }
 
-  let playerLobbies = player.lobbySet;
-  
-  for (let lobby in playerLobbies) {
-    updateMapInLobby(player._id, updatedLandSet, playerLobbies[lobby]);
-  }
+  // let playerLobbies = player.lobbySet;
+  // console.log("PLAYER LOBBIES: " + playerLobbies);
+  console.log("UPDATED LAND SET: " + JSON.stringify(updatedLandSet));
+  // for (let lobby in playerLobbies) {
+  //   updateMapInLobby(player._id, updatedLandSet, playerLobbies[lobby]);
+  // }
+  updateMapInLobby(player._id, updatedLandSet, lobby._id);
 
   return updatedLandSet;
 }
 
 function polygonToLand(poly) {
+
   let land = [];
   for (let i in poly.geometry.coordinates[0]) {
     let coordObj = {
@@ -466,16 +476,36 @@ function polygonToLand(poly) {
   return land;
 }
 
+function polygonToLand2(poly) {
+
+  let land = [];
+  console.log("POLY TO LAND FUNCTION 2: "+ JSON.stringify(poly));
+  console.log("POLY TO LAND FUNCTION 2: "+ JSON.stringify(poly[0]));
+
+  for (let i in poly[0]) {
+    let coordObj = {
+      "latitude": poly[0][i][0],
+      "longitude": poly[0][i][1],
+    }
+    // console.log(`COORD OBJ: ${JSON.stringify(coordObj)}`);
+    land.push(coordObj);
+  }
+  return land;
+}
+
 function subtractLand(addedLand, lobby, playerId) {
+  console.log("IN SUBTRACT LAND\n");
+  // console.log(JSON.stringify(lobby) + "player: "+ playerId);
+
   // console.log(`NOW IN ${lobby.lobbyName}`);
   for (let [oppId, oppData] of Object.entries(lobby["playerSet"])) {
     // console.log(`oppId: ${oppId}, playerId: ${playerId}`);
     if (oppId != playerId) {
       let oppLandSet = oppData["lands"];
+      // console.log(`oppId: ${oppId}, playerId: ${playerId}\n`);
+      console.log(`oppLandSet: ${JSON.stringify(oppLandSet)}\n`);
 
-      // console.log(`oppLandSet: ${JSON.stringify(oppLandSet)}`);
-
-      let updatedLandSet = [];
+      let updatedLandSet = []; // THIS DOESNT GET UPDATED SO IDK IF PLAYER LAND IS GETTING UPDATED AFTER
       for (let i in oppLandSet) {
         let oppLand = oppLandSet[i];
         let oldPoly = pathToPolygon(oppLand);
@@ -484,18 +514,25 @@ function subtractLand(addedLand, lobby, playerId) {
         // console.log(`NEW POLY: ${JSON.stringify(newPoly)}`);
         let updatedOppPoly = turf.difference(oldPoly, newPoly);
         // console.log(`DIFFERENCE: ${JSON.stringify(updatedOppPoly)}`);
+        console.log("DIFFERENCE POLYGON: "+ JSON.stringify(updatedOppPoly));
 
-        if (typeof(updatedOppPoly) == "MultiPolygon") {
-          // If difference results in multiple polygons, difference returns a MultiPolygon
-          for (i in updatedOppPoly) {
-            updatedLandSet.push(polygonToLand(updatedOppPoly[i]));
+        // if (typeof(updatedOppPoly) == "MultiPolygon") {
+        if(updatedOppPoly){
+          if (updatedOppPoly.geometry["type"] == "MultiPolygon") {
+            // If difference results in multiple polygons, difference returns a MultiPolygon
+            // for (i in updatedOppPoly) {
+            //   updatedLandSet.push(polygonToLand(updatedOppPoly[i])); // use polygonToLand2 function here
+            // }
+            for (i in updatedOppPoly.geometry.coordinates) {
+              updatedLandSet.push(polygonToLand2(updatedOppPoly.geometry.coordinates[i])); // use polygonToLand2 function here
+            }
+          } else {
+            updatedLandSet.push(polygonToLand(updatedOppPoly));
           }
-          
-        } else {
-          updatedLandSet.push(polygonToLand(updatedOppPoly));
         }
       }
       updateMapInLobby(oppId, updatedLandSet, lobby._id);
+
     }
   };
 }
@@ -505,27 +542,80 @@ async function updatePlayerStats(playerId, pathArea, pathDist){
   if (player){
     player.totalAreaRan += pathArea;
     player.totalDistanceRan += pathDist;
+
     const result = await playersCollection.updateOne(
-      { _id: player._id }, { $set: { totalAreaRan: player.totalAreaRan, totalDistanceRan: player.totalDistanceRan } });
+      { _id: player._id },
+      { $set: {
+        totalAreaRan: player.totalAreaRan,
+        totalDistanceRan: player.totalDistanceRan
+      }
+    });
+
     if (result.modifiedCount === 1) {
       console.log("Player stats updated");
-      return { totalAreaRan: player.totalAreaRan, totalDistanceRan: player.totalDistanceRan };
+      // return { totalAreaRan: player.totalAreaRan, totalDistanceRan: player.totalDistanceRan };
+      const playerLobbies = player["lobbySet"];
+      for (let i in playerLobbies) {
+        // let lobbyId = new ObjectId(playerLobbies[i]);
+        updatePlayerLobbyStats(playerLobbies[i], playerId, pathArea, pathDist);
+      }
     } else {
         console.log("Player stats not updated");
-        return null; // throw/ catch exception??
+        // return null; // throw/ catch exception??
     }
-  } 
+  }
   else {
     console.log("Player not found.");
-    return null; // throw/ catch exception??
+    // return null; // throw/ catch exception??
   }
 }
+
+async function updatePlayerLobbyStats(lobbyId, playerId, pathArea, pathDist) {
+  const lobby = await lobbiesCollection.findOne({ _id: new ObjectId(lobbyId) });
+
+  if (lobby) {
+    const player = lobby.playerSet[playerId];
+
+    if (player) {
+      // Update the player's distance and area
+      player.distanceCovered += pathDist;
+      player.totalArea += pathArea;
+
+      // Update the playerSet in the lobby
+      lobby.playerSet[playerId] = player;
+
+      const updateLobbyResult = await lobbiesCollection.updateOne(
+        { _id: lobby._id },
+        {
+          $set: {
+            playerSet: lobby.playerSet
+          }
+        }
+      );
+
+      if (updateLobbyResult.modifiedCount === 1) {
+        console.log(`Player stats updated in lobby: ${lobbyId}`);
+      } else {
+        console.log(`Failed to update player stats in lobby: ${lobbyId}`);
+      }
+    } else {
+      console.log(`Player with ID ${playerId} not found in lobby: ${lobbyId}`);
+    }
+  } else {
+    console.log(`Lobby with ID ${lobbyId} not found.`);
+  }
+}
+
 
 // Helper function for updating a player's map in a specified lobby.
 // playerId: Id of player who's map will be updated.
 // newMap: The map which will replace the existing one. Stored as an array of shapes made up of coordinates.
 // lobbyId: Id of lobby where map will be updated
 async function updateMapInLobby(playerId, newMap, lobbyId) {
+  console.log("IN UPDATE MAP IN LOBBY\n");
+  console.log("neqMAP:" + JSON.stringify(newMap) + "\n");
+  console.log("playerId:" + playerId + "\n");
+  console.log("lobbyId:" + lobbyId + "\n");
   const lobbiesCollection = client.db("runio").collection("lobbies");
   let query = "playerSet." + playerId;
   let setTarget = "playerSet." + playerId + ".lands"

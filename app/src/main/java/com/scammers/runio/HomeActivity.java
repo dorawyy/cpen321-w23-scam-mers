@@ -29,6 +29,7 @@ public class HomeActivity extends AppCompatActivity {
     private ImageButton profileActivityButton;
     private Button locationButton;
 
+    // ChatGPT usage: NO
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +77,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
-
+    // ChatGPT usage: NO
     private void checkPermissions() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {

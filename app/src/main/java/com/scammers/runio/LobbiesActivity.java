@@ -31,6 +31,7 @@ public class LobbiesActivity extends AppCompatActivity {
 
     private ImageButton profileActivityButton;
 
+    // ChatGPT usage: NO
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

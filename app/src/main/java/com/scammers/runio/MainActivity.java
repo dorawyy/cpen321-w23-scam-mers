@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static String fcmToken;
 
+    // ChatGPT usage: NO
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,11 +104,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // ChatGPT usage: NO
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         signInLauncher.launch(signInIntent);
     }
 
+    // ChatGPT usage: NO
     private ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -126,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
             }
     );
 
+    // ChatGPT usage: NO
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
@@ -141,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // ChatGPT usage: NO
     @Override
     protected void onStart() {
         super.onStart();
@@ -150,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
         updateUI(account);
     }
 
+    // ChatGPT usage: NO
     private void updateUI(GoogleSignInAccount account) {
         if (account == null) {
             Log.d(TAG, "There is no user signed in");
@@ -251,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
+    // ChatGPT usage: YES
     private void setupHttpClient() {
         // Load your self-signed certificate or CA certificate from a resource
         InputStream certInputStream = getResources().openRawResource(R.raw.cert);

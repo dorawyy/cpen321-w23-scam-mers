@@ -21,6 +21,7 @@ public class Player {
 
 
     // Called when making a new player
+    // ChatGPT usage: NO
     public Player(GoogleSignInAccount account) {
         this.playerEmail = account.getEmail();
         this.playerPhotoUrl = String.valueOf(account.getPhotoUrl());
@@ -31,6 +32,7 @@ public class Player {
     }
 
     // Called when retrieving an existing player
+    // ChatGPT usage: No
     public Player(JSONObject playerJSON) throws JSONException {
         this.playerEmail = playerJSON.getString("playerEmail");
         this.playerPhotoUrl = playerJSON.getString("playerPhotoUrl");
@@ -51,13 +53,17 @@ public class Player {
         }
     }
 
+    // ChatGPT usage: NO
     public String getPlayerId() {
         return this.playerId;
     }
+
+    // ChatGPT usage: NO
     public void setPlayerId(String playerId) {
         this.playerId = playerId;
     }
 
+    // ChatGPT usage: NO
     public String toJSON() throws JSONException {
         JSONObject jsonObject = new JSONObject();
         JSONArray lobbySetArray = new JSONArray();

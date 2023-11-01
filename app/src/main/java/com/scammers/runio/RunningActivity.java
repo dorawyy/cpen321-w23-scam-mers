@@ -40,6 +40,7 @@ public class RunningActivity extends FragmentActivity implements OnMapReadyCallb
     private final String TAG = "RunningActivity";
     private Run run;
 
+    // ChatGPT usage: NO
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +101,7 @@ public class RunningActivity extends FragmentActivity implements OnMapReadyCallb
         });
     }
 
+    // ChatGPT usage: NO
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -138,6 +140,7 @@ public class RunningActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
+    // ChatGPT usage: NO
     @Override
     public void onLocationChanged(@NonNull Location location) {
         Log.d(TAG, "Lat: " + location.getLatitude() + " | Long: " + location.getLongitude());

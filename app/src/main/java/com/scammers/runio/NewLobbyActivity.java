@@ -31,6 +31,7 @@ public class NewLobbyActivity extends AppCompatActivity {
     String newLobbyName;
     Button lobbySubmitButton;
 
+    // ChatGPT usage: NO
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

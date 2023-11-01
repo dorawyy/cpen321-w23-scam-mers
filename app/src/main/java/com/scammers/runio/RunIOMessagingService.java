@@ -26,6 +26,7 @@ import okhttp3.Response;
 public class RunIOMessagingService extends FirebaseMessagingService {
     private String TAG = "Notification";
 
+    // ChatGPT usage: NO
     public static void updateToken() {
         if (MainActivity.currentPlayer == null ||
                 MainActivity.fcmToken == null ||
@@ -52,16 +53,15 @@ public class RunIOMessagingService extends FirebaseMessagingService {
         });
     }
 
+    // ChatGPT usage: NO
     @Override
     public void onNewToken(@NonNull String token) {
         Log.d(TAG, "Refreshed token: " + token);
         MainActivity.fcmToken = token;
-        // If you want to send messages to this application instance or
-        // manage this apps subscriptions on the server side, send the
-        // FCM registration token to your app server.
         updateToken();
     }
 
+    // ChatGPT usage: Partial
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Log.d(TAG, "Notification Received: " + remoteMessage.getData().toString());

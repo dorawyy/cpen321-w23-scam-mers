@@ -35,6 +35,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView totalArea;
     private TextView totalDistance;
 
+    // ChatGPT usage: NO
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

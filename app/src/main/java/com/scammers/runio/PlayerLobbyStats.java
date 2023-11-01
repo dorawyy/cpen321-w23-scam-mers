@@ -16,6 +16,7 @@ public class PlayerLobbyStats {
     public final int color;
     public final ArrayList<ArrayList<LatLng>> lands;
 
+    // ChatGPT usage: Partial
     public PlayerLobbyStats() {
         this.distanceCovered = 0.0;
         this.totalArea = 0.0;
@@ -23,6 +24,7 @@ public class PlayerLobbyStats {
         this.lands = new ArrayList<ArrayList<LatLng>>();
     }
 
+    // ChatGPT usage: Partial
     public PlayerLobbyStats(JSONObject playerStatsJSON) throws JSONException {
         this.distanceCovered = playerStatsJSON.getDouble("distanceCovered");
         this.totalArea = playerStatsJSON.getDouble("totalArea");
@@ -43,6 +45,7 @@ public class PlayerLobbyStats {
         }
     }
 
+    // ChatGPT usage: Partial
     public JSONObject toJSON() throws JSONException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("distanceCovered", distanceCovered);
@@ -65,6 +68,7 @@ public class PlayerLobbyStats {
         return jsonObject;
     }
 
+    // ChatGPT usage: NO
     public static int lowerAlpha(int color) {
         return ALPHA_MASK_100 & color;
     }

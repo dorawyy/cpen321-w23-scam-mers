@@ -47,14 +47,11 @@ public class Run {
         return distance(start, end) < COMPLETE_LOOP_THRESHOLD;
     }
 
-//    private double distance(LatLng start, LatLng end) {
-//        return Math.sqrt(Math.pow(start.longitude - end.longitude, 2)
-//                + Math.pow(start.latitude - end.latitude, 2));
-//    }
-
     // Mean radius of the Earth in kilometers
     private static final double EARTH_RADIUS_METERS = 6371000.0; // 6371 km * 1000 m/km
 
+
+    // ChatGPT usage: YES
     public static double distance(LatLng c1, LatLng c2) {
         // Convert LatLng objects to radians
         double lat1Rad = Math.toRadians(c1.latitude);

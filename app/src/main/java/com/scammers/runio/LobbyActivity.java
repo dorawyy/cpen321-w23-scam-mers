@@ -49,6 +49,8 @@ public class LobbyActivity extends AppCompatActivity implements OnMapReadyCallba
     private Lobby currentLobby;
     private GoogleMap mMap;
     private LocationManager locationManager;
+
+    // ChatGPT usage: NO
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,38 +124,7 @@ public class LobbyActivity extends AppCompatActivity implements OnMapReadyCallba
         });
     }
 
-//    private HashMap<String, Player> loadPlayerData(Lobby lobby) {
-//        HashMap<String, Player> players = new HashMap<>();
-//        for (String playerId : lobby.playerSet) {
-//            // GET request for player info
-//            String url = "https://40.90.192.159:8081/player/" + playerId;
-//            Request getLobby = new Request.Builder()
-//                    .url(url)
-//                    .build();
-//            MainActivity.client.newCall(getLobby).enqueue(new Callback() {
-//                @Override
-//                public void onFailure(@NonNull Call call, @NonNull IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                @Override
-//                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-//                    if(response.code() != 200){
-//                        throw new IOException("Unexpected code " + response);
-//                    }
-//                    try {
-//                        Player player = new Player(new JSONObject(response.body().string()));
-//                        players.put(player.getPlayerId(), player);
-//
-//                    } catch (JSONException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                }
-//            });
-//        }
-//        return players;
-//    }
-
+    // ChatGPT usage: NO
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;

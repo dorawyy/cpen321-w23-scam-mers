@@ -7,10 +7,11 @@ import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class PlayerLobbyStats {
-    private static int ALPHA_MASK_100 = (100 << 24) | 0xFFFFFF;
+    private static final int ALPHA_MASK_100 = (100 << 24) | 0xFFFFFF;
     public final double distanceCovered;
     public final double totalArea;
     public final int color;

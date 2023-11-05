@@ -1,14 +1,14 @@
 package com.scammers.runio;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,85 +42,142 @@ public class AddPlayerActivity extends AppCompatActivity {
             public void onClick(View view) {
                 invitedPlayerEmail = playerEmailInput.getText().toString();
                 Log.d(TAG, "invited player: " + invitedPlayerEmail);
-                MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+                MediaType mediaType =
+                        MediaType.parse("application/json; charset=utf-8");
 
                 // GET request to check if player exists
-                String url = "https://40.90.192.159:8081/player/" + invitedPlayerEmail;
+                String url = "https://40.90.192.159:8081/player/" +
+                        invitedPlayerEmail;
                 Request checkPlayer = new Request.Builder()
                         .url(url)
                         .build();
-                MainActivity.client.newCall(checkPlayer).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                        e.printStackTrace();
-                    }
+                MainActivity.client.newCall(checkPlayer)
+                                   .enqueue(new Callback() {
+                                       @Override
+                                       public void onFailure(@NonNull Call call,
+                                                             @NonNull
+                                                             IOException e) {
+                                           e.printStackTrace();
+                                       }
 
-                    @Override
-                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        Log.d(TAG, "RESPONSE CODE: " + response.code());
-                        if(response.code() == 404){
-                            // email not found in DB
-                            Log.d(TAG, "email not found");
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    // Update UI elements here
-                                    Toast.makeText(AddPlayerActivity.this, "E-Mail not registered: " + invitedPlayerEmail, Toast.LENGTH_LONG).show();
-                                }
-                            });
-                            finish(); // maybe????
-                        }
-                        else if(response.code() == 200) {
-                            String responseBody = response.body().string();
-                            Log.d(TAG, "Response player: " + responseBody);
-                            try {
-                                Player invitedPlayer = new Player(new JSONObject(responseBody));
+                                       @Override
+                                       public void onResponse(
+                                               @NonNull Call call,
+                                               @NonNull Response response)
+                                               throws IOException {
+                                           Log.d(TAG, "RESPONSE CODE: " +
+                                                   response.code());
+                                           if (response.code() == 404) {
+                                               // email not found in DB
+                                               Log.d(TAG, "email not found");
+                                               runOnUiThread(new Runnable() {
+                                                   @Override
+                                                   public void run() {
+                                                       // Update UI elements here
+                                                       Toast.makeText(
+                                                                    AddPlayerActivity.this,
+                                                                    "E-Mail not registered: " +
+                                                                            invitedPlayerEmail,
+                                                                    Toast.LENGTH_LONG)
+                                                            .show();
+                                                   }
+                                               });
+                                               finish(); // maybe????
+                                           } else if (response.code() == 200) {
+                                               String responseBody =
+                                                       response.body().string();
+                                               Log.d(TAG, "Response player: " +
+                                                       responseBody);
+                                               try {
+                                                   Player invitedPlayer =
+                                                           new Player(
+                                                                   new JSONObject(
+                                                                           responseBody));
 
-                                //app.put('/lobby/:lobbyId/player/:playerId')
-                                // Retrieve the lobby ID from the intent's extras
-                                String lobbyId = getIntent().getStringExtra("lobbyIdAddPlayer");
-                                String putPlayerUrl = "https://40.90.192.159:8081/lobby/" + lobbyId + "/player/" + invitedPlayer.getPlayerId();
-                                Log.d(TAG, "Player add url:" + putPlayerUrl);
+                                                   //app.put('/lobby/:lobbyId/player/:playerId')
+                                                   // Retrieve the lobby ID from the intent's extras
+                                                   String lobbyId =
+                                                           getIntent().getStringExtra(
+                                                                   "lobbyIdAddPlayer");
+                                                   String putPlayerUrl =
+                                                           "https://40.90.192.159:8081/lobby/" +
+                                                                   lobbyId +
+                                                                   "/player/" +
+                                                                   invitedPlayer.getPlayerId();
+                                                   Log.d(TAG,
+                                                         "Player add url:" +
+                                                                 putPlayerUrl);
 //                                RequestBody requestBody = RequestBody.create(invitedPlayer.toJSON(), mediaType);
-                                PlayerLobbyStats invitedPlayerStats = new PlayerLobbyStats();
-                                RequestBody requestBody = RequestBody.create(invitedPlayerStats.toJSON().toString(), mediaType);
-                                Request addPlayerReq = new Request.Builder()
-                                        .url(putPlayerUrl)
-                                        .put(requestBody)
-                                        .build();
-                                MainActivity.client.newCall(addPlayerReq).enqueue(new Callback() {
-                                    @Override
-                                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                                        e.printStackTrace();
-                                    }
+                                                   PlayerLobbyStats
+                                                           invitedPlayerStats =
+                                                           new PlayerLobbyStats();
+                                                   RequestBody requestBody =
+                                                           RequestBody.create(
+                                                                   invitedPlayerStats.toJSON()
+                                                                                     .toString(),
+                                                                   mediaType);
+                                                   Request addPlayerReq =
+                                                           new Request.Builder()
+                                                                   .url(putPlayerUrl)
+                                                                   .put(requestBody)
+                                                                   .build();
+                                                   MainActivity.client.newCall(
+                                                                       addPlayerReq)
+                                                                      .enqueue(
+                                                                              new Callback() {
+                                                                                  @Override
+                                                                                  public void onFailure(
+                                                                                          @NonNull
+                                                                                          Call call,
+                                                                                          @NonNull
+                                                                                          IOException e) {
+                                                                                      e.printStackTrace();
+                                                                                  }
 
-                                    @Override
-                                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                                        if (response.isSuccessful()) {
-                                            // Handle the successful response here
-                                            Log.d(TAG, "Player added");
-                                            runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    // Update UI elements here
-                                                    Toast.makeText(AddPlayerActivity.this, "Added player: " + invitedPlayerEmail, Toast.LENGTH_LONG).show();
-                                                }
-                                            });
-                                        } else {
-                                            // Handle the error response here
-                                            Log.d(TAG, "Error inviting player: " + response);
-                                        }
-                                    }
-                                });
-                            } catch (JSONException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                        else {
-                            throw new IOException("Unexpected code " + response);
-                        }
-                    }
-                });
+                                                                                  @Override
+                                                                                  public void onResponse(
+                                                                                          @NonNull
+                                                                                          Call call,
+                                                                                          @NonNull
+                                                                                          Response response)
+                                                                                          throws
+                                                                                          IOException {
+                                                                                      if (response.isSuccessful()) {
+                                                                                          // Handle the successful response here
+                                                                                          Log.d(TAG,
+                                                                                                "Player added");
+                                                                                          runOnUiThread(
+                                                                                                  new Runnable() {
+                                                                                                      @Override
+                                                                                                      public void run() {
+                                                                                                          // Update UI elements here
+                                                                                                          Toast.makeText(
+                                                                                                                       AddPlayerActivity.this,
+                                                                                                                       "Added player: " +
+                                                                                                                               invitedPlayerEmail,
+                                                                                                                       Toast.LENGTH_LONG)
+                                                                                                               .show();
+                                                                                                      }
+                                                                                                  });
+                                                                                      } else {
+                                                                                          // Handle the error response here
+                                                                                          Log.d(TAG,
+                                                                                                "Error inviting player: " +
+                                                                                                        response);
+                                                                                      }
+                                                                                  }
+                                                                              });
+                                               } catch (JSONException e) {
+                                                   throw new RuntimeException(
+                                                           e);
+                                               }
+                                           } else {
+                                               throw new IOException(
+                                                       "Unexpected code " +
+                                                               response);
+                                           }
+                                       }
+                                   });
 
                 // Close add player activity once finished
                 finish();

@@ -1,14 +1,8 @@
 package com.scammers.runio;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -18,6 +12,10 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -26,22 +24,20 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class LobbyActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class LobbyActivity extends AppCompatActivity
+        implements OnMapReadyCallback {
     final static String TAG = "LobbyActivity";
     private ImageButton homeActivityButton;
     private ImageButton profileActivityButton;
@@ -57,8 +53,9 @@ public class LobbyActivity extends AppCompatActivity implements OnMapReadyCallba
         setContentView(R.layout.activity_lobby);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.lobby_map);
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.lobby_map);
         mapFragment.getMapAsync(this);
 
         homeActivityButton = findViewById(R.id.home_button_lobby);
@@ -66,7 +63,8 @@ public class LobbyActivity extends AppCompatActivity implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
                 // Go to new activity page where activity is live
-                Intent runningIntent = new Intent(LobbyActivity.this, HomeActivity.class);
+                Intent runningIntent =
+                        new Intent(LobbyActivity.this, HomeActivity.class);
                 startActivity(runningIntent);
             }
         });
@@ -78,7 +76,8 @@ public class LobbyActivity extends AppCompatActivity implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
                 // Go to new activity page where activity is live
-                Intent profileIntent = new Intent(LobbyActivity.this, ProfileActivity.class);
+                Intent profileIntent =
+                        new Intent(LobbyActivity.this, ProfileActivity.class);
                 startActivity(profileIntent);
             }
         });
@@ -88,14 +87,15 @@ public class LobbyActivity extends AppCompatActivity implements OnMapReadyCallba
 
         lobby_stats_button = findViewById(R.id.lobby_stats_button);
         lobby_stats_button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        // Go to new lobby stats intent
-                        Intent lobbyStatsIntent = new Intent(LobbyActivity.this, LobbyStatsActivity.class);
-                        lobbyStatsIntent.putExtra("lobbyStatsId", lobbyId);
-                        startActivity(lobbyStatsIntent);
-                    }
-                });
+            @Override
+            public void onClick(View view) {
+                // Go to new lobby stats intent
+                Intent lobbyStatsIntent = new Intent(LobbyActivity.this,
+                                                     LobbyStatsActivity.class);
+                lobbyStatsIntent.putExtra("lobbyStatsId", lobbyId);
+                startActivity(lobbyStatsIntent);
+            }
+        });
 
         // GET request to get Lobby info
         String url = "https://40.90.192.159:8081/lobby/" + lobbyId;
@@ -109,14 +109,19 @@ public class LobbyActivity extends AppCompatActivity implements OnMapReadyCallba
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if(response.code() != 200){
+            public void onResponse(@NonNull Call call,
+                                   @NonNull Response response)
+                    throws IOException {
+                if (response.code() != 200) {
                     throw new IOException("Unexpected code " + response);
                 }
                 try {
-                    currentLobby = new Lobby(new JSONObject(response.body().string()));
-                    TextView textView = findViewById(R.id.lobby_name); // Replace with the ID of your TextView
-                    textView.setText(currentLobby.lobbyName); // The text you want to set
+                    currentLobby =
+                            new Lobby(new JSONObject(response.body().string()));
+                    TextView textView = findViewById(
+                            R.id.lobby_name); // Replace with the ID of your TextView
+                    textView.setText(
+                            currentLobby.lobbyName); // The text you want to set
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -128,7 +133,12 @@ public class LobbyActivity extends AppCompatActivity implements OnMapReadyCallba
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this,
+                                               android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this,
+                                                   android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -138,13 +148,17 @@ public class LobbyActivity extends AppCompatActivity implements OnMapReadyCallba
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager =
+                (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         // Zoom in on the user's current location
-        Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location lastLocation = locationManager.getLastKnownLocation(
+                LocationManager.GPS_PROVIDER);
         if (lastLocation != null) {
-            LatLng userLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 13));
+            LatLng userLocation = new LatLng(lastLocation.getLatitude(),
+                                             lastLocation.getLongitude());
+            mMap.moveCamera(
+                    CameraUpdateFactory.newLatLngZoom(userLocation, 13));
         }
 
         // Add polygons to indicate areas on the map.
@@ -157,7 +171,8 @@ public class LobbyActivity extends AppCompatActivity implements OnMapReadyCallba
                         .addAll(land)
                         .strokeColor(playerLobbyStats.color)
                         .strokeWidth(5)
-                        .fillColor(PlayerLobbyStats.lowerAlpha(playerLobbyStats.color))
+                        .fillColor(PlayerLobbyStats.lowerAlpha(
+                                playerLobbyStats.color))
                         .geodesic(true);
                 Polygon polygon1 = googleMap.addPolygon(polygonOptions);
             }

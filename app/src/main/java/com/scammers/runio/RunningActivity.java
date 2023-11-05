@@ -1,10 +1,5 @@
 package com.scammers.runio;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
-
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -20,6 +15,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -28,7 +28,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.scammers.runio.databinding.ActivityRunningBinding;
 
-public class RunningActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
+public class RunningActivity extends FragmentActivity
+        implements OnMapReadyCallback, LocationListener {
 
     private GoogleMap mMap;
     private ActivityRunningBinding binding;
@@ -50,8 +51,9 @@ public class RunningActivity extends FragmentActivity implements OnMapReadyCallb
         setContentView(binding.getRoot());
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.running_map);
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.running_map);
         mapFragment.getMapAsync(this);
 
         stopActivityButton = findViewById(R.id.stop_activity_button);
@@ -64,44 +66,54 @@ public class RunningActivity extends FragmentActivity implements OnMapReadyCallb
                     finish();
                 } else {
                     // Display stop warning as popup
-                    LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-                    View popupView = inflater.inflate(R.layout.activity_stop_warning, null);
+                    LayoutInflater inflater = (LayoutInflater) getSystemService(
+                            LAYOUT_INFLATER_SERVICE);
+                    View popupView =
+                            inflater.inflate(R.layout.activity_stop_warning,
+                                             null);
 
                     int width = LinearLayout.LayoutParams.WRAP_CONTENT;
                     int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-                    final PopupWindow stopWarningPopup = new PopupWindow(popupView, width, height, true);
+                    final PopupWindow stopWarningPopup =
+                            new PopupWindow(popupView, width, height, true);
 
                     stopWarningPopup.showAtLocation(view, Gravity.CENTER, 0, 0);
 
                     popupView.setOnTouchListener(new View.OnTouchListener() {
                         @Override
-                        public boolean onTouch(View view, MotionEvent motionEvent) {
+                        public boolean onTouch(View view,
+                                               MotionEvent motionEvent) {
                             stopWarningPopup.dismiss();
                             return true;
                         }
                     });
 
-                    keepRunningButton = popupView.findViewById(R.id.keep_running_button);
-                    keepRunningButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            stopWarningPopup.dismiss();
-                        }
-                    });
+                    keepRunningButton =
+                            popupView.findViewById(R.id.keep_running_button);
+                    keepRunningButton.setOnClickListener(
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    stopWarningPopup.dismiss();
+                                }
+                            });
 
-                    confirmStopActivityButton = popupView.findViewById(R.id.confirm_stop_activity_button);
-                    confirmStopActivityButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            finish();
-                        }
-                    });
+                    confirmStopActivityButton = popupView.findViewById(
+                            R.id.confirm_stop_activity_button);
+                    confirmStopActivityButton.setOnClickListener(
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    finish();
+                                }
+                            });
                 }
             }
         });
     }
 
     // ChatGPT usage: NO
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -114,7 +126,12 @@ public class RunningActivity extends FragmentActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this,
+                                               android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this,
+                                                   android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -125,25 +142,31 @@ public class RunningActivity extends FragmentActivity implements OnMapReadyCallb
             return;
         }
         mMap.setMyLocationEnabled(true);
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2500, 0, this);
+        locationManager =
+                (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                                               2500, 0, this);
         polylineOptions = new PolylineOptions()
                 .width(10)
                 .color(ContextCompat.getColor(this, R.color.gpsBlue));
 
         // Zoom in on the user's current location
-        Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location lastLocation = locationManager.getLastKnownLocation(
+                LocationManager.GPS_PROVIDER);
         if (lastLocation != null) {
-            LatLng userLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-            Log.d(TAG, "User location: "+ userLocation);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
+            LatLng userLocation = new LatLng(lastLocation.getLatitude(),
+                                             lastLocation.getLongitude());
+            Log.d(TAG, "User location: " + userLocation);
+            mMap.moveCamera(
+                    CameraUpdateFactory.newLatLngZoom(userLocation, 15));
         }
     }
 
     // ChatGPT usage: NO
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        Log.d(TAG, "Lat: " + location.getLatitude() + " | Long: " + location.getLongitude());
+        Log.d(TAG, "Lat: " + location.getLatitude() + " | Long: " +
+                location.getLongitude());
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
 

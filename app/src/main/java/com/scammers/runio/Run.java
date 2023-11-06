@@ -84,7 +84,8 @@ public class Run {
         /*
          * This method will check if the player has run a valid loop and if so,
          * it will update the state of the map (Map.update()).  This state must
-         * be sent to every player in the lobby. Each player will be notified when
+         * be sent to every player in the lobby. Each player will be notified
+         *  when
          * someone finishes an activity.
          *
          * This can send API call to backend with the path
@@ -96,7 +97,8 @@ public class Run {
         String url =
                 "https://40.90.192.159:8081/player/" + this.playerId + "/run";
         MediaType mediaType =
-                MediaType.parse("application/json; charset=utf-8");
+                MediaType.parse("application/json; " +
+                                        "charset=utf-8");
         Gson gson = new Gson();
         String pathJSON = gson.toJson(this.path);
         Log.d("Run", "path:" + pathJSON);
@@ -116,10 +118,15 @@ public class Run {
             public void onResponse(@NonNull Call call,
                                    @NonNull Response response)
                     throws IOException {
-                Log.d("Run", "run response:" + response.body().string());
+                Log.d("Run", "run response:" +
+                        response.body().string());
 //                try {
-//                    MainActivity.currentPlayer.totalAreaRan =  (new JSONObject(response.body().string()).getDouble("totalAreaRan"));
-//                    MainActivity.currentPlayer.totalDistanceRan =  (new JSONObject(response.body().string()).getDouble("totalDistanceRan"));
+//                    MainActivity.currentPlayer.totalAreaRan =  (new
+//                    JSONObject(response.body().string()).getDouble
+//                    ("totalAreaRan"));
+//                    MainActivity.currentPlayer.totalDistanceRan =  (new
+//                    JSONObject(response.body().string()).getDouble
+//                    ("totalDistanceRan"));
 //                } catch (JSONException e) {
 //                    throw new RuntimeException(e);
 //                }

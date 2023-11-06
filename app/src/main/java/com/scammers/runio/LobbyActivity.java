@@ -52,7 +52,8 @@ public class LobbyActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby);
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        // Obtain the SupportMapFragment and get notified when the map is
+        // ready to be used.
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.lobby_map);
@@ -64,7 +65,8 @@ public class LobbyActivity extends AppCompatActivity
             public void onClick(View view) {
                 // Go to new activity page where activity is live
                 Intent runningIntent =
-                        new Intent(LobbyActivity.this, HomeActivity.class);
+                        new Intent(LobbyActivity.this,
+                                   HomeActivity.class);
                 startActivity(runningIntent);
             }
         });
@@ -77,7 +79,8 @@ public class LobbyActivity extends AppCompatActivity
             public void onClick(View view) {
                 // Go to new activity page where activity is live
                 Intent profileIntent =
-                        new Intent(LobbyActivity.this, ProfileActivity.class);
+                        new Intent(LobbyActivity.this,
+                                   ProfileActivity.class);
                 startActivity(profileIntent);
             }
         });
@@ -90,7 +93,8 @@ public class LobbyActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 // Go to new lobby stats intent
-                Intent lobbyStatsIntent = new Intent(LobbyActivity.this,
+                Intent lobbyStatsIntent =
+                        new Intent(LobbyActivity.this,
                                                      LobbyStatsActivity.class);
                 lobbyStatsIntent.putExtra("lobbyStatsId", lobbyId);
                 startActivity(lobbyStatsIntent);
@@ -119,7 +123,8 @@ public class LobbyActivity extends AppCompatActivity
                     currentLobby =
                             new Lobby(new JSONObject(response.body().string()));
                     TextView textView = findViewById(
-                            R.id.lobby_name); // Replace with the ID of your TextView
+                            R.id.lobby_name); // Replace with the ID of your
+                    // TextView
                     textView.setText(
                             currentLobby.lobbyName); // The text you want to set
                 } catch (JSONException e) {
@@ -134,17 +139,19 @@ public class LobbyActivity extends AppCompatActivity
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
         if (ActivityCompat.checkSelfPermission(this,
-                                               android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                android.Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this,
-                                                   android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                        PackageManager.PERMISSION_GRANTED) {
+                android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //   public void onRequestPermissionsResult(int requestCode,
+            //   String[] permissions,
             //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
+            // to handle the case where the user grants the permission. See
+            // the documentation
             // for ActivityCompat#requestPermissions for more details.
             return;
         }

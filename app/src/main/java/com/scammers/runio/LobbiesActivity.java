@@ -64,38 +64,44 @@ public class LobbiesActivity extends AppCompatActivity {
 
                             // TODO Now display it
                             LinearLayout parentLayout = findViewById(
-                                    R.id.lobbiesLinearLayout); // Replace with your parent layout ID
+                                    R.id.lobbiesLinearLayout); // Replace
+                            // with your parent layout ID
 
-                            String lobbyName = body.getString("lobbyName");
+                            String lobbyName =
+                                    body.getString("lobbyName");
                             Log.d(TAG,
-                                  "Creating this Lobby Button: " + lobbyName);
+                              "Creating this Lobby Button: " + lobbyName);
 
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     // Create a new Button
                                     Button button =
-                                            new Button(LobbiesActivity.this);
+                                        new Button(LobbiesActivity.this);
                                     button.setText(lobbyName);
 
-                                    // Set any additional properties for the Button as needed
-                                    // button.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                                    // Set any additional properties for the
+                                    // Button as needed
+                                    // button.setLayoutParams(new
+                                    // LinearLayout.LayoutParams(LinearLayout
+                                    // .LayoutParams.WRAP_CONTENT,
+                                    // LinearLayout.LayoutParams.WRAP_CONTENT));
 
                                     // Add the Button to the parent layout
                                     parentLayout.addView(button);
                                     button.setOnClickListener(
-                                            new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    Intent lobbyIntent =
-                                                            new Intent(
-                                                                    LobbiesActivity.this,
-                                                                    LobbyActivity.class);
-                                                    lobbyIntent.putExtra(
-                                                            "lobbyId", lobbyId);
-                                                    startActivity(lobbyIntent);
-                                                }
-                                            });
+                                    new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Intent lobbyIntent =
+                                            new Intent(
+                                            LobbiesActivity.this,
+                                                        LobbyActivity.class);
+                                            lobbyIntent.putExtra(
+                                                    "lobbyId", lobbyId);
+                                            startActivity(lobbyIntent);
+                                        }
+                                    });
                                 }
                             });
 
@@ -116,7 +122,8 @@ public class LobbiesActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Go to new activity page where activity is live
                 Intent runningIntent =
-                        new Intent(LobbiesActivity.this, HomeActivity.class);
+                        new Intent(LobbiesActivity.this,
+                                   HomeActivity.class);
                 startActivity(runningIntent);
             }
         });
@@ -129,7 +136,8 @@ public class LobbiesActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Go to new activity page where activity is live
                 Intent profileIntent =
-                        new Intent(LobbiesActivity.this, ProfileActivity.class);
+                        new Intent(LobbiesActivity.this,
+                                   ProfileActivity.class);
                 startActivity(profileIntent);
             }
         });
@@ -139,24 +147,29 @@ public class LobbiesActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 //                // Display lobby creator as popup
-//                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-//                View popupView = inflater.inflate(R.layout.activity_new_lobby, null);
+//                LayoutInflater inflater = (LayoutInflater) getSystemService
+//                (LAYOUT_INFLATER_SERVICE);
+//                View popupView = inflater.inflate(R.layout
+//                .activity_new_lobby, null);
 //
 //                int width = LinearLayout.LayoutParams.WRAP_CONTENT;
 //                int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-//                final PopupWindow createLobbyPopup = new PopupWindow(popupView, width, height, true);
+//                final PopupWindow createLobbyPopup = new PopupWindow
+//                (popupView, width, height, true);
 //
 //                createLobbyPopup.showAtLocation(view, Gravity.CENTER, 0, 0);
 //
 //                popupView.setOnTouchListener(new View.OnTouchListener() {
 //                    @Override
-//                    public boolean onTouch(View view, MotionEvent motionEvent) {
+//                    public boolean onTouch(View view, MotionEvent
+//                    motionEvent) {
 //                        createLobbyPopup.dismiss();
 //                        return true;
 //                    }
 //                });
-                Intent newLobbyIntent = new Intent(LobbiesActivity.this,
-                                                   NewLobbyActivity.class);
+                Intent newLobbyIntent = new Intent(
+                            LobbiesActivity.this,
+                                         NewLobbyActivity.class);
                 startActivity(newLobbyIntent);
             }
         });

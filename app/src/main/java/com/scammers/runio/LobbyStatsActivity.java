@@ -110,7 +110,8 @@ public class LobbyStatsActivity extends AppCompatActivity {
                     }
 
                     //Display playerStats in screen
-                    for (Map.Entry<String, PlayerLobbyStats> entry : currentLobby.playerMap.entrySet()) {
+                    for (Map.Entry<String, PlayerLobbyStats> entry :
+                            currentLobby.playerMap.entrySet()) {
                         PlayerLobbyStats playerLobbyStats = entry.getValue();
                         double distanceCovered =
                                 playerLobbyStats.distanceCovered;
@@ -132,7 +133,8 @@ public class LobbyStatsActivity extends AppCompatActivity {
                                 // Set text properties
                                 textView.setText("Area Claimed: " +
                                                          df.format(totalArea) +
-                                                         "km²\nKilometers ran: " +
+                                                         "km²\nKilometers " +
+                                                         "ran: " +
                                                          df.format(
                                                                  distanceCovered) +
                                                          "km");
@@ -141,7 +143,8 @@ public class LobbyStatsActivity extends AppCompatActivity {
 
                                 // Set padding
                                 int paddingInDp =
-                                        16; // Convert your padding in dp to pixels
+                                        16; // Convert your padding in dp to
+                                // pixels
                                 float scale =
                                         getResources().getDisplayMetrics().density;
                                 int paddingInPixels =

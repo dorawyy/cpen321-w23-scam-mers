@@ -37,8 +37,10 @@ public class RunIOMessagingService extends FirebaseMessagingService {
                 MainActivity.currentPlayer.getPlayerId() + "/fcmToken/" +
                 MainActivity.fcmToken;
         MediaType mediaType =
-                MediaType.parse("application/json; charset=utf-8");
-        RequestBody requestBody = RequestBody.create("", mediaType);
+                MediaType.parse("application/json; " +
+                                        "charset=utf-8");
+        RequestBody requestBody =
+                RequestBody.create("", mediaType);
         Request updateFcmToken =
                 new Request.Builder().url(fcmUrl).put(requestBody).build();
 
@@ -77,28 +79,31 @@ public class RunIOMessagingService extends FirebaseMessagingService {
         String title = remoteMessage.getData().get("title");
         String body = remoteMessage.getData().get("body");
 
-        // Create a unique notification ID (you can use a random number or a unique identifier)
+        // Create a unique notification ID (you can use a random number or a
+        // unique identifier)
         int notificationId = (int) System.currentTimeMillis();
 
         // Create an Intent to open the app when the notification is clicked
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        // Create a TaskStackBuilder to ensure that navigating from the notification opens the correct activity
+        // Create a TaskStackBuilder to ensure that navigating from the
+        // notification opens the correct activity
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(intent);
 
         // Create the pending intent
-        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0,
-                                                                    PendingIntent.FLAG_UPDATE_CURRENT |
-                                                                            PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent =
+                stackBuilder.getPendingIntent(0,
+                                    PendingIntent.FLAG_UPDATE_CURRENT |
+                                            PendingIntent.FLAG_IMMUTABLE);
 
         // Create a notification channel (required for Android Oreo and above)
         String channelId = "channel_id";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel =
                     new NotificationChannel(channelId, "Channel Name",
-                                            NotificationManager.IMPORTANCE_DEFAULT);
+                                        NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManager notificationManager =
                     getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);

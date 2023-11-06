@@ -46,7 +46,8 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Go to new activity page where activity is live
                 Intent runningIntent =
-                        new Intent(ProfileActivity.this, HomeActivity.class);
+                        new Intent(ProfileActivity.this,
+                                   HomeActivity.class);
                 startActivity(runningIntent);
             }
         });

@@ -68,14 +68,16 @@ public class MainActivity extends AppCompatActivity {
                                              @NonNull Task<String> task) {
                                          if (!task.isSuccessful()) {
                                              Log.w(TAG,
-                                                   "Fetching FCM registration token failed",
+                                           "Fetching FCM registration" +
+                                                           " token failed",
                                                    task.getException());
                                              return;
                                          }
 
                                          // Get new FCM registration token
                                          fcmToken = task.getResult();
-                                         Log.d(TAG, "FCM Token: " + fcmToken);
+                                         Log.d(TAG, "FCM Token: "
+                                                 + fcmToken);
                                      }
                                  });
 
@@ -84,7 +86,8 @@ public class MainActivity extends AppCompatActivity {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(
                 GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(
-                        "749392990960-mlcvsjnsc9l7n46i8ppqhmbm86auosoh.apps.googleusercontent.com")
+            "749392990960-mlcvsjnsc9l7n46i8ppqhmbm86auosoh.apps" +
+                        ".googleusercontent.com")
                 .requestEmail()
                 .build();
         // Build a GoogleSignInClient with the options specified by gso.
@@ -112,7 +115,8 @@ public class MainActivity extends AppCompatActivity {
                     result -> {
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             // Handle the successful sign-in here
-                            // You can get the data from the result intent if needed
+                            // You can get the data from the result intent if
+                            // needed
                             Intent data = result.getData();
                             // Add your logic here
                             Task<GoogleSignInAccount> task =
@@ -137,8 +141,10 @@ public class MainActivity extends AppCompatActivity {
             // Signed in successfully, show authenticated UI.
             updateUI(account);
         } catch (ApiException e) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            // The ApiException status code indicates the detailed failure
+            // reason.
+            // Please refer to the GoogleSignInStatusCodes class reference
+            // for more information.
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
             updateUI(null);
         }
@@ -148,9 +154,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        // Check for existing Google Sign In account, if the user is already signed in
+        // Check for existing Google Sign In account, if the user is already
+        // signed in
         // the GoogleSignInAccount will be non-null.
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(this);
         updateUI(account);
     }
 
@@ -194,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
                         currentPlayer = new Player(account);
                         // PUT to backend
                         MediaType mediaType = MediaType.parse(
-                                "application/json; charset=utf-8");
+                        "application/json; charset=utf-8");
                         RequestBody requestBody = null;
                         try {
                             requestBody =
@@ -203,7 +211,8 @@ public class MainActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
-//                        Log.d(TAG, "request bodyyyy" + requestBody.toString());
+//                        Log.d(TAG, "request bodyyyy" + requestBody.toString
+//                        ());
                         Request request = new Request.Builder()
                                 .url(url)
                                 .put(requestBody) // Use PUT method
@@ -222,18 +231,19 @@ public class MainActivity extends AppCompatActivity {
                                     // Handle the successful response here
                                     try {
                                         currentPlayer.setPlayerId(
-                                                new JSONObject(response.body()
-                                                                       .string()).getString(
-                                                        "_id"));
+                                            new JSONObject(response.body()
+                                           .string()).getString("_id"));
                                         RunIOMessagingService.updateToken();
                                     } catch (JSONException e) {
                                         throw new RuntimeException(e);
                                     }
-                                    Log.d(TAG, "putting message" + response);
+                                    Log.d(TAG, "putting message" +
+                                            response);
                                 } else {
                                     // Handle the error response here
                                     Log.d(TAG,
-                                          "error putting message" + response);
+                                          "error putting message" +
+                                                  response);
                                 }
                             }
                         });
@@ -245,13 +255,13 @@ public class MainActivity extends AppCompatActivity {
                             currentPlayer = new Player(body);
                             RunIOMessagingService.updateToken();
                             Log.d(TAG,
-                                  "Player Class:" + currentPlayer.playerEmail +
-                                          currentPlayer.playerPhotoUrl +
-                                          currentPlayer.playerDisplayName +
-                                          " lobbySet: " +
-                                          currentPlayer.lobbySet + "distance:" +
-                                          currentPlayer.totalDistanceRan +
-                                          "area:" + currentPlayer.totalAreaRan);
+                              "Player Class:" + currentPlayer.playerEmail +
+                                      currentPlayer.playerPhotoUrl +
+                                      currentPlayer.playerDisplayName +
+                                      " lobbySet: " +
+                                      currentPlayer.lobbySet + "distance:" +
+                                      currentPlayer.totalDistanceRan +
+                                      "area:" + currentPlayer.totalAreaRan);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -269,7 +279,8 @@ public class MainActivity extends AppCompatActivity {
             // Send token to backend
             // Move to another activity
             Intent homeIntent =
-                    new Intent(MainActivity.this, HomeActivity.class);
+                    new Intent(MainActivity.this,
+                               HomeActivity.class);
             startActivity(homeIntent);
         }
     }
@@ -282,7 +293,8 @@ public class MainActivity extends AppCompatActivity {
                 getResources().openRawResource(R.raw.cert);
 
         try {
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            CertificateFactory cf =
+                    CertificateFactory.getInstance("X.509");
             Certificate ca;
             ca = cf.generateCertificate(certInputStream);
 
@@ -299,14 +311,16 @@ public class MainActivity extends AppCompatActivity {
 
             // Create an SSLContext with the custom TrustManager
             SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
+            sslContext.init(null, trustManagerFactory.getTrustManagers(),
+                            null);
 
             // Set up your OkHttpClient to use the custom SSLContext
             client = new OkHttpClient.Builder()
                     .sslSocketFactory(sslContext.getSocketFactory(),
-                                      (X509TrustManager) trustManagerFactory.getTrustManagers()[0])
+                  (X509TrustManager) trustManagerFactory.getTrustManagers()[0])
                     .hostnameVerifier(
-                            (hostname, session) -> true) // Bypass hostname verification if needed
+                            (hostname, session) -> true) // Bypass hostname
+                    // verification if needed
                     .build();
 
             // Use this client for your network requests

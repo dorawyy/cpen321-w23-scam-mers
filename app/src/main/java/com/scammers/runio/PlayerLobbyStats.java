@@ -51,7 +51,8 @@ public class PlayerLobbyStats {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("distanceCovered", distanceCovered);
         jsonObject.put("totalArea", totalArea);
-        // intentionally left out color because it should be assigned by the backend.
+        // intentionally left out color because it should be assigned by the
+        // backend.
 
         JSONArray landsArray = new JSONArray();
         for (ArrayList<LatLng> land : lands) {

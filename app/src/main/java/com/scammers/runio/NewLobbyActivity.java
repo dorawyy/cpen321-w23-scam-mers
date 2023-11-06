@@ -38,7 +38,7 @@ public class NewLobbyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_lobby);
 
-        lobbyNameInput = (EditText) findViewById(R.id.new_lobby_name_form);
+        lobbyNameInput = findViewById(R.id.new_lobby_name_form);
 
         lobbySubmitButton = findViewById(R.id.new_lobby_submit_button);
         lobbySubmitButton.setOnClickListener(new View.OnClickListener() {
@@ -51,8 +51,10 @@ public class NewLobbyActivity extends AppCompatActivity {
 
                 // TODO: Send new lobby to backend, where it will be added to db
                 MediaType mediaType =
-                        MediaType.parse("application/json; charset=utf-8");
-//                ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+                    MediaType.parse("application/json; " +
+                                            "charset=utf-8");
+//                ObjectWriter ow = new ObjectMapper().writer()
+//                .withDefaultPrettyPrinter();
 
                 try {
                     RequestBody requestBody =
@@ -65,78 +67,85 @@ public class NewLobbyActivity extends AppCompatActivity {
 
                     // Can we reuse the OkHttpClient from MainActivity??
                     MainActivity.client.newCall(createLobbyReq)
-                                       .enqueue(new Callback() {
-                                           @Override
-                                           public void onFailure(Call call,
-                                                                 IOException e) {
-                                               e.printStackTrace();
-                                           }
+                   .enqueue(new Callback() {
+                       @Override
+                       public void onFailure(Call call,
+                                         IOException e) {
+                           e.printStackTrace();
+                       }
 
-                                           @Override
-                                           public void onResponse(Call call,
-                                                                  Response response)
-                                                   throws IOException {
-                                               if (response.isSuccessful()) {
-                                                   // Handle the successful response here
-                                                   try {
-                                                       JSONObject resBody =
-                                                               new JSONObject(
-                                                                       response.body()
-                                                                               .string());
-//                                    Log.d(TAG, "Create lobby successful, Response: " + resBody.getString("_id"));
-                                                       MainActivity.currentPlayer.lobbySet.add(
-                                                               resBody.getString(
-                                                                       "_id"));
+                       @Override
+                       public void onResponse(Call call,
+                                          Response response)
+                               throws IOException {
+                           if (response.isSuccessful()) {
+                               // Handle the successful
+                               // response here
+                               try {
+                                   JSONObject resBody =
+                                   new JSONObject(
+                                       response.body()
+                                               .string());
+//                                    Log.d(TAG, "Create lobby successful,
+//                                    Response: " + resBody.getString("_id"));
+                                   MainActivity.currentPlayer.lobbySet.add(
+                                   resBody.getString("_id"));
 
-//                                    String updatedPlayerJSON = ow.writeValueAsString(MainActivity.currentPlayer);
-//                                    Log.d(TAG, "New player JSON is: " + updatedPlayerJSON);
-                                                       RequestBody requestBody =
-                                                               RequestBody.create(
-                                                                       MainActivity.currentPlayer.toJSON(),
-                                                                       mediaType);
+//                                    String updatedPlayerJSON = ow
+//                                    .writeValueAsString(MainActivity
+//                                    .currentPlayer);
+//                                    Log.d(TAG, "New player JSON is: " +
+//                                    updatedPlayerJSON);
+                                   RequestBody requestBody =
+                                           RequestBody.create(
+                                           MainActivity.currentPlayer.toJSON(),
+                                           mediaType);
 
-                                                       Request addLobbyReq =
-                                                               new Request.Builder()
-                                                                       .url(PLAYER_ADD_LOBBY_URL +
-                                                                                    MainActivity.currentPlayer.playerEmail)
-                                                                       .put(requestBody)
-                                                                       .build();
+                                   Request addLobbyReq =
+                                       new Request.Builder()
+                                       .url(PLAYER_ADD_LOBBY_URL +
+                                        MainActivity.currentPlayer.playerEmail)
+                                       .put(requestBody)
+                                       .build();
 
-                                                       MainActivity.client.newCall(
-                                                                           addLobbyReq)
-                                                                          .enqueue(
-                                                                                  new Callback() {
-                                                                                      @Override
-                                                                                      public void onFailure(
-                                                                                              Call call,
-                                                                                              IOException e) {
-                                                                                          e.printStackTrace();
-                                                                                      }
+                                   MainActivity.client.newCall(
+                                       addLobbyReq)
+                                      .enqueue(
+                                          new Callback() {
+                                              @Override
+                                              public void onFailure(
+                                                      Call call,
+                                                      IOException e) {
+                                                  e.printStackTrace();
+                                              }
 
-                                                                                      @Override
-                                                                                      public void onResponse(
-                                                                                              @NonNull
-                                                                                              Call call,
-                                                                                              @NonNull
-                                                                                              Response response)
-                                                                                              throws
-                                                                                              IOException {
-                                                                                          Log.d(TAG,
-                                                                                                "Successfully added new lobby to player lobby set");
-                                                                                      }
-                                                                                  });
-                                                   } catch (JSONException e) {
-                                                       throw new RuntimeException(
-                                                               e);
-                                                   }
-                                               } else {
-                                                   // Handle the error response here
-                                                   Log.d(TAG,
-                                                         "Error in creating lobby: " +
-                                                                 response);
-                                               }
-                                           }
-                                       });
+                                              @Override
+                                              public void onResponse(
+                                                  @NonNull
+                                                  Call call,
+                                                  @NonNull
+                                                  Response response)
+                                                  throws
+                                                  IOException {
+                                              Log.d(TAG,
+                                                "Successfully added new" +
+                                                " lobby to player lobby set");
+                                          }
+                                      });
+                               } catch (JSONException e) {
+                                   throw new RuntimeException(
+                                           e);
+                               }
+                           } else {
+                               // Handle the error
+                               // response here
+                               Log.d(TAG,
+                                     "Error in creating " +
+                                             "lobby: " +
+                                             response);
+                           }
+                       }
+                   });
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }

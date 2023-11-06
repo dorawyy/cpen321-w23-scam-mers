@@ -23,9 +23,11 @@ import com.bumptech.glide.Glide;
 public class HomeActivity extends AppCompatActivity {
 
     private Button startActivityButton;
+
     private Button lobbiesActivityButton;
 
     private ImageButton profileActivityButton;
+
     private Button locationButton;
 
     // ChatGPT usage: NO

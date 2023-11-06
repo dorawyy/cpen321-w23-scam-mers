@@ -32,13 +32,21 @@ public class RunningActivity extends FragmentActivity
         implements OnMapReadyCallback, LocationListener {
 
     private GoogleMap mMap;
+
     private ActivityRunningBinding binding;
+
     private LocationManager locationManager;
+
     private PolylineOptions polylineOptions;
+
     private Button stopActivityButton;
+
     private Button keepRunningButton;
+
     private Button confirmStopActivityButton;
+
     private final String TAG = "RunningActivity";
+
     private Run run;
 
     // ChatGPT usage: NO

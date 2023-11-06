@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     public static String photoUrlPublic;
 
     public static OkHttpClient client;
+
     public static Player currentPlayer;
 
     public static String fcmToken;

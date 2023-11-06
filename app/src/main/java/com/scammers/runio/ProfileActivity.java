@@ -29,9 +29,11 @@ import okhttp3.Response;
 public class ProfileActivity extends AppCompatActivity {
 
     private ImageButton homeActivityButton;
+
     private ImageView profilePictureView;
 
     private TextView totalArea;
+    
     private TextView totalDistance;
 
     // ChatGPT usage: NO

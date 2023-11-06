@@ -23,13 +23,18 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class NewLobbyActivity extends AppCompatActivity {
+
     final static String TAG = "NewLobby";
+
     final static String CREATE_LOBBY_URL = "https://40.90.192.159:8081/lobby/";
+
     final static String PLAYER_ADD_LOBBY_URL =
             "https://40.90.192.159:8081/player/";
 
     EditText lobbyNameInput;
+
     String newLobbyName;
+
     Button lobbySubmitButton;
 
     // ChatGPT usage: NO
@@ -47,7 +52,7 @@ public class NewLobbyActivity extends AppCompatActivity {
                 newLobbyName = lobbyNameInput.getText().toString();
                 Lobby newLobby = new Lobby(newLobbyName,
                                            MainActivity.currentPlayer.getPlayerId());
-                PlayerLobbyStats p = new PlayerLobbyStats();
+//                PlayerLobbyStats p = new PlayerLobbyStats();
 
                 // TODO: Send new lobby to backend, where it will be added to db
                 MediaType mediaType =

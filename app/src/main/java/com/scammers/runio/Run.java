@@ -18,9 +18,13 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class Run {
+
     private final String playerId;
+
     private final double NEW_COORD_THRESHOLD = 5;
+
     private final double COMPLETE_LOOP_THRESHOLD = 100;
+
     ArrayList<LatLng> path;
 
     // ChatGPT usage: NO

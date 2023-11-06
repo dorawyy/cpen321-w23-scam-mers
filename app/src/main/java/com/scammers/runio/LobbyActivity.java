@@ -38,12 +38,19 @@ import okhttp3.Response;
 
 public class LobbyActivity extends AppCompatActivity
         implements OnMapReadyCallback {
+
     final static String TAG = "LobbyActivity";
+
     private ImageButton homeActivityButton;
+
     private ImageButton profileActivityButton;
+
     private Button lobby_stats_button;
+
     private Lobby currentLobby;
+
     private GoogleMap mMap;
+
     private LocationManager locationManager;
 
     // ChatGPT usage: NO

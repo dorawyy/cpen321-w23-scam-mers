@@ -11,11 +11,17 @@ import java.util.HashSet;
 public class Player {
 
     private String playerId = null;
+
     public final String playerEmail;
+
     public final String playerPhotoUrl;
+
     public final String playerDisplayName;
+
     public HashSet<String> lobbySet;
+
     public double totalAreaRan;
+
     public double totalDistanceRan;
 
 

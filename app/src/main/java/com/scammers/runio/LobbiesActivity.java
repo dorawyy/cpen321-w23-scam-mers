@@ -26,7 +26,9 @@ import okhttp3.Response;
 public class LobbiesActivity extends AppCompatActivity {
 
     final static String TAG = "LobbiesActivity";
+
     private ImageButton homeActivityButton;
+
     private Button createLobbyButton;
 
     private ImageButton profileActivityButton;

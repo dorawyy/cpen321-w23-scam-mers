@@ -23,9 +23,13 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class AddPlayerActivity extends AppCompatActivity {
+
     final static String TAG = "AddPlayerActivity";
+
     EditText playerEmailInput;
+
     String invitedPlayerEmail;
+
     Button addPlayerSubmitButton;
 
     // ChatGPT usage: NO
@@ -111,8 +115,8 @@ public class AddPlayerActivity extends AppCompatActivity {
                                Log.d(TAG,
                                      "Player add url:" +
                                              putPlayerUrl);
-//                                RequestBody requestBody = RequestBody
-//                                .create(invitedPlayer.toJSON(), mediaType);
+//                               RequestBody requestBody = RequestBody
+//                               .create(invitedPlayer.toJSON(), mediaType);
                                PlayerLobbyStats
                                        invitedPlayerStats =
                                        new PlayerLobbyStats();

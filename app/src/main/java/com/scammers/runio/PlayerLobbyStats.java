@@ -11,10 +11,15 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class PlayerLobbyStats {
+
     private static final int ALPHA_MASK_100 = (100 << 24) | 0xFFFFFF;
+
     public final double distanceCovered;
+
     public final double totalArea;
+
     public final int color;
+
     public final ArrayList<ArrayList<LatLng>> lands;
 
     // ChatGPT usage: Partial

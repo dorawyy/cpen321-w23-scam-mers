@@ -9,8 +9,11 @@ import java.util.Iterator;
 public class Lobby {
 
     private String lobbyId = null;
+
     public final String lobbyName;
+
     public final String lobbyLeaderId;
+
     public HashMap<String, PlayerLobbyStats> playerMap;
 
     // ChatGPT usage: NO

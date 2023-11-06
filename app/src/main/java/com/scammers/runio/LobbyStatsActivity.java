@@ -28,8 +28,11 @@ import okhttp3.Response;
 public class LobbyStatsActivity extends AppCompatActivity {
 
     final static String TAG = "LobbyStatsActivity";
+
     private ImageButton profileActivityButton;
+
     private ImageButton homeActivityButton;
+
     private Button addPlayerButton;
 
     @Override
@@ -42,7 +45,8 @@ public class LobbyStatsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent runningIntent =
-                        new Intent(LobbyStatsActivity.this, HomeActivity.class);
+                        new Intent(LobbyStatsActivity.this,
+                                   HomeActivity.class);
                 startActivity(runningIntent);
             }
         });
@@ -54,7 +58,8 @@ public class LobbyStatsActivity extends AppCompatActivity {
         profileActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent profileIntent = new Intent(LobbyStatsActivity.this,
+                Intent profileIntent =
+                        new Intent(LobbyStatsActivity.this,
                                                   ProfileActivity.class);
                 startActivity(profileIntent);
             }
@@ -100,10 +105,10 @@ public class LobbyStatsActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(View view) {
                                         Intent addPlayerIntent = new Intent(
-                                                LobbyStatsActivity.this,
+                                        LobbyStatsActivity.this,
                                                 AddPlayerActivity.class);
                                         addPlayerIntent.putExtra(
-                                                "lobbyIdAddPlayer", lobbyId);
+                                            "lobbyIdAddPlayer", lobbyId);
                                         startActivity(addPlayerIntent);
                                     }
                                 });
@@ -128,16 +133,16 @@ public class LobbyStatsActivity extends AppCompatActivity {
                             public void run() {
                                 // Create a new TextView
                                 TextView textView =
-                                        new TextView(LobbyStatsActivity.this);
+                                new TextView(LobbyStatsActivity.this);
 
                                 // Set text properties
                                 textView.setText("Area Claimed: " +
-                                                         df.format(totalArea) +
-                                                         "km²\nKilometers " +
-                                                         "ran: " +
-                                                         df.format(
-                                                                 distanceCovered) +
-                                                         "km");
+                                                     df.format(totalArea) +
+                                                     "km²\nKilometers " +
+                                                     "ran: " +
+                                                     df.format(
+                                                             distanceCovered) +
+                                                     "km");
                                 textView.setTextSize(20);
                                 textView.setBackgroundColor(color);
 
@@ -146,7 +151,7 @@ public class LobbyStatsActivity extends AppCompatActivity {
                                         16; // Convert your padding in dp to
                                 // pixels
                                 float scale =
-                                        getResources().getDisplayMetrics().density;
+                                    getResources().getDisplayMetrics().density;
                                 int paddingInPixels =
                                         (int) (paddingInDp * scale + 0.5f);
                                 textView.setPadding(paddingInPixels,

@@ -6,17 +6,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.HashSet;
 
 public class Player {
 
     private String playerId = null;
+
     public final String playerEmail;
+
     public final String playerPhotoUrl;
+
     public final String playerDisplayName;
+
     public HashSet<String> lobbySet;
+
     public double totalAreaRan;
+
     public double totalDistanceRan;
 
 

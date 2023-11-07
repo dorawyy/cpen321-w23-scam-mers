@@ -1,21 +1,19 @@
 package com.scammers.runio;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 
 public class Lobby {
 
     private String lobbyId = null;
+
     public final String lobbyName;
+
     public final String lobbyLeaderId;
+
     public HashMap<String, PlayerLobbyStats> playerMap;
 
     // ChatGPT usage: NO
@@ -39,7 +37,8 @@ public class Lobby {
         while (keys.hasNext()) {
             String playerId = keys.next();
             JSONObject playerStatsJSON = playerMapJSON.getJSONObject(playerId);
-            PlayerLobbyStats playerStats = new PlayerLobbyStats(playerStatsJSON);
+            PlayerLobbyStats playerStats =
+                    new PlayerLobbyStats(playerStatsJSON);
             playerMap.put(playerId, playerStats);
         }
     }

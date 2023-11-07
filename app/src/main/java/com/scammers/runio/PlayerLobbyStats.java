@@ -7,13 +7,19 @@ import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class PlayerLobbyStats {
-    private static int ALPHA_MASK_100 = (100 << 24) | 0xFFFFFF;
+
+    private static final int ALPHA_MASK_100 = (100 << 24) | 0xFFFFFF;
+
     public final double distanceCovered;
+
     public final double totalArea;
+
     public final int color;
+
     public final ArrayList<ArrayList<LatLng>> lands;
 
     // ChatGPT usage: Partial
@@ -50,7 +56,8 @@ public class PlayerLobbyStats {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("distanceCovered", distanceCovered);
         jsonObject.put("totalArea", totalArea);
-        // intentionally left out color because it should be assigned by the backend.
+        // intentionally left out color because it should be assigned by the
+        // backend.
 
         JSONArray landsArray = new JSONArray();
         for (ArrayList<LatLng> land : lands) {

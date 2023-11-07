@@ -83,6 +83,7 @@ app.get("/", (req,res)=>{
 
 // ChatGPT usage: PARTIAL
 app.put('/player/:playerEmail', async (req, res) => {
+  console.log("playerEmail");
   try {
     const { playerEmail } = req.params;
     const playerData = req.body;
@@ -108,6 +109,7 @@ app.put('/player/:playerEmail', async (req, res) => {
 
 // ChatGPT usage: NO
 app.put('/player/:playerId/fcmToken/:fcmToken', async (req, res) => {
+  console.log("FCM TOKEN");
   try {
     const { playerId, fcmToken } = req.params;
 
@@ -215,8 +217,7 @@ app.get('/lobby/:lobbyId/lobbyName', async (req, res) => {
 
     const lobbiesCollection = client.db("runio").collection("lobbies");
     const existingLobby = await lobbiesCollection.findOne(
-      { _id: new ObjectId(lobbyId) },
-      { projection: { lobbyName: true, _id: false } }
+      { _id: new ObjectId(lobbyId) }, { projection: { lobbyName: true, _id: false } }
     );
 
     if (existingLobby) {
@@ -257,13 +258,7 @@ app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
     playerStats["color"] = lobby.availableColors.pop(); // check if lobby full or not
     lobby.playerSet[playerId] = playerStats;
 
-    const lobbyResult = await lobbiesCollection.updateOne({ _id: new ObjectId(lobbyId) },
-                              { $set:
-                                {
-                                  playerSet: lobby.playerSet,
-                                  availableColors:lobby.availableColors
-                                }
-                              });
+    const lobbyResult = await lobbiesCollection.updateOne({ _id: new ObjectId(lobbyId) },{ $set:{playerSet: lobby.playerSet,availableColors:lobby.availableColors}});
     const playerResult = await playersCollection.updateOne({ _id: new ObjectId(playerId) }, { $push: { lobbySet: lobbyId} });
 
     return res.status(200).json({message: "Player added"});
@@ -276,18 +271,26 @@ app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
 // ChatGPT usage: NO
 async function notifyLobby(playerId) {
   const runner = await playersCollection.findOne({ _id: new ObjectId(playerId) });
-  // const everyone = await playersCollection.find();
-  const everyoneCursor = await playersCollection.find();
-  const everyone = await everyoneCursor.toArray();
-  // Filter out the player with playerId from the everyone array
-  const filteredEveryone = everyone.filter(player => player._id.toString() !== playerId);
+  const lobbySet = runner["lobbySet"]
+  const playerIds = {}
+  for (const lobby in lobbySet){
+    const playerSet = lobby.playerSet;
+    for (const player in playerSet){
+      curr_playerId = Object.keys(player(0))
+      if(playerIds[curr_playerId] == undefined && curr_playerId != playerId){
+        curr_player = await playersCollection.findOne({ _id: new ObjectId(curr_playerId) });
+        playerIds[curr_playerId] = curr_player["fcmToken"]
+      } 
+    }
+  }
   try{
     sendNotification(runner.fcmToken, "CONGRATULATIONS!!", "You just completed a run! Keep it up! 🏆");  
   } catch{
   }
-  for (const player of filteredEveryone) {
+  for (const playerId in playerIds) {
     try {
-      sendNotification(player.fcmToken, runner.playerDisplayName + " just completed a run!", "Keep running to catch up. 🏃🔥");
+      player_fcmToken = playerIds[playerId]
+      sendNotification(player_fcmToken, runner.playerDisplayName + " just completed a run!", "Keep running to catch up. 🏃🔥");
     } catch {
     }
   }
@@ -526,13 +529,7 @@ async function updatePlayerStats(playerId, pathArea, pathDist){
     player.totalAreaRan += pathArea;
     player.totalDistanceRan += pathDist;
 
-    const result = await playersCollection.updateOne(
-      { _id: player._id },
-      { $set: {
-        totalAreaRan: player.totalAreaRan,
-        totalDistanceRan: player.totalDistanceRan
-      }
-    });
+    const result = await playersCollection.updateOne({ _id: player._id },{ $set: {totalAreaRan: player.totalAreaRan,totalDistanceRan: player.totalDistanceRan}});
 
     if (result.modifiedCount === 1) {
       console.log("Player stats updated");
@@ -568,14 +565,7 @@ async function updatePlayerLobbyStats(lobbyId, playerId, pathArea, pathDist) {
       // Update the playerSet in the lobby
       lobby.playerSet[playerId] = player;
 
-      const updateLobbyResult = await lobbiesCollection.updateOne(
-        { _id: lobby._id },
-        {
-          $set: {
-            playerSet: lobby.playerSet
-          }
-        }
-      );
+      const updateLobbyResult = await lobbiesCollection.updateOne({ _id: lobby._id },{$set: {playerSet: lobby.playerSet}});
 
       if (updateLobbyResult.modifiedCount === 1) {
         console.log(`Player stats updated in lobby: ${lobbyId}`);
@@ -605,8 +595,7 @@ async function updateMapInLobby(playerId, newMap, lobbyId) {
   let query = "playerSet." + playerId;
   let setTarget = "playerSet." + playerId + ".lands"
   await lobbiesCollection.updateOne(
-    { _id: new ObjectId(lobbyId),  [query]: {$exists: true} },
-    { $set: { [setTarget]: newMap }}, 
+    { _id: new ObjectId(lobbyId),  [query]: {$exists: true} },{ $set: { [setTarget]: newMap }}
   );
 }
 

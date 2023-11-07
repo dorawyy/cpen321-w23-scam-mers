@@ -1,16 +1,15 @@
 package com.scammers.runio;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 
@@ -29,8 +28,7 @@ import okhttp3.Response;
 public class LobbyStatsActivity extends AppCompatActivity {
 
     final static String TAG = "LobbyStatsActivity";
-    private ImageButton profileActivityButton;
-    private ImageButton homeActivityButton;
+
     private Button addPlayerButton;
 
     @Override
@@ -38,22 +36,28 @@ public class LobbyStatsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby_stats);
 
-        homeActivityButton = findViewById(R.id.home_button_lobby_stats);
+        ImageButton homeActivityButton =
+                findViewById(R.id.home_button_lobby_stats);
         homeActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent runningIntent = new Intent(LobbyStatsActivity.this, HomeActivity.class);
+                Intent runningIntent =
+                        new Intent(LobbyStatsActivity.this,
+                                   HomeActivity.class);
                 startActivity(runningIntent);
             }
         });
 
-        profileActivityButton = findViewById(R.id.profile_image_button_lobby_stats);
+        ImageButton profileActivityButton =
+                findViewById(R.id.profile_image_button_lobby_stats);
         String photoUrl = MainActivity.photoUrlPublic;
         Glide.with(this).load(photoUrl).into(profileActivityButton);
         profileActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent profileIntent = new Intent(LobbyStatsActivity.this, ProfileActivity.class);
+                Intent profileIntent =
+                        new Intent(LobbyStatsActivity.this,
+                                                  ProfileActivity.class);
                 startActivity(profileIntent);
             }
         });
@@ -76,54 +80,81 @@ public class LobbyStatsActivity extends AppCompatActivity {
 
             // ChatGPT usage: Partial
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if(response.code() != 200){
+            public void onResponse(@NonNull Call call,
+                                   @NonNull Response response)
+                    throws IOException {
+                if (response.code() != 200) {
                     throw new IOException("Unexpected code " + response);
                 }
                 try {
-                    JSONObject responseBody = new JSONObject(response.body().string());
+                    JSONObject responseBody =
+                            new JSONObject(response.body().string());
                     Lobby currentLobby = new Lobby(responseBody);
-                    TextView textView = findViewById(R.id.lobby_name_lobby_stats);
+                    TextView textView =
+                            findViewById(R.id.lobby_name_lobby_stats);
                     textView.setText(currentLobby.lobbyName);
-                    if (!currentLobby.lobbyLeaderId.equals(MainActivity.currentPlayer.getPlayerId())) {
+                    if (!currentLobby.lobbyLeaderId.equals(
+                            MainActivity.currentPlayer.getPlayerId())) {
                         addPlayerButton.setVisibility(View.INVISIBLE);
                     } else {
-                        addPlayerButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent addPlayerIntent = new Intent(LobbyStatsActivity.this, AddPlayerActivity.class);
-                                addPlayerIntent.putExtra("lobbyIdAddPlayer", lobbyId);
-                                startActivity(addPlayerIntent);
-                            }
-                        });
+                        addPlayerButton.setOnClickListener(
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent addPlayerIntent = new Intent(
+                                        LobbyStatsActivity.this,
+                                                AddPlayerActivity.class);
+                                        addPlayerIntent.putExtra(
+                                            "lobbyIdAddPlayer", lobbyId);
+                                        startActivity(addPlayerIntent);
+                                    }
+                                });
                     }
 
                     //Display playerStats in screen
-                    for(Map.Entry<String, PlayerLobbyStats> entry: currentLobby.playerMap.entrySet()) {
+                    for (Map.Entry<String, PlayerLobbyStats> entry :
+                            currentLobby.playerMap.entrySet()) {
                         PlayerLobbyStats playerLobbyStats = entry.getValue();
-                        double distanceCovered = playerLobbyStats.distanceCovered;
+                        double distanceCovered =
+                                playerLobbyStats.distanceCovered;
                         double totalArea = playerLobbyStats.totalArea;
                         DecimalFormat df = new DecimalFormat("0.00");
-                        int color = PlayerLobbyStats.lowerAlpha(playerLobbyStats.color);
+                        int color = PlayerLobbyStats.lowerAlpha(
+                                playerLobbyStats.color);
 
-                        LinearLayout parentLayout = findViewById(R.id.lobbyStatsLinearLayout);
+                        LinearLayout parentLayout =
+                                findViewById(R.id.lobbyStatsLinearLayout);
                         runOnUiThread(new Runnable() {
                             // ChatGPT usage: YES
                             @Override
                             public void run() {
                                 // Create a new TextView
-                                TextView textView = new TextView(LobbyStatsActivity.this);
+                                TextView textView =
+                                new TextView(LobbyStatsActivity.this);
 
                                 // Set text properties
-                                textView.setText("Area Claimed: " + df.format(totalArea) + "km²\nKilometers ran: " + df.format( distanceCovered) + "km");
+                                textView.setText("Area Claimed: " +
+                                                     df.format(totalArea) +
+                                                     "km²\nKilometers " +
+                                                     "ran: " +
+                                                     df.format(
+                                                             distanceCovered) +
+                                                     "km");
                                 textView.setTextSize(20);
                                 textView.setBackgroundColor(color);
 
                                 // Set padding
-                                int paddingInDp = 16; // Convert your padding in dp to pixels
-                                float scale = getResources().getDisplayMetrics().density;
-                                int paddingInPixels = (int) (paddingInDp * scale + 0.5f);
-                                textView.setPadding(paddingInPixels, paddingInPixels, paddingInPixels, paddingInPixels);
+                                int paddingInDp =
+                                        16; // Convert your padding in dp to
+                                // pixels
+                                float scale =
+                                    getResources().getDisplayMetrics().density;
+                                int paddingInPixels =
+                                        (int) (paddingInDp * scale + 0.5f);
+                                textView.setPadding(paddingInPixels,
+                                                    paddingInPixels,
+                                                    paddingInPixels,
+                                                    paddingInPixels);
 
                                 parentLayout.addView(textView);
                             }
@@ -131,7 +162,7 @@ public class LobbyStatsActivity extends AppCompatActivity {
 
                     }
                 } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                    throw new IOException(e);
                 }
             }
         });

@@ -81,7 +81,7 @@ public class HomeActivity extends AppCompatActivity {
             Toast.makeText(this, "We got location thanks!",
                            Toast.LENGTH_LONG)
                  .show();
-            return;
+
         } else {
             // Creating the AlertDialog
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -100,7 +100,7 @@ public class HomeActivity extends AppCompatActivity {
                                                     " !!!!");
                                               dialogInterface.dismiss(); //
                                               // Dismiss the dialog
-                                              return;
+
                                           }
                                       })
                    .setPositiveButton("AGREE",

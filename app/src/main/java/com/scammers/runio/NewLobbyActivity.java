@@ -51,15 +51,11 @@ public class NewLobbyActivity extends AppCompatActivity {
             public void onClick(View view) {
                 newLobbyName = lobbyNameInput.getText().toString();
                 Lobby newLobby = new Lobby(newLobbyName,
-                                           MainActivity.currentPlayer.getPlayerId());
-//                PlayerLobbyStats p = new PlayerLobbyStats();
+                                   MainActivity.currentPlayer.getPlayerId());
 
-                // TODO: Send new lobby to backend, where it will be added to db
                 MediaType mediaType =
                     MediaType.parse("application/json; " +
                                             "charset=utf-8");
-//                ObjectWriter ow = new ObjectMapper().writer()
-//                .withDefaultPrettyPrinter();
 
                 try {
                     RequestBody requestBody =
@@ -70,7 +66,6 @@ public class NewLobbyActivity extends AppCompatActivity {
                             .post(requestBody)
                             .build();
 
-                    // Can we reuse the OkHttpClient from MainActivity??
                     MainActivity.client.newCall(createLobbyReq)
                    .enqueue(new Callback() {
                        @Override
@@ -91,16 +86,9 @@ public class NewLobbyActivity extends AppCompatActivity {
                                    new JSONObject(
                                        response.body()
                                                .string());
-//                                    Log.d(TAG, "Create lobby successful,
-//                                    Response: " + resBody.getString("_id"));
                                    MainActivity.currentPlayer.lobbySet.add(
                                    resBody.getString("_id"));
 
-//                                    String updatedPlayerJSON = ow
-//                                    .writeValueAsString(MainActivity
-//                                    .currentPlayer);
-//                                    Log.d(TAG, "New player JSON is: " +
-//                                    updatedPlayerJSON);
                                    RequestBody requestBody =
                                            RequestBody.create(
                                            MainActivity.currentPlayer.toJSON(),
@@ -142,12 +130,8 @@ public class NewLobbyActivity extends AppCompatActivity {
                                            e);
                                }
                            } else {
-                               // Handle the error
-                               // response here
-                               Log.d(TAG,
-                                     "Error in creating " +
-                                             "lobby: " +
-                                             response);
+                               Log.d(TAG, "Error in creating " + "lobby: "
+                                       + response);
                            }
                        }
                    });
@@ -159,7 +143,6 @@ public class NewLobbyActivity extends AppCompatActivity {
                                "Created new lobby: " + newLobbyName,
                                Toast.LENGTH_LONG).show();
 
-                // Close lobby creation activity once finished
                 finish();
             }
         });

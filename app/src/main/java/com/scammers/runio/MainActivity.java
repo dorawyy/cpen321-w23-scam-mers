@@ -137,15 +137,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             GoogleSignInAccount account =
                     completedTask.getResult(ApiException.class);
-//            String idToken = account.getIdToken();
-//            // TODO(developer): send ID Token to server and validate
-            // Signed in successfully, show authenticated UI.
             updateUI(account);
         } catch (ApiException e) {
-            // The ApiException status code indicates the detailed failure
-            // reason.
-            // Please refer to the GoogleSignInStatusCodes class reference
-            // for more information.
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
             updateUI(null);
         }
@@ -155,9 +148,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        // Check for existing Google Sign In account, if the user is already
-        // signed in
-        // the GoogleSignInAccount will be non-null.
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(this);
         updateUI(account);
@@ -195,8 +185,6 @@ public class MainActivity extends AppCompatActivity {
                 public void onResponse(Call call, Response response)
                         throws IOException {
                     String responseBody = response.body().string();
-//                    Log.d(TAG, "response:" + response);
-//                    Log.d(TAG, "response.body():" + response.body());
 
                     if (response.code() == 404) {
                         Log.d(TAG, "HEEHEHREEE");
@@ -212,13 +200,10 @@ public class MainActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             throw new IOException(e);
                         }
-//                        Log.d(TAG, "request bodyyyy" + requestBody.toString
-//                        ());
                         Request request = new Request.Builder()
                                 .url(url)
                                 .put(requestBody) // Use PUT method
                                 .build();
-//                        Log.d(TAG, "after bulding" + request.body());
                         client.newCall(request).enqueue(new Callback() {
                             @Override
                             public void onFailure(Call call, IOException e) {
@@ -264,15 +249,11 @@ public class MainActivity extends AppCompatActivity {
                                       currentPlayer.totalDistanceRan +
                                       "area:" + currentPlayer.totalAreaRan);
                         } catch (JSONException e) {
-                            throw new RuntimeException(e);
+                            throw new IOException(e);
                         }
                     } else {
                         throw new IOException("Unexpected code " + response);
                     }
-//                        runOnUiThread(() -> {
-//                            TextView myName = findViewById(R.id.my_name);
-//                            myName.setText("My Name: " + responseBody);
-//                        });
                 }
 
             });

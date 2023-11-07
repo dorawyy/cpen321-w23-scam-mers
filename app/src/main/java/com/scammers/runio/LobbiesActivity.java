@@ -143,27 +143,6 @@ public class LobbiesActivity extends AppCompatActivity {
         createLobbyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-/*                // Display lobby creator as popup
-                LayoutInflater inflater = (LayoutInflater) getSystemService
-                (LAYOUT_INFLATER_SERVICE);
-                View popupView = inflater.inflate(R.layout
-                .activity_new_lobby, null);
-
-                int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-                int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-                final PopupWindow createLobbyPopup = new PopupWindow
-                (popupView, width, height, true);
-
-                createLobbyPopup.showAtLocation(view, Gravity.CENTER, 0, 0);
-
-                popupView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View view, MotionEvent
-                    motionEvent) {
-                        createLobbyPopup.dismiss();
-                        return true;
-                    }
-                });*/
                 Intent newLobbyIntent = new Intent(
                             LobbiesActivity.this,
                                          NewLobbyActivity.class);

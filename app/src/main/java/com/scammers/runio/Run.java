@@ -25,6 +25,10 @@ public class Run {
 
     private final double COMPLETE_LOOP_THRESHOLD = 100;
 
+    // Mean radius of the Earth in kilometers
+    private static final double EARTH_RADIUS_METERS = 6371000.0;
+    // 6371 km * 1000 m/km
+
     ArrayList<LatLng> path;
 
     // ChatGPT usage: NO
@@ -54,9 +58,7 @@ public class Run {
         return distance(start, end) < COMPLETE_LOOP_THRESHOLD;
     }
 
-    // Mean radius of the Earth in kilometers
-    private static final double EARTH_RADIUS_METERS = 6371000.0;
-    // 6371 km * 1000 m/km
+
 
 
     // ChatGPT usage: YES
@@ -115,7 +117,7 @@ public class Run {
         MainActivity.client.newCall(sendRun).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-
+                Log.d("Run", "API fail");
             }
 
             @Override
@@ -124,16 +126,6 @@ public class Run {
                     throws IOException {
                 Log.d("Run", "run response:" +
                         response.body().string());
-//                try {
-//                    MainActivity.currentPlayer.totalAreaRan =  (new
-//                    JSONObject(response.body().string()).getDouble
-//                    ("totalAreaRan"));
-//                    MainActivity.currentPlayer.totalDistanceRan =  (new
-//                    JSONObject(response.body().string()).getDouble
-//                    ("totalDistanceRan"));
-//                } catch (JSONException e) {
-//                    throw new IOException(e);
-//                }
             }
         });
 

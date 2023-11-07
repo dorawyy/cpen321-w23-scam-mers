@@ -276,18 +276,26 @@ app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
 // ChatGPT usage: NO
 async function notifyLobby(playerId) {
   const runner = await playersCollection.findOne({ _id: new ObjectId(playerId) });
-  // const everyone = await playersCollection.find();
-  const everyoneCursor = await playersCollection.find();
-  const everyone = await everyoneCursor.toArray();
-  // Filter out the player with playerId from the everyone array
-  const filteredEveryone = everyone.filter(player => player._id.toString() !== playerId);
+  const lobbySet = runner["lobbySet"]
+  const playerIds = {}
+  for (const lobby in lobbySet){
+    const playerSet = lobby.playerSet;
+    for (const player in playerSet){
+      curr_playerId = Object.keys(player(0))
+      if(playerIds[curr_playerId] == undefined && curr_playerId != playerId){
+        curr_player = await playersCollection.findOne({ _id: new ObjectId(curr_playerId) });
+        playerIds[curr_playerId] = curr_player["fcmToken"]
+      } 
+    }
+  }
   try{
     sendNotification(runner.fcmToken, "CONGRATULATIONS!!", "You just completed a run! Keep it up! 🏆");  
   } catch{
   }
-  for (const player of filteredEveryone) {
+  for (const playerId in playerIds) {
     try {
-      sendNotification(player.fcmToken, runner.playerDisplayName + " just completed a run!", "Keep running to catch up. 🏃🔥");
+      player_fcmToken = playerIds[playerId]
+      sendNotification(player_fcmToken, runner.playerDisplayName + " just completed a run!", "Keep running to catch up. 🏃🔥");
     } catch {
     }
   }

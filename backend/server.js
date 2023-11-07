@@ -109,7 +109,7 @@ app.put('/player/:playerEmail', async (req, res) => {
 
 // ChatGPT usage: NO
 app.put('/player/:playerId/fcmToken/:fcmToken', async (req, res) => {
-  console.log("FCM TOKEN")
+  console.log("FCM TOKEN");
   try {
     const { playerId, fcmToken } = req.params;
 

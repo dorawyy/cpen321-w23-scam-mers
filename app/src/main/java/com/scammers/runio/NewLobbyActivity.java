@@ -135,8 +135,8 @@ public class NewLobbyActivity extends AppCompatActivity {
                            }
                        }
                    });
-                } catch (JSONException ignored) {
-
+                } catch (JSONException e) {
+                    Log.d(TAG, "Error in creating JSON");
                 }
 
                 Toast.makeText(NewLobbyActivity.this,

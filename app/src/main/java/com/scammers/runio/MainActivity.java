@@ -57,6 +57,30 @@ public class MainActivity extends AppCompatActivity {
     public static String fcmToken;
 
     // ChatGPT usage: NO
+    private final ActivityResultLauncher<Intent> signInLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            // Handle the successful sign-in here
+                            // You can get the data from the result intent if
+                            // needed
+                            Intent data = result.getData();
+                            // Add your logic here
+                            Task<GoogleSignInAccount> task =
+                                    GoogleSignIn.getSignedInAccountFromIntent(
+                                            data);
+                            handleSignInResult(task);
+                        } else {
+                            Log.d(TAG, "Problem Signing In");
+                            // Handle the unsuccessful sign-in here
+                            // Add your logic for handling the failure
+                        }
+                    }
+            );
+
+
+    // ChatGPT usage: NO
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,28 +133,6 @@ public class MainActivity extends AppCompatActivity {
         signInLauncher.launch(signInIntent);
     }
 
-    // ChatGPT usage: NO
-    private final ActivityResultLauncher<Intent> signInLauncher =
-            registerForActivityResult(
-                    new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        if (result.getResultCode() == Activity.RESULT_OK) {
-                            // Handle the successful sign-in here
-                            // You can get the data from the result intent if
-                            // needed
-                            Intent data = result.getData();
-                            // Add your logic here
-                            Task<GoogleSignInAccount> task =
-                                    GoogleSignIn.getSignedInAccountFromIntent(
-                                            data);
-                            handleSignInResult(task);
-                        } else {
-                            Log.d(TAG, "Problem Signing In");
-                            // Handle the unsuccessful sign-in here
-                            // Add your logic for handling the failure
-                        }
-                    }
-            );
 
     // ChatGPT usage: NO
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {

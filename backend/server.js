@@ -215,8 +215,7 @@ app.get('/lobby/:lobbyId/lobbyName', async (req, res) => {
 
     const lobbiesCollection = client.db("runio").collection("lobbies");
     const existingLobby = await lobbiesCollection.findOne(
-      { _id: new ObjectId(lobbyId) },
-      { projection: { lobbyName: true, _id: false } }
+      { _id: new ObjectId(lobbyId) }, { projection: { lobbyName: true, _id: false } }
     );
 
     if (existingLobby) {
@@ -258,11 +257,7 @@ app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
     lobby.playerSet[playerId] = playerStats;
 
     const lobbyResult = await lobbiesCollection.updateOne({ _id: new ObjectId(lobbyId) },
-                              { $set:
-                                {
-                                  playerSet: lobby.playerSet,
-                                  availableColors:lobby.availableColors
-                                }
+                              { $set:{playerSet: lobby.playerSet,availableColors:lobby.availableColors}
                               });
     const playerResult = await playersCollection.updateOne({ _id: new ObjectId(playerId) }, { $push: { lobbySet: lobbyId} });
 
@@ -536,10 +531,7 @@ async function updatePlayerStats(playerId, pathArea, pathDist){
 
     const result = await playersCollection.updateOne(
       { _id: player._id },
-      { $set: {
-        totalAreaRan: player.totalAreaRan,
-        totalDistanceRan: player.totalDistanceRan
-      }
+      { $set: {totalAreaRan: player.totalAreaRan,totalDistanceRan: player.totalDistanceRan}
     });
 
     if (result.modifiedCount === 1) {
@@ -579,9 +571,7 @@ async function updatePlayerLobbyStats(lobbyId, playerId, pathArea, pathDist) {
       const updateLobbyResult = await lobbiesCollection.updateOne(
         { _id: lobby._id },
         {
-          $set: {
-            playerSet: lobby.playerSet
-          }
+          $set: {playerSet: lobby.playerSet}
         }
       );
 
@@ -613,8 +603,7 @@ async function updateMapInLobby(playerId, newMap, lobbyId) {
   let query = "playerSet." + playerId;
   let setTarget = "playerSet." + playerId + ".lands"
   await lobbiesCollection.updateOne(
-    { _id: new ObjectId(lobbyId),  [query]: {$exists: true} },
-    { $set: { [setTarget]: newMap }}, 
+    { _id: new ObjectId(lobbyId),  [query]: {$exists: true} },{ $set: { [setTarget]: newMap }}
   );
 }
 

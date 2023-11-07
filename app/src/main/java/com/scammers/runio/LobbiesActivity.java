@@ -27,12 +27,6 @@ public class LobbiesActivity extends AppCompatActivity {
 
     final static String TAG = "LobbiesActivity";
 
-    private ImageButton homeActivityButton;
-
-    private Button createLobbyButton;
-
-    private ImageButton profileActivityButton;
-
     // ChatGPT usage: NO
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +112,7 @@ public class LobbiesActivity extends AppCompatActivity {
             });
         }
 
-        homeActivityButton = findViewById(R.id.home_button_lobbies);
+        ImageButton homeActivityButton = findViewById(R.id.home_button_lobbies);
         homeActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -130,7 +124,8 @@ public class LobbiesActivity extends AppCompatActivity {
             }
         });
 
-        profileActivityButton = findViewById(R.id.profile_image_button_lobbies);
+        ImageButton profileActivityButton =
+                findViewById(R.id.profile_image_button_lobbies);
         String photoUrl = MainActivity.photoUrlPublic;
         Glide.with(this).load(photoUrl).into(profileActivityButton);
         profileActivityButton.setOnClickListener(new View.OnClickListener() {
@@ -144,31 +139,31 @@ public class LobbiesActivity extends AppCompatActivity {
             }
         });
 
-        createLobbyButton = findViewById(R.id.create_lobby_button);
+        Button createLobbyButton = findViewById(R.id.create_lobby_button);
         createLobbyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                // Display lobby creator as popup
-//                LayoutInflater inflater = (LayoutInflater) getSystemService
-//                (LAYOUT_INFLATER_SERVICE);
-//                View popupView = inflater.inflate(R.layout
-//                .activity_new_lobby, null);
-//
-//                int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-//                int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-//                final PopupWindow createLobbyPopup = new PopupWindow
-//                (popupView, width, height, true);
-//
-//                createLobbyPopup.showAtLocation(view, Gravity.CENTER, 0, 0);
-//
-//                popupView.setOnTouchListener(new View.OnTouchListener() {
-//                    @Override
-//                    public boolean onTouch(View view, MotionEvent
-//                    motionEvent) {
-//                        createLobbyPopup.dismiss();
-//                        return true;
-//                    }
-//                });
+/*                // Display lobby creator as popup
+                LayoutInflater inflater = (LayoutInflater) getSystemService
+                (LAYOUT_INFLATER_SERVICE);
+                View popupView = inflater.inflate(R.layout
+                .activity_new_lobby, null);
+
+                int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+                int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                final PopupWindow createLobbyPopup = new PopupWindow
+                (popupView, width, height, true);
+
+                createLobbyPopup.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+                popupView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent
+                    motionEvent) {
+                        createLobbyPopup.dismiss();
+                        return true;
+                    }
+                });*/
                 Intent newLobbyIntent = new Intent(
                             LobbiesActivity.this,
                                          NewLobbyActivity.class);

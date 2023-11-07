@@ -41,17 +41,7 @@ public class LobbyActivity extends AppCompatActivity
 
     final static String TAG = "LobbyActivity";
 
-    private ImageButton homeActivityButton;
-
-    private ImageButton profileActivityButton;
-
-    private Button lobby_stats_button;
-
     private Lobby currentLobby;
-
-    private GoogleMap mMap;
-
-    private LocationManager locationManager;
 
     // ChatGPT usage: NO
     @Override
@@ -66,7 +56,7 @@ public class LobbyActivity extends AppCompatActivity
                         .findFragmentById(R.id.lobby_map);
         mapFragment.getMapAsync(this);
 
-        homeActivityButton = findViewById(R.id.home_button_lobby);
+        ImageButton homeActivityButton = findViewById(R.id.home_button_lobby);
         homeActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,7 +68,8 @@ public class LobbyActivity extends AppCompatActivity
             }
         });
 
-        profileActivityButton = findViewById(R.id.profile_image_button_lobby);
+        ImageButton profileActivityButton =
+                findViewById(R.id.profile_image_button_lobby);
         String photoUrl = MainActivity.photoUrlPublic;
         Glide.with(this).load(photoUrl).into(profileActivityButton);
         profileActivityButton.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +86,7 @@ public class LobbyActivity extends AppCompatActivity
         // Retrieve the lobby ID from the intent's extras
         String lobbyId = getIntent().getStringExtra("lobbyId");
 
-        lobby_stats_button = findViewById(R.id.lobby_stats_button);
+        Button lobby_stats_button = findViewById(R.id.lobby_stats_button);
         lobby_stats_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -144,7 +135,6 @@ public class LobbyActivity extends AppCompatActivity
     // ChatGPT usage: NO
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
-        mMap = googleMap;
         if (ActivityCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
@@ -162,7 +152,7 @@ public class LobbyActivity extends AppCompatActivity
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        locationManager =
+        LocationManager locationManager =
                 (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         // Zoom in on the user's current location
@@ -171,7 +161,7 @@ public class LobbyActivity extends AppCompatActivity
         if (lastLocation != null) {
             LatLng userLocation = new LatLng(lastLocation.getLatitude(),
                                              lastLocation.getLongitude());
-            mMap.moveCamera(
+            googleMap.moveCamera(
                     CameraUpdateFactory.newLatLngZoom(userLocation, 13));
         }
 
@@ -188,7 +178,7 @@ public class LobbyActivity extends AppCompatActivity
                         .fillColor(PlayerLobbyStats.lowerAlpha(
                                 playerLobbyStats.color))
                         .geodesic(true);
-                Polygon polygon1 = googleMap.addPolygon(polygonOptions);
+                googleMap.addPolygon(polygonOptions);
             }
         }
     }

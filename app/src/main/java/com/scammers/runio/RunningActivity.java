@@ -33,13 +33,7 @@ public class RunningActivity extends FragmentActivity
 
     private GoogleMap mMap;
 
-    private ActivityRunningBinding binding;
-
-    private LocationManager locationManager;
-
     private PolylineOptions polylineOptions;
-
-    private Button stopActivityButton;
 
     private Button keepRunningButton;
 
@@ -55,7 +49,8 @@ public class RunningActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
         run = new Run(MainActivity.currentPlayer.getPlayerId());
 
-        binding = ActivityRunningBinding.inflate(getLayoutInflater());
+        com.scammers.runio.databinding.ActivityRunningBinding binding =
+                ActivityRunningBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         // Obtain the SupportMapFragment and get notified when the map is
@@ -65,7 +60,7 @@ public class RunningActivity extends FragmentActivity
                         .findFragmentById(R.id.running_map);
         mapFragment.getMapAsync(this);
 
-        stopActivityButton = findViewById(R.id.stop_activity_button);
+        Button stopActivityButton = findViewById(R.id.stop_activity_button);
         stopActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -158,10 +153,10 @@ public class RunningActivity extends FragmentActivity
             return;
         }
         mMap.setMyLocationEnabled(true);
-        locationManager =
+        LocationManager locationManager =
                 (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                                   2500, 0, this);
+                                               2500, 0, this);
         polylineOptions = new PolylineOptions()
                 .width(10)
                 .color(ContextCompat.getColor(this, R.color.gpsBlue));

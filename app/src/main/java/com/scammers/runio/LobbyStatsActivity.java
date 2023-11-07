@@ -29,10 +29,6 @@ public class LobbyStatsActivity extends AppCompatActivity {
 
     final static String TAG = "LobbyStatsActivity";
 
-    private ImageButton profileActivityButton;
-
-    private ImageButton homeActivityButton;
-
     private Button addPlayerButton;
 
     @Override
@@ -40,7 +36,8 @@ public class LobbyStatsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby_stats);
 
-        homeActivityButton = findViewById(R.id.home_button_lobby_stats);
+        ImageButton homeActivityButton =
+                findViewById(R.id.home_button_lobby_stats);
         homeActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,7 +48,7 @@ public class LobbyStatsActivity extends AppCompatActivity {
             }
         });
 
-        profileActivityButton =
+        ImageButton profileActivityButton =
                 findViewById(R.id.profile_image_button_lobby_stats);
         String photoUrl = MainActivity.photoUrlPublic;
         Glide.with(this).load(photoUrl).into(profileActivityButton);

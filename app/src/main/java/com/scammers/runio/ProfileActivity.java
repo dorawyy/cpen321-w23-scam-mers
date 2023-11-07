@@ -28,12 +28,8 @@ import okhttp3.Response;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private ImageButton homeActivityButton;
-
-    private ImageView profilePictureView;
-
     private TextView totalArea;
-    
+
     private TextView totalDistance;
 
     // ChatGPT usage: NO
@@ -42,7 +38,7 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        homeActivityButton = findViewById(R.id.home_button_profile);
+        ImageButton homeActivityButton = findViewById(R.id.home_button_profile);
         homeActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,7 +50,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        profilePictureView = findViewById(R.id.profile_picture_view);
+        ImageView profilePictureView = findViewById(R.id.profile_picture_view);
         String photoUrl = MainActivity.photoUrlPublic;
         Glide.with(this).load(photoUrl).into(profilePictureView);
 

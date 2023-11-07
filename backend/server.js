@@ -83,7 +83,7 @@ app.get("/", (req,res)=>{
 
 // ChatGPT usage: PARTIAL
 app.put('/player/:playerEmail', async (req, res) => {
-  console.log("playerEmail")
+  console.log("playerEmail");
   try {
     const { playerEmail } = req.params;
     const playerData = req.body;

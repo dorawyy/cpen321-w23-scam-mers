@@ -83,8 +83,7 @@ app.get("/", (req,res)=>{
 
 // ChatGPT usage: PARTIAL
 app.put('/player/:playerEmail', async (req, res) => {
-  try {
-    const { playerEmail } = req.params;
+  try {const { playerEmail } = req.params;
     const playerData = req.body;
 
     if (!playerEmail || !playerData) {
@@ -256,9 +255,7 @@ app.put('/lobby/:lobbyId/player/:playerId', async (req, res) => {
     playerStats["color"] = lobby.availableColors.pop(); // check if lobby full or not
     lobby.playerSet[playerId] = playerStats;
 
-    const lobbyResult = await lobbiesCollection.updateOne({ _id: new ObjectId(lobbyId) },
-                              { $set:{playerSet: lobby.playerSet,availableColors:lobby.availableColors}
-                              });
+    const lobbyResult = await lobbiesCollection.updateOne({ _id: new ObjectId(lobbyId) },{ $set:{playerSet: lobby.playerSet,availableColors:lobby.availableColors}});
     const playerResult = await playersCollection.updateOne({ _id: new ObjectId(playerId) }, { $push: { lobbySet: lobbyId} });
 
     return res.status(200).json({message: "Player added"});
@@ -529,10 +526,7 @@ async function updatePlayerStats(playerId, pathArea, pathDist){
     player.totalAreaRan += pathArea;
     player.totalDistanceRan += pathDist;
 
-    const result = await playersCollection.updateOne(
-      { _id: player._id },
-      { $set: {totalAreaRan: player.totalAreaRan,totalDistanceRan: player.totalDistanceRan}
-    });
+    const result = await playersCollection.updateOne({ _id: player._id },{ $set: {totalAreaRan: player.totalAreaRan,totalDistanceRan: player.totalDistanceRan}});
 
     if (result.modifiedCount === 1) {
       console.log("Player stats updated");
@@ -568,12 +562,7 @@ async function updatePlayerLobbyStats(lobbyId, playerId, pathArea, pathDist) {
       // Update the playerSet in the lobby
       lobby.playerSet[playerId] = player;
 
-      const updateLobbyResult = await lobbiesCollection.updateOne(
-        { _id: lobby._id },
-        {
-          $set: {playerSet: lobby.playerSet}
-        }
-      );
+      const updateLobbyResult = await lobbiesCollection.updateOne({ _id: lobby._id },{$set: {playerSet: lobby.playerSet}});
 
       if (updateLobbyResult.modifiedCount === 1) {
         console.log(`Player stats updated in lobby: ${lobbyId}`);

@@ -49,7 +49,7 @@ public class RunningActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
         run = new Run(MainActivity.currentPlayer.getPlayerId());
 
-        com.scammers.runio.databinding.ActivityRunningBinding binding =
+        ActivityRunningBinding binding =
                 ActivityRunningBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 

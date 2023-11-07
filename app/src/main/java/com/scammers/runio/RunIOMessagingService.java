@@ -55,7 +55,7 @@ public class RunIOMessagingService extends FirebaseMessagingService {
                                    @NonNull Response response)
                     throws IOException {
                 if (response.code() != 200) {
-                    throw new RuntimeException(
+                    throw new IOException(
                             "Unable to update FCM Token. Response: " +
                                     response);
                 }

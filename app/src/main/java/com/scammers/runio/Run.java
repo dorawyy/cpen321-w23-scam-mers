@@ -132,7 +132,7 @@ public class Run {
 //                    JSONObject(response.body().string()).getDouble
 //                    ("totalDistanceRan"));
 //                } catch (JSONException e) {
-//                    throw new RuntimeException(e);
+//                    throw new IOException(e);
 //                }
             }
         });

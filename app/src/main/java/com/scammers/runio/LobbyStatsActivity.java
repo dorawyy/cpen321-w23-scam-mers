@@ -162,7 +162,7 @@ public class LobbyStatsActivity extends AppCompatActivity {
 
                     }
                 } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                    throw new IOException(e);
                 }
             }
         });

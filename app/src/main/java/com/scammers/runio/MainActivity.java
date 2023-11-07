@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
                                     RequestBody.create(currentPlayer.toJSON(),
                                                        mediaType);
                         } catch (JSONException e) {
-                            throw new RuntimeException(e);
+                            throw new IOException(e);
                         }
 //                        Log.d(TAG, "request bodyyyy" + requestBody.toString
 //                        ());
@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
                                            .string()).getString("_id"));
                                         RunIOMessagingService.updateToken();
                                     } catch (JSONException e) {
-                                        throw new RuntimeException(e);
+                                        throw new IOException(e);
                                     }
                                     Log.d(TAG, "putting message" +
                                             response);

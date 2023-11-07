@@ -126,7 +126,7 @@ public class LobbyActivity extends AppCompatActivity
                     textView.setText(
                             currentLobby.lobbyName); // The text you want to set
                 } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                    throw new IOException(e);
                 }
             }
         });

@@ -176,8 +176,7 @@ public class AddPlayerActivity extends AppCompatActivity {
                                           }
                                       });
                            } catch (JSONException e) {
-                               throw new RuntimeException(
-                                       e);
+                               throw new IOException(e);
                            }
                        } else {
                            throw new IOException(

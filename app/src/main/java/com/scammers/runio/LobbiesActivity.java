@@ -103,7 +103,7 @@ public class LobbiesActivity extends AppCompatActivity {
 
 
                         } catch (JSONException e) {
-                            throw new RuntimeException(e);
+                            throw new IOException(e);
                         }
                     } else {
                         Log.d(TAG, "Lobby not registered in DB");

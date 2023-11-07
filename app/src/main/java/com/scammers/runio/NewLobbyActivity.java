@@ -138,7 +138,7 @@ public class NewLobbyActivity extends AppCompatActivity {
                                           }
                                       });
                                } catch (JSONException e) {
-                                   throw new RuntimeException(
+                                   throw new IOException(
                                            e);
                                }
                            } else {
@@ -151,8 +151,8 @@ public class NewLobbyActivity extends AppCompatActivity {
                            }
                        }
                    });
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                } catch (JSONException ignored) {
+
                 }
 
                 Toast.makeText(NewLobbyActivity.this,

@@ -83,7 +83,9 @@ app.get("/", (req,res)=>{
 
 // ChatGPT usage: PARTIAL
 app.put('/player/:playerEmail', async (req, res) => {
-  try {const { playerEmail } = req.params;
+  console.log("playerEmail")
+  try {
+    const { playerEmail } = req.params;
     const playerData = req.body;
 
     if (!playerEmail || !playerData) {
@@ -107,6 +109,7 @@ app.put('/player/:playerEmail', async (req, res) => {
 
 // ChatGPT usage: NO
 app.put('/player/:playerId/fcmToken/:fcmToken', async (req, res) => {
+  console.log("FCM TOKEN")
   try {
     const { playerId, fcmToken } = req.params;
 

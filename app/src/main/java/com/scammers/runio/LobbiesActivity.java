@@ -33,6 +33,7 @@ public class LobbiesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobbies);
 
+        if (MainActivity.currentPlayer != null) {
         // Display player lobbies
         for (String lobbyId : MainActivity.currentPlayer.lobbySet) {
             // GET request to get Lobby info
@@ -66,14 +67,16 @@ public class LobbiesActivity extends AppCompatActivity {
                             String lobbyName =
                                     body.getString("lobbyName");
                             Log.d(TAG,
-                              "Creating this Lobby Button: " + lobbyName);
+                                  "Creating this Lobby Button: " +
+                                          lobbyName);
 
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     // Create a new Button
                                     Button button =
-                                        new Button(LobbiesActivity.this);
+                                            new Button(
+                                                    LobbiesActivity.this);
                                     button.setText(lobbyName);
 
                                     // Set any additional properties for the
@@ -86,18 +89,21 @@ public class LobbiesActivity extends AppCompatActivity {
                                     // Add the Button to the parent layout
                                     parentLayout.addView(button);
                                     button.setOnClickListener(
-                                    new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            Intent lobbyIntent =
-                                            new Intent(
-                                            LobbiesActivity.this,
-                                                        LobbyActivity.class);
-                                            lobbyIntent.putExtra(
-                                                    "lobbyId", lobbyId);
-                                            startActivity(lobbyIntent);
-                                        }
-                                    });
+                                            new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(
+                                                        View view) {
+                                                    Intent lobbyIntent =
+                                                            new Intent(
+                                                                    LobbiesActivity.this,
+                                                                    LobbyActivity.class);
+                                                    lobbyIntent.putExtra(
+                                                            "lobbyId",
+                                                            lobbyId);
+                                                    startActivity(
+                                                            lobbyIntent);
+                                                }
+                                            });
                                 }
                             });
 
@@ -110,6 +116,7 @@ public class LobbiesActivity extends AppCompatActivity {
                     }
                 }
             });
+        }
         }
 
         ImageButton homeActivityButton = findViewById(R.id.home_button_lobbies);

@@ -1,9 +1,14 @@
 name: GitHub Actions Backend Unit Tests
 run-name: ${{ github.actor }} is running the backend tests
-on: [push]
+on:
+  push:
+    branches: 
+    - "main"
 jobs:
   Backend-Unit-Tests:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - run: cd ~/backend
+      - run: npm install
       - run: npm test

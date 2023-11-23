@@ -10,7 +10,7 @@
         "spherical-geometry-js": "^3.0.0"
     },
     "scripts": {
-        "test": "ls && node --experimental-vm-modules ./node_modules/.bin/jest --detectOpenHandles --forceExit",
+        "test": "jest --forceExit --detectOpenHandles",
         "test:coverage": "node --experimental-vm-modules ./node_modules/.bin/jest --runInBand --detectOpenHandles --forceExit --coverage"
     },
     "devDependencies": {

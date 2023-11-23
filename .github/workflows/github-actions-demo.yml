@@ -1,9 +1,9 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+name: GitHub Actions Backend Unit Tests
+run-name: ${{ github.actor }} is running the backend tests
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
+  Backend-Unit-Tests:
     runs-on: ubuntu-latest
     steps:
-      - run: cd ../../backend
+      - run: cd backend
       - run: npm test

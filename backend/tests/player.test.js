@@ -164,7 +164,7 @@ describe('Testing PUT Player Endpoint', () => {
   // Expected status code: 500
   // Expected behavior: no change in database
   // Expected output: server error
-  test('PUT player invalid id', async () => {
+  test('PUT player server error', async () => {
     const playerEmail = 'johndoe3@gmail.com';
     const playerData = {
       "lobbySet": [],

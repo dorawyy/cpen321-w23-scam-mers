@@ -42,6 +42,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.UUID;
+
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class AddPlayerToLobbyTest {
@@ -94,9 +96,72 @@ public class AddPlayerToLobbyTest {
                       isDisplayed()));
         materialButton2.perform(click());
 
+        // Create new lobby for adding player
+        //
+        ViewInteraction materialButton3 = onView(
+                allOf(withId(R.id.create_lobby_button), withText("New Lobby"),
+                      childAtPosition(
+                              childAtPosition(
+                                      withId(android.R.id.content),
+                                      0),
+                              1),
+                      isDisplayed()));
+        materialButton3.perform(click());
+
+        ViewInteraction appCompatEditText = onView(
+                allOf(withId(R.id.new_lobby_name_form),
+                      childAtPosition(
+                              childAtPosition(
+                                      withClassName(
+                                              is("androidx.constraintlayout" +
+                                                         ".widget" +
+                                                         ".ConstraintLayout")),
+                                      0),
+                              0),
+                      isDisplayed()));
+        String randomText = UUID.randomUUID().toString();
+        appCompatEditText.perform(replaceText(randomText),
+                                  closeSoftKeyboard());
+
+        ViewInteraction materialButton4 = onView(
+                allOf(withId(R.id.new_lobby_submit_button),
+                      withText("Create Lobby"),
+                      childAtPosition(
+                              childAtPosition(
+                                      withClassName(
+                                              is("androidx.constraintlayout" +
+                                                         ".widget" +
+                                                         ".ConstraintLayout")),
+                                      0),
+                              1),
+                      isDisplayed()));
+        materialButton4.perform(click());
+
+        ViewInteraction appCompatImageButton = onView(
+                allOf(withId(R.id.home_button_lobbies),
+                      childAtPosition(
+                              allOf(withId(R.id.lobbiesConstraintLayout),
+                                    childAtPosition(
+                                            withClassName(
+                                                    is("androidx.constraintlayout.widget.ConstraintLayout")),
+                                            0)),
+                              0),
+                      isDisplayed()));
+        appCompatImageButton.perform(click());
+
+        ViewInteraction materialButton5 = onView(
+                allOf(withId(R.id.lobbies_button_home), withText("Lobbies"),
+                      childAtPosition(
+                              childAtPosition(
+                                      withId(android.R.id.content),
+                                      0),
+                              2),
+                      isDisplayed()));
+        materialButton5.perform(click());
+        //
 
         ViewInteraction button = onView(
-                allOf(withText("TestEspresso"),
+                allOf(withText(randomText),
                       isDisplayed()));
         button.perform(click());
 
@@ -107,7 +172,7 @@ public class AddPlayerToLobbyTest {
                       isDisplayed()));
         button2.check(matches(isDisplayed()));
 
-        ViewInteraction materialButton3 = onView(
+        ViewInteraction materialButton6 = onView(
                 allOf(withId(R.id.lobby_stats_button),
                       withText("View Lobby Stats"),
                       childAtPosition(
@@ -116,7 +181,7 @@ public class AddPlayerToLobbyTest {
                                       0),
                               2),
                       isDisplayed()));
-        materialButton3.perform(click());
+        materialButton6.perform(click());
 
         ViewInteraction button3 = onView(
                 allOf(withId(R.id.add_player_button), withText("Add Player"),
@@ -124,7 +189,7 @@ public class AddPlayerToLobbyTest {
                       isDisplayed()));
         button3.check(matches(isDisplayed()));
 
-        ViewInteraction materialButton4 = onView(
+        ViewInteraction materialButton7 = onView(
                 allOf(withId(R.id.add_player_button), withText("Add Player"),
                       childAtPosition(
                               childAtPosition(
@@ -132,9 +197,9 @@ public class AddPlayerToLobbyTest {
                                       0),
                               2),
                       isDisplayed()));
-        materialButton4.perform(click());
+        materialButton7.perform(click());
 
-        ViewInteraction appCompatEditText = onView(
+        ViewInteraction appCompatEditText2 = onView(
                 allOf(withId(R.id.add_player_form),
                       childAtPosition(
                               childAtPosition(
@@ -145,7 +210,7 @@ public class AddPlayerToLobbyTest {
                                       0),
                               0),
                       isDisplayed()));
-        appCompatEditText.perform(replaceText("mttrashbag@gmail.com"),
+        appCompatEditText2.perform(replaceText("mttrashbag@gmail.com"),
                                   closeSoftKeyboard());
 
         ViewInteraction button4 = onView(
@@ -156,7 +221,7 @@ public class AddPlayerToLobbyTest {
                       isDisplayed()));
         button4.check(matches(isDisplayed()));
 
-        ViewInteraction materialButton5 = onView(
+        ViewInteraction materialButton8 = onView(
                 allOf(withId(R.id.add_player_submit_button),
                       withText("Add Player"),
                       childAtPosition(
@@ -166,7 +231,7 @@ public class AddPlayerToLobbyTest {
                                       0),
                               1),
                       isDisplayed()));
-        materialButton5.perform(click());
+        materialButton8.perform(click());
 
         onView(withText("Added player: mttrashbag@gmail.com"))
                 .inRoot(new ToastMatcher())

@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: cd backend
-      - run: npm install
+      - run: cd backend && npm install
       - run: echo "${{ secrets.FIREBASE_ADMIN_SDK_KEY }}" > ~/backend/runio-401718-firebase-adminsdk-ezjsi-797731a4a0.js
-      - run: npm test
+      - run: cd backend && npm test

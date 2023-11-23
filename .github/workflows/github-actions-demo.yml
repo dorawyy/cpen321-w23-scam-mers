@@ -5,5 +5,5 @@ jobs:
   Backend-Unit-Tests:
     runs-on: ubuntu-latest
     steps:
-      - run: cd backend
+      - run: cd ~/backend
       - run: npm test

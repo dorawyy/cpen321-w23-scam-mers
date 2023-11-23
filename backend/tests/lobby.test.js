@@ -4,8 +4,10 @@ import { app, lobbiesCollection, playersCollection } from '../app.js';
 
 jest.mock('mongodb');
 
+// ChatGPT usage: NO
 // Interface POST /lobby
 describe('Testing POST Lobby Endpoint', () => {
+// ChatGPT usage: NO
   test('Post new lobby', async () => {
     const lobbyLeaderId = "000000000000000000000000"
     const lobbyData = {
@@ -31,7 +33,7 @@ describe('Testing POST Lobby Endpoint', () => {
     expect(response.statusCode).toBe(201);
     expect(response.body).toEqual({message: "Created new lobby", _id: newLobbyId});
   });
-
+// ChatGPT usage: NO
   test('Post new lobby with invalid lobbyData', async () => {
     const mockedInsertOneLobby = jest.fn().mockReturnValue(null);
     const mockedUpdatetOnePlayer = jest.fn().mockReturnValue(null);
@@ -43,7 +45,7 @@ describe('Testing POST Lobby Endpoint', () => {
     expect(response.statusCode).toBe(400);
     expect(response.body).toEqual({ error: 'Insufficient lobby data' });
   });
-
+// ChatGPT usage: NO
   test('Post new lobby with server error', async () => {
     const lobbyLeaderId = "000000000000000000000000"
     const lobbyData = {
@@ -75,8 +77,10 @@ describe('Testing POST Lobby Endpoint', () => {
   });
 });
 
+// ChatGPT usage: NO
 // Interface GET /lobby/:lobbyId
 describe('Testing GET Lobby Endpoint', () => {
+    // ChatGPT usage: NO
     test('Get lobby', async () => {
         const lobbyId = "000000000000000000000000"
         const lobbyData = {
@@ -109,7 +113,7 @@ describe('Testing GET Lobby Endpoint', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body).toEqual(lobbyData);
     });
-
+// ChatGPT usage: NO
     test('Get lobby that does not exist', async () => {
         const lobbyId = "000000000000000000000000"
         const mockedFindOne = jest.fn().mockReturnValue(null);
@@ -118,7 +122,7 @@ describe('Testing GET Lobby Endpoint', () => {
         expect(response.statusCode).toBe(404);
         expect(response.body).toEqual({ error: 'Lobby not found' });
     });
-
+// ChatGPT usage: NO
     test('Get lobby with invalid lobby id', async () => {
         const lobbyId = "00000000000000000000000Z"
         const mockedFindOne = jest.fn().mockReturnValue(null);
@@ -127,7 +131,7 @@ describe('Testing GET Lobby Endpoint', () => {
         expect(response.statusCode).toBe(400);
         expect(response.body).toEqual({ error: 'Lobby Id is invalid' });
     });
-
+// ChatGPT usage: NO
     test('Get lobby with server error', async () => {
         const lobbyId = "000000000000000000000000"
         const mockedFindOne = jest.fn(() => {
@@ -140,8 +144,10 @@ describe('Testing GET Lobby Endpoint', () => {
     });
 });
 
+// ChatGPT usage: NO
 // Interface GET /lobby/:lobbyId/lobbyName
 describe('Testing GET Lobby Name Endpoint', () => {
+    // ChatGPT usage: NO
     test('Get lobby name', async () => {
         const lobbyId = "000000000000000000000000"
         const lobbyData = {
@@ -153,7 +159,7 @@ describe('Testing GET Lobby Name Endpoint', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body).toEqual(lobbyData);
     });
-
+// ChatGPT usage: NO
     test('Get lobby name that does not exist', async () => {
         const lobbyId = "000000000000000000000000"
         const mockedFindOne = jest.fn().mockReturnValue(null);
@@ -162,7 +168,7 @@ describe('Testing GET Lobby Name Endpoint', () => {
         expect(response.statusCode).toBe(404);
         expect(response.body).toEqual({ error: 'Lobby not found' });
     });
-
+// ChatGPT usage: NO
     test('Get lobby name with invalid lobby id', async () => {
         const lobbyId = "00000000000000000000000Z"
         const mockedFindOne = jest.fn().mockReturnValue(null);
@@ -171,7 +177,7 @@ describe('Testing GET Lobby Name Endpoint', () => {
         expect(response.statusCode).toBe(400);
         expect(response.body).toEqual({ error: 'Lobby Id is invalid' });
     });
-
+// ChatGPT usage: NO
     test('Get lobby name with server error', async () => {
         const lobbyId = "000000000000000000000000"
         const mockedFindOne = jest.fn(() => {
@@ -184,8 +190,10 @@ describe('Testing GET Lobby Name Endpoint', () => {
     });
 });
 
+// ChatGPT usage: NO
 // Interface PUT /lobby/:lobbyId/player/:playerId
 describe('Testing PUT Player into a Lobby Endpoint', () => {
+    // ChatGPT usage: NO
     test('Put player into lobby', async () => {
         const lobbyId = "000000000000000000000000"
         const playerId = "000000000000000000000001"
@@ -213,7 +221,7 @@ describe('Testing PUT Player into a Lobby Endpoint', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body).toEqual({message: "Player added"});
     });
-
+// ChatGPT usage: NO
     test('Put player into lobby they are already in', async () => {
         const lobbyId = "000000000000000000000000"
         const playerId = "000000000000000000000001"
@@ -249,7 +257,7 @@ describe('Testing PUT Player into a Lobby Endpoint', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body).toEqual({message: "This player is already a member of this lobby"});
     });
-
+// ChatGPT usage: NO
     test('Put player into lobby with invalid playerStats', async () => {
         const lobbyId = "00000000000000000000000Z"
         const playerId = "0000000000000000000000Z1"
@@ -269,7 +277,7 @@ describe('Testing PUT Player into a Lobby Endpoint', () => {
         expect(response.statusCode).toBe(400);
         expect(response.body).toEqual({ error: 'Missing parameters' });
     });
-
+// ChatGPT usage: NO
     test('Put non-existent player into lobby', async () => {
         const lobbyId = "000000000000000000000000"
         const playerId = "000000000000000000000001"
@@ -297,7 +305,7 @@ describe('Testing PUT Player into a Lobby Endpoint', () => {
         expect(response.statusCode).toBe(404);
         expect(response.body).toEqual({ error: 'Player or lobby not found' });
     });
-
+// ChatGPT usage: NO
     test('Put player into lobby with server error', async () => {
         const lobbyId = "000000000000000000000000"
         const playerId = "000000000000000000000001"

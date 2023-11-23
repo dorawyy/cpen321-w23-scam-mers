@@ -4,8 +4,10 @@ import { app, client, playersCollection, lobbiesCollection } from '../app.js';
 
 jest.mock('mongodb');
 
+// ChatGPT usage: NO
 // Interface POST /player/:playerId/run
 describe('Testing POST Player Run', () => {
+  // ChatGPT usage: NO
   // Input: player run with no old lands
   // Expected status code: 200
   // Expected behavior: player run updated in database
@@ -61,7 +63,7 @@ describe('Testing POST Player Run', () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({ message: "Run seccessfully recorded" });
   });
-
+// ChatGPT usage: NO
   // Input: player run with no old lands
   // Expected status code: 200
   // Expected behavior: player run updated in database
@@ -166,7 +168,7 @@ describe('Testing POST Player Run', () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({ message: "Run seccessfully recorded" });
   });
-
+// ChatGPT usage: NO
   // Input: player run with no old lands
   // Expected status code: 200
   // Expected behavior: player run updated in database
@@ -312,7 +314,7 @@ describe('Testing POST Player Run', () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({ message: "Run seccessfully recorded" });
   });
-
+// ChatGPT usage: NO
   // Input: player run with no old lands
   // Expected status code: 200
   // Expected behavior: player run updated in database
@@ -331,7 +333,7 @@ describe('Testing POST Player Run', () => {
     expect(response.statusCode).toBe(400);
     expect(response.body).toEqual({ error: 'Insufficient player run fields' });
   });
-
+// ChatGPT usage: NO
   // Input: player run with no old lands
   // Expected status code: 200
   // Expected behavior: player run updated in database
@@ -354,7 +356,7 @@ describe('Testing POST Player Run', () => {
     expect(response.statusCode).toBe(500);
     expect(response.body).toEqual({ error: 'Server error' });
   });
-
+// ChatGPT usage: NO
   // Input: player run with no old lands
   // Expected status code: 200
   // Expected behavior: player run updated in database
@@ -504,7 +506,7 @@ describe('Testing POST Player Run', () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({ message: "Run seccessfully recorded" });
   });
-
+// ChatGPT usage: NO
   // Input: player run with no old lands
   // Expected status code: 200
   // Expected behavior: player run updated in database
@@ -565,7 +567,7 @@ describe('Testing POST Player Run', () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({ message: "Run seccessfully recorded" });
   });
-
+// ChatGPT usage: NO
   // Input: player run with no old lands
   // Expected status code: 200
   // Expected behavior: player run updated in database

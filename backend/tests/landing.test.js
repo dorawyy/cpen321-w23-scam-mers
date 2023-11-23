@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { app, } from '../app.js';
 
+// ChatGPT usage: NO
 describe('Testing Server Landing Page', () => {
     test('Welcome message GET /', async () => {
         const response = await request(app).get('/');

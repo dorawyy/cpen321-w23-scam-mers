@@ -5,9 +5,10 @@ import { MongoClient } from 'mongodb';
 
 jest.mock('mongodb');
 
+// ChatGPT usage: NO
 // Interface GET /player/:player
 describe('Testing GET Player Endpoint', () => {
-
+// ChatGPT usage: NO
   // Input: goelsrijan99@gmail.com playerEmail that exists
   // Expected status code: 200
   // Expected behavior: database is unchanged
@@ -30,7 +31,7 @@ describe('Testing GET Player Endpoint', () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual(mockedPlayer);
   });
-
+// ChatGPT usage: NO
   // Input: 65420eab8416de2e55a111b2 playerId that exists
   // Expected status code: 200
   // Expected behavior: database is unchanged
@@ -53,7 +54,7 @@ describe('Testing GET Player Endpoint', () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual(mockedPlayer);
   });
-
+// ChatGPT usage: NO
   // Input: 2a playerId that is not valid
   // Expected status code: 400
   // Expected behavior: database is unchanged
@@ -66,7 +67,7 @@ describe('Testing GET Player Endpoint', () => {
     const response = await request(app).get(`/player/${playerId}`);
     expect(response.statusCode).toBe(400);
   });
-
+// ChatGPT usage: NO
   // Input: something@gamil.com playerEmail that doesn't exist
   // Expected status code: 404
   // Expected behavior: database is unchanged
@@ -79,7 +80,7 @@ describe('Testing GET Player Endpoint', () => {
     const response = await request(app).get(`/player/${playerId}`);
     expect(response.statusCode).toBe(404);
   });
-
+// ChatGPT usage: NO
   // Input: servor error
   // Expected status code: 500
   // Expected behavior: database is unchanged
@@ -97,9 +98,10 @@ describe('Testing GET Player Endpoint', () => {
 
 });
 
+// ChatGPT usage: NO
 // Interface PUT /player/:playerEmail
 describe('Testing PUT Player Endpoint', () => {
-
+// ChatGPT usage: NO
   // Input: johndoe@gmail.com playerEmail that exists
   // Expected status code: 200
   // Expected behavior: player in database updated
@@ -132,7 +134,7 @@ describe('Testing PUT Player Endpoint', () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({message: "Updated existing player"});
   });
-
+// ChatGPT usage: NO
   // Input: johndoe2@gmail.com playerEmail that doesn't exist
   // Expected status code: 201
   // Expected behavior: player added in database
@@ -157,7 +159,7 @@ describe('Testing PUT Player Endpoint', () => {
     expect(response.statusCode).toBe(201);
     expect(response.body).toEqual({message: "Created new player", _id: playerId});
   });
-
+// ChatGPT usage: NO
   // Input: invalid id
   // Expected status code: 500
   // Expected behavior: no change in database
@@ -184,9 +186,10 @@ describe('Testing PUT Player Endpoint', () => {
 
 });
 
+// ChatGPT usage: NO
 // Interface PUT /player/:playerEmail/fcmToken/:fcmToken
 describe('Testing PUT Player FCM Token Endpoint', () => {
-
+// ChatGPT usage: NO
   // Input: 000000000000000000000000 playerId that exists
   // Expected status code: 200
   // Expected behavior: player in database updated
@@ -211,7 +214,7 @@ describe('Testing PUT Player FCM Token Endpoint', () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({message: "Updated player fcmToken"});
   });
-
+// ChatGPT usage: NO
   // Input: 000000000000000000000001 playerId that doesn't exist
   // Expected status code: 404
   // Expected behavior: no change in database
@@ -225,7 +228,7 @@ describe('Testing PUT Player FCM Token Endpoint', () => {
     expect(response.statusCode).toBe(404);
     expect(response.body).toEqual({ error: 'player not found' });
   });
-
+// ChatGPT usage: NO
   // Input: 1 invalid playerId
   // Expected status code: 400
   // Expected behavior: no change in database
@@ -237,7 +240,7 @@ describe('Testing PUT Player FCM Token Endpoint', () => {
     expect(response.statusCode).toBe(400);
     expect(response.body).toEqual({ error: 'Insufficient or invalid player data fields' });
   });
-
+// ChatGPT usage: NO
   // Input: server error
   // Expected status code: 500
   // Expected behavior: no change in database

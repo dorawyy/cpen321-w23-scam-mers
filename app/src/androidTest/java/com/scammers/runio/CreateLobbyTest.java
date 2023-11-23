@@ -5,7 +5,6 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
@@ -19,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
-import androidx.test.espresso.Espresso;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -44,7 +42,7 @@ import org.junit.runner.RunWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class CreateLobbyTest2 {
+public class CreateLobbyTest {
 
     @Rule
     public ActivityScenarioRule<MainActivity> mActivityScenarioRule =
@@ -64,7 +62,7 @@ public class CreateLobbyTest2 {
     }
 
     @Test
-    public void createLobbyTest2() throws UiObjectNotFoundException {
+    public void createLobbyTest() throws UiObjectNotFoundException {
         ViewInteraction id = onView(
                 allOf(withText("Sign in"),
                       childAtPosition(
@@ -77,25 +75,12 @@ public class CreateLobbyTest2 {
                       isDisplayed()));
         id.perform(click());
 
-//        ViewInteraction sign_in_button = Espresso.onView(withId(R.id.sign_in_button));
-//        sign_in_button.perform(click());
-        // Wait for the account picker to appear
         device.wait(Until.hasObject(By.pkg("com.google.android.gms.auth")), 5000);
 
-        // Find and click on the first Google account
         UiObject
                 firstAccount = device.findObject(new UiSelector().resourceId("com.google.android.gms:id/account_display_name").index(0));
         firstAccount.click();
 
-//        ViewInteraction materialButton = onView(
-//                allOf(withId(android.R.id.button1), withText("AGREE"),
-//                      childAtPosition(
-//                              childAtPosition(
-//                                      withClassName(
-//                                              is("android.widget.ScrollView")),
-//                                      0),
-//                              3)));
-//        materialButton.perform(scrollTo(), click());
 
         ViewInteraction button = onView(
                 allOf(withId(R.id.lobbies_button_home), withText("Lobbies"),

@@ -64,7 +64,8 @@ public class AddPlayerToLobbyTest {
     }
 
     @Test
-    public void addPlayerToLobbyTest() throws UiObjectNotFoundException {
+    public void addPlayerToLobbyTest()
+            throws UiObjectNotFoundException, InterruptedException {
         ViewInteraction ic = onView(
                 allOf(withText("Sign in"),
                       childAtPosition(
@@ -79,7 +80,6 @@ public class AddPlayerToLobbyTest {
 
         device.wait(Until.hasObject(By.pkg("com.google.android.gms.auth")), 5000);
 
-        // Find and click on the first Google account
         UiObject
                 firstAccount = device.findObject(new UiSelector().resourceId("com.google.android.gms:id/account_display_name").index(0));
         firstAccount.click();
@@ -94,20 +94,9 @@ public class AddPlayerToLobbyTest {
                       isDisplayed()));
         materialButton2.perform(click());
 
-//        ViewInteraction button = onView(
-//                allOf(withText("Add Player Test"),
-//                      childAtPosition(
-//                              allOf(withId(R.id.lobbiesLinearLayout),
-//                                    childAtPosition(
-//                                            withClassName(
-//                                                    is("androidx.constraintlayout.widget.ConstraintLayout")),
-//                                            2)),
-//                              1),
-//                      isDisplayed()));
-//        button.perform(click());
 
         ViewInteraction button = onView(
-                allOf(withText("Add Player Test"),
+                allOf(withText("TestEspresso"),
                       isDisplayed()));
         button.perform(click());
 
@@ -183,26 +172,6 @@ public class AddPlayerToLobbyTest {
                 .inRoot(new ToastMatcher())
                 .check(matches(isDisplayed()));
 
-//        pressBack();
-//
-//        ViewInteraction materialButton6 = onView(
-//                allOf(withId(R.id.lobby_stats_button),
-//                      withText("View Lobby Stats"),
-//                      childAtPosition(
-//                              childAtPosition(
-//                                      withId(android.R.id.content),
-//                                      0),
-//                              2),
-//                      isDisplayed()));
-//        materialButton6.perform(click());
-//
-//        ViewInteraction textView = onView(
-//                allOf(withText("Area Claimed: 0.00km�\nKilometers ran: 0.00km"),
-//                      withParent(allOf(withId(R.id.lobbyStatsLinearLayout),
-//                                       withParent(IsInstanceOf.<View>instanceOf(
-//                                               android.view.ViewGroup.class)))),
-//                      isDisplayed()));
-//        textView.check(matches(isDisplayed()));
     }
 
     private static Matcher<View> childAtPosition(

@@ -40,6 +40,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.UUID;
+
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class CreateLobbyTest {
@@ -140,7 +142,8 @@ public class CreateLobbyTest {
                                       0),
                               0),
                       isDisplayed()));
-        appCompatEditText.perform(replaceText("TestEspresso"),
+        String randomText = UUID.randomUUID().toString();
+        appCompatEditText.perform(replaceText(randomText),
                                   closeSoftKeyboard());
 
         ViewInteraction materialButton4 = onView(
@@ -180,7 +183,7 @@ public class CreateLobbyTest {
         materialButton5.perform(click());
 
         ViewInteraction button4 = onView(
-                allOf(withText("TESTESPRESSO"),
+                allOf(withText(randomText),
                       withParent(allOf(withId(R.id.lobbiesLinearLayout),
                                        withParent(IsInstanceOf.<View>instanceOf(
                                                android.view.ViewGroup.class)))),

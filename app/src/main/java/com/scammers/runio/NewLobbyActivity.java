@@ -1,6 +1,8 @@
 package com.scammers.runio;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -44,8 +46,26 @@ public class NewLobbyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_lobby);
 
         lobbyNameInput = findViewById(R.id.new_lobby_name_form);
+        lobbyNameInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // No implementation needed
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // Enable the button only if the lobby name is not empty
+                lobbySubmitButton.setEnabled(!charSequence.toString().trim().isEmpty());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                // No implementation needed
+            }
+        });
 
         lobbySubmitButton = findViewById(R.id.new_lobby_submit_button);
+        lobbySubmitButton.setEnabled(false);
         lobbySubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

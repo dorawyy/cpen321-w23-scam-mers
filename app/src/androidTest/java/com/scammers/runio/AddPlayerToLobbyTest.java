@@ -61,6 +61,8 @@ public class AddPlayerToLobbyTest {
     private UiDevice device;
     private int clickCount = 0;
     private int NR_MAX_CLICKS = 5;
+    private String testEmail = "testuser123@gmail.com";
+    private String testName = "Rubinson Julius";
 
     @Before
     public void setUp() {
@@ -193,8 +195,8 @@ public class AddPlayerToLobbyTest {
                                       0),
                               0),
                       isDisplayed()));
-        appCompatEditText2.perform(replaceText("mttrashbag@gmail.com"),
-                                  closeSoftKeyboard());
+        appCompatEditText2.perform(replaceText(testEmail),
+                                   closeSoftKeyboard());
 
         ViewInteraction button4 = onView(
                 allOf(withId(R.id.add_player_submit_button),
@@ -217,9 +219,15 @@ public class AddPlayerToLobbyTest {
         materialButton8.perform(click());
         clickCount++;
 
-        onView(withText("Added player: mttrashbag@gmail.com"))
-                .inRoot(new ToastMatcher())
-                .check(matches(isDisplayed()));
+        ViewInteraction textView = onView(
+                allOf(withText(
+                              testName + "\nArea Claimed: 0.00km²\nKilometers ran: 0.00km"),
+                      withParent(allOf(withId(R.id.lobbyStatsLinearLayout),
+                                       withParent(IsInstanceOf.<View>instanceOf(
+                                               android.view.ViewGroup.class)))),
+                      isDisplayed()));
+        textView.check(matches(withText(
+                testName + "\nArea Claimed: 0.00km²\nKilometers ran: 0.00km")));
 
         assert clickCount <= NR_MAX_CLICKS;
 

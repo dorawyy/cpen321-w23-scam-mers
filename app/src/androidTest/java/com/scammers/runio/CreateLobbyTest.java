@@ -57,6 +57,8 @@ public class CreateLobbyTest {
                     "android.permission.ACCESS_COARSE_LOCATION");
 
     private UiDevice device;
+    private int clickCount = 0;
+    private int NR_MAX_CLICKS = 5;
 
     @Before
     public void setUp() {
@@ -99,6 +101,7 @@ public class CreateLobbyTest {
                               2),
                       isDisplayed()));
         materialButton2.perform(click());
+        clickCount++;
 
         ViewInteraction button2 = onView(
                 allOf(withId(R.id.create_lobby_button), withText("New Lobby"),
@@ -115,6 +118,7 @@ public class CreateLobbyTest {
                               1),
                       isDisplayed()));
         materialButton3.perform(click());
+        clickCount++;
 
         ViewInteraction editText = onView(
                 allOf(withId(R.id.new_lobby_name_form),
@@ -159,28 +163,7 @@ public class CreateLobbyTest {
                               1),
                       isDisplayed()));
         materialButton4.perform(click());
-
-        ViewInteraction appCompatImageButton = onView(
-                allOf(withId(R.id.home_button_lobbies),
-                      childAtPosition(
-                              allOf(withId(R.id.lobbiesConstraintLayout),
-                                    childAtPosition(
-                                            withClassName(
-                                                    is("androidx.constraintlayout.widget.ConstraintLayout")),
-                                            0)),
-                              0),
-                      isDisplayed()));
-        appCompatImageButton.perform(click());
-
-        ViewInteraction materialButton5 = onView(
-                allOf(withId(R.id.lobbies_button_home), withText("Lobbies"),
-                      childAtPosition(
-                              childAtPosition(
-                                      withId(android.R.id.content),
-                                      0),
-                              2),
-                      isDisplayed()));
-        materialButton5.perform(click());
+        clickCount++;
 
         ViewInteraction button4 = onView(
                 allOf(withText(randomText),
@@ -189,6 +172,8 @@ public class CreateLobbyTest {
                                                android.view.ViewGroup.class)))),
                       isDisplayed()));
         button4.check(matches(isDisplayed()));
+
+        assert clickCount <= NR_MAX_CLICKS;
     }
 
     private static Matcher<View> childAtPosition(

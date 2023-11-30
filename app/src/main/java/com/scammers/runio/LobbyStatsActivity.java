@@ -113,9 +113,12 @@ public class LobbyStatsActivity extends AppCompatActivity {
                                 // Create a new TextView
                                 TextView textView =
                                 new TextView(LobbyStatsActivity.this);
-
+                                String playerName = "";
+                                if (playerLobbyStats.playerName != null) {
+                                    playerName = playerLobbyStats.playerName + "\n";
+                                }
                                 // Set text properties
-                                textView.setText("Area Claimed: " +
+                                textView.setText(playerName + "Area Claimed: " +
                                                      df.format(totalArea) +
                                                      "km²\nKilometers " +
                                                      "ran: " +

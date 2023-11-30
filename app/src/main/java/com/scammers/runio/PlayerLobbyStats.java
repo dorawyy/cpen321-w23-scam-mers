@@ -14,6 +14,7 @@ public class PlayerLobbyStats {
 
     private static final int ALPHA_MASK_100 = (100 << 24) | 0xFFFFFF;
 
+    public final String playerName;
     public final double distanceCovered;
 
     public final double totalArea;
@@ -24,6 +25,7 @@ public class PlayerLobbyStats {
 
     // ChatGPT usage: Partial
     public PlayerLobbyStats() {
+        this.playerName = MainActivity.currentPlayer.playerDisplayName;
         this.distanceCovered = 0.0;
         this.totalArea = 0.0;
         this.color = Color.WHITE;
@@ -32,6 +34,7 @@ public class PlayerLobbyStats {
 
     // ChatGPT usage: Partial
     public PlayerLobbyStats(JSONObject playerStatsJSON) throws JSONException {
+        this.playerName = playerStatsJSON.getString("playerName");
         this.distanceCovered = playerStatsJSON.getDouble("distanceCovered");
         this.totalArea = playerStatsJSON.getDouble("totalArea");
         this.color = playerStatsJSON.getInt("color");
@@ -54,6 +57,7 @@ public class PlayerLobbyStats {
     // ChatGPT usage: Partial
     public JSONObject toJSON() throws JSONException {
         JSONObject jsonObject = new JSONObject();
+        jsonObject.put("playerName", playerName);
         jsonObject.put("distanceCovered", distanceCovered);
         jsonObject.put("totalArea", totalArea);
         // intentionally left out color because it should be assigned by the

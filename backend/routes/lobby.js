@@ -78,7 +78,7 @@ router.post('/', async (req, res) => {
       //TODO: support the availableColor stack
       const { lobbyId, playerId } = req.params;
       const playerStats = req.body;
-      const requiredFields = ['distanceCovered', 'totalArea', 'lands'];
+      const requiredFields = ['distanceCovered', 'totalArea', 'lands', 'playerName'];
   
       if (!isValidObjectId(lobbyId) ||
         !isValidObjectId(playerId) ||
@@ -99,6 +99,7 @@ router.post('/', async (req, res) => {
       }
   
       playerStats["color"] = lobby.availableColors.pop(); // check if lobby full or not
+      playerStats["playerName"] = player["playerDisplayName"]
       lobby.playerSet[playerId] = playerStats;
   
       const lobbyResult = await lobbiesCollection.updateOne({ _id: new ObjectId(lobbyId) },{ $set:{playerSet: lobby.playerSet,availableColors:lobby.availableColors}});

@@ -1,7 +1,7 @@
 import {jest} from '@jest/globals'
 import request from 'supertest';
-import { app } from '../app.js';
-import { lobbiesCollection, playersCollection } from '../helpers/mongodb.js';
+import { app } from '../../app.js';
+import { lobbiesCollection, playersCollection } from '../../helpers/mongodb.js';
 
 jest.mock('mongodb');
 
@@ -16,6 +16,7 @@ describe('Testing POST Lobby Endpoint', () => {
     "lobbyLeaderId": lobbyLeaderId,
     "playerSet": {
             [lobbyLeaderId]: {
+            "playerName": "John Doe",
             "distanceCovered": 0.0,
             "totalArea": 0.0,
             "lands": [],
@@ -53,12 +54,13 @@ describe('Testing POST Lobby Endpoint', () => {
     "lobbyName": "Test Lobby",
     "lobbyLeaderId": lobbyLeaderId,
     "playerSet": {
-            [lobbyLeaderId]: {
-            "distanceCovered": 0.0,
-            "totalArea": 0.0,
-            "lands": [],
-            }
+        [lobbyLeaderId]: {
+        "playerName": "John Doe",
+        "distanceCovered": 0.0,
+        "totalArea": 0.0,
+        "lands": [],
         }
+    }
     }
     const newLobbyId = '000000000000000000000001'
 
@@ -199,6 +201,7 @@ describe('Testing PUT Player into a Lobby Endpoint', () => {
         const lobbyId = "000000000000000000000000"
         const playerId = "000000000000000000000001"
         const playerStats = {
+            "playerName": "John Doe",
             "distanceCovered": 0,
             "totalArea": 0,
             "lands": [],
@@ -227,8 +230,9 @@ describe('Testing PUT Player into a Lobby Endpoint', () => {
         const lobbyId = "000000000000000000000000"
         const playerId = "000000000000000000000001"
         const playerStats = {
-            "distanceCovered": 0.0,
-            "totalArea": 0.0,
+            "playerName": "John Doe",
+            "distanceCovered": 0,
+            "totalArea": 0,
             "lands": [],
             "color": -2290138
         };
@@ -283,6 +287,7 @@ describe('Testing PUT Player into a Lobby Endpoint', () => {
         const lobbyId = "000000000000000000000000"
         const playerId = "000000000000000000000001"
         const playerStats = {
+            "playerName": "John Doe",
             "distanceCovered": 0,
             "totalArea": 0,
             "lands": [],
@@ -311,6 +316,7 @@ describe('Testing PUT Player into a Lobby Endpoint', () => {
         const lobbyId = "000000000000000000000000"
         const playerId = "000000000000000000000001"
         const playerStats = {
+            "playerName": "John Doe",
             "distanceCovered": 0,
             "totalArea": 0,
             "lands": [],

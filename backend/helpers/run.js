@@ -17,10 +17,11 @@ export async function updateMapInLobby(playerId, newMap, lobbyId) {
 }
 
 // ChatGPT usage: NO
-function pathToPolygon(path) {
+export function pathToPolygon(path) {
   let pointList = [];
+  const requiredFields = ['latitude', 'longitude'];
   for (let point in path) {
-    if (path[point]["latitude"] && path[point]["longitude"]) {
+    if ('latitude' in path[point] && 'longitude' in path[point]) {
       let lat = path[point]["latitude"];
       let long = path[point]["longitude"];
       pointList.push([lat, long]);

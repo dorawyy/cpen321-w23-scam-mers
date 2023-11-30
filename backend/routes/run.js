@@ -24,7 +24,7 @@ router.post('/player/:playerId', async (req, res) => {
     await updateLobbyMaps(playerId, playerRun);
     await updatePlayerStats(playerId, pathArea, pathDist); // Update personal stats and lobby stats(distance and total area)
     await notifyLobby(playerId);
-    return res.status(200).json({ message: "Run seccessfully recorded" });
+    return res.status(200).json({ message: "Run successfully recorded", area: pathArea, distance: pathDist});
   } catch (error) {
     return res.status(500).json({ error: 'Server error' });
   }

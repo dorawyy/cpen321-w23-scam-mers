@@ -5,6 +5,7 @@ import static com.scammers.runio.MainActivity.client;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,12 +38,21 @@ public class ProfileActivity extends AppCompatActivity {
 
     private TextView totalDistance;
 
+    private GoogleSignInClient mGoogleSignInClient;
+
     // ChatGPT usage: NO
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(
+                GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(
+                        "749392990960-mlcvsjnsc9l7n46i8ppqhmbm86auosoh.apps" +
+                                ".googleusercontent.com")
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         ImageButton homeActivityButton = findViewById(R.id.home_button_profile);
         homeActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,5 +113,27 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        Button signOutButton = findViewById(R.id.button_sign_out);
+        signOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signOut();
+            }
+        });
+
+    }
+
+    private void signOut() {
+        mGoogleSignInClient.signOut()
+                           .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                               @Override
+                               public void onComplete(@NonNull Task<Void> task) {
+                                   Intent mainIntent =
+                                           new Intent(ProfileActivity.this, MainActivity.class);
+                                   mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                   startActivity(mainIntent);
+                                   finish();
+                               }
+                           });
     }
 }

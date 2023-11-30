@@ -13,6 +13,9 @@
     <!--    Lobbies-->
     <string name="create_lobby_button_caption">New Lobby</string>
 
+    <!--    Profile-->
+    <string name="button_sign_out_caption">Sign Out</string>
+
     <!--    NewLobby-->
     <string name="new_lobby_title">Create New Lobby</string>
     <string name="new_lobby_name_form_caption">New Lobby Name</string>

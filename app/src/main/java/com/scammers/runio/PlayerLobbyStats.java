@@ -32,6 +32,14 @@ public class PlayerLobbyStats {
         this.lands = new ArrayList<ArrayList<LatLng>>();
     }
 
+    public PlayerLobbyStats(String playerName) {
+        this.playerName = playerName;
+        this.distanceCovered = 0.0;
+        this.totalArea = 0.0;
+        this.color = Color.WHITE;
+        this.lands = new ArrayList<ArrayList<LatLng>>();
+    }
+
     // ChatGPT usage: Partial
     public PlayerLobbyStats(JSONObject playerStatsJSON) throws JSONException {
         this.playerName = playerStatsJSON.getString("playerName");

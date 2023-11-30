@@ -158,7 +158,6 @@ public class NewLobbyActivity extends AppCompatActivity {
 
                                               resultIntent.setData(
                                                       Uri.parse(lobbyId));
-//                                              resultIntent.putExtra("newLobbyId", lobbyId);
                                               setResult(RESULT_OK, resultIntent);
                                               finish();
                                           }

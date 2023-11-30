@@ -1,5 +1,7 @@
 package com.scammers.runio;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,6 +11,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -116,9 +120,12 @@ public class AddPlayerActivity extends AppCompatActivity {
                                Log.d(TAG,
                                      "Player add url:" +
                                              putPlayerUrl);
+                               Gson gson = new Gson();
+                               String invitedPlayerName = gson.fromJson(responseBody, Player.class).playerDisplayName;
                                PlayerLobbyStats
                                        invitedPlayerStats =
-                                       new PlayerLobbyStats();
+                                       new PlayerLobbyStats(invitedPlayerName);
+
                                RequestBody requestBody =
                                        RequestBody.create(
                                                invitedPlayerStats.toJSON()
@@ -140,6 +147,7 @@ public class AddPlayerActivity extends AppCompatActivity {
                                                   @NonNull
                                                   IOException e) {
                                               e.printStackTrace();
+                                              finish();
                                           }
 
                                           @Override
@@ -167,6 +175,12 @@ public class AddPlayerActivity extends AppCompatActivity {
                                                    .show();
                                                   }
                                                   });
+                                                  Intent resultIntent = new Intent();
+                                                  Log.d(TAG, "INVITED PLAYER: " + gson.toJson(invitedPlayerStats));
+                                                  resultIntent.setData(
+                                                          Uri.parse(gson.toJson(invitedPlayerStats)));
+                                                  setResult(RESULT_OK, resultIntent);
+                                                  finish();
                                               } else {
                                                   // Handle error response
                                                   Log.d(TAG,
@@ -185,9 +199,6 @@ public class AddPlayerActivity extends AppCompatActivity {
                        }
                    }
                });
-
-                // Close add player activity once finished
-                finish();
             }
         });
     }

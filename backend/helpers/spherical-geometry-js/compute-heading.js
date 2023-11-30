@@ -2,23 +2,11 @@ import LatLng from './latlng.js';
 import { convert } from './convert.js';
 import { toRadians, toDegrees } from './utils.js';
 
-/**
- * @param {number} angle
- * @param {number} start
- * @param {number} end
- */
 function fmod(angle, start, end) {
   end -= start;
   return ((((angle - start) % end) + end) % end) + start;
 }
 
-/**
- * Returns the heading from one LatLng to another LatLng. Headings are expressed
- * in degrees clockwise from North within the range [-180, 180).
- * @param {LatLng} from
- * @param {LatLng} to
- * @returns {number}
- */
 export default function computeHeading(from, to) {
   from = convert(from);
   to = convert(to);

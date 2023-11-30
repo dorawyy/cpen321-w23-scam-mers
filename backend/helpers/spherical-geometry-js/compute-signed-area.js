@@ -3,12 +3,6 @@ import { computeDistanceBetweenHelper } from './compute-distance-between.js';
 import LatLng from './latlng.js';
 import { convert } from './convert.js';
 
-/**
- * @param {LatLng} a
- * @param {LatLng} b
- * @param {LatLng} c
- * @returns number
- */
 function sphericalExcess(a, b, c) {
   const polygon = [a, b, c, a];
   const distances = [];
@@ -26,12 +20,6 @@ function sphericalExcess(a, b, c) {
   return 4 * Math.atan(Math.sqrt(Math.abs(tan)));
 }
 
-/**
- * @param {LatLng} a
- * @param {LatLng} b
- * @param {LatLng} c
- * @returns number
- */
 function sphericalSign(a, b, c) {
   const matrix = [a, b, c].map((point) => {
     const lat = toRadians(point.lat());
@@ -54,26 +42,11 @@ function sphericalSign(a, b, c) {
     : -1;
 }
 
-/**
- * @param {LatLng} a
- * @param {LatLng} b
- * @param {LatLng} c
- * @returns number
- */
 function computeSphericalExcess(a, b, c) {
   return sphericalExcess(a, b, c) * sphericalSign(a, b, c);
 }
 
-/**
- * Returns the signed area of a closed path. The signed area may be used to
- * determine the orientation of the path. The computed area uses the same units
- * as the radius. The radius defaults to the Earth's radius in meters, in which
- * case the area is in square meters.
- * @param {LatLngLike[]} loop
- * @param {number} [radius]
- * @returns {number}
- */
-export default function computeSignedArea(loop, radius = EARTH_RADIUS) {
+export default function computeSignedArea(loop, radius) {
   if (loop.length < 3) return 0;
   loop = loop.map((v) => convert(v));
 

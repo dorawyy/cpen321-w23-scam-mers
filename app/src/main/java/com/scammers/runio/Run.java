@@ -101,7 +101,7 @@ public class Run {
         this.path.add(path.get(0));
 
         String url =
-                "https://40.90.192.159:8081/player/" + this.playerId + "/run";
+                "https://40.90.192.159:8081/run/player/" + this.playerId;
         MediaType mediaType =
                 MediaType.parse("application/json; " +
                                         "charset=utf-8");

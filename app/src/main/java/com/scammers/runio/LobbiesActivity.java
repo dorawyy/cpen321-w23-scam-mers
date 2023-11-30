@@ -182,7 +182,6 @@ public class LobbiesActivity extends AppCompatActivity {
                         NewLobbyActivity.class);
 
                 startActivityIntent.launch(newLobbyIntent);
-//                startActivity(newLobbyIntent);
             }
         });
     }

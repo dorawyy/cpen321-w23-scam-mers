@@ -2,6 +2,7 @@ package com.scammers.runio;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -18,6 +19,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.Call;
@@ -36,31 +41,7 @@ public class LobbyStatsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby_stats);
 
-        ImageButton homeActivityButton =
-                findViewById(R.id.home_button_lobby_stats);
-        homeActivityButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent runningIntent =
-                        new Intent(LobbyStatsActivity.this,
-                                   HomeActivity.class);
-                startActivity(runningIntent);
-            }
-        });
-
-        ImageButton profileActivityButton =
-                findViewById(R.id.profile_image_button_lobby_stats);
-        String photoUrl = MainActivity.photoUrlPublic;
-        Glide.with(this).load(photoUrl).into(profileActivityButton);
-        profileActivityButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent profileIntent =
-                        new Intent(LobbyStatsActivity.this,
-                                                  ProfileActivity.class);
-                startActivity(profileIntent);
-            }
-        });
+        createViewButtons();
 
         addPlayerButton = findViewById(R.id.add_player_button);
 
@@ -110,10 +91,11 @@ public class LobbyStatsActivity extends AppCompatActivity {
                                     }
                                 });
                     }
+                    List<Map.Entry<String, PlayerLobbyStats>> playerList = new ArrayList<>(currentLobby.playerMap.entrySet());
+                    playerList.sort((p1, p2) -> Double.compare(p2.getValue().totalArea, p1.getValue().totalArea));
 
-                    //Display playerStats in screen
-                    for (Map.Entry<String, PlayerLobbyStats> entry :
-                            currentLobby.playerMap.entrySet()) {
+                    // Display playerStats in screen
+                    for (Map.Entry<String, PlayerLobbyStats> entry : playerList) {
                         PlayerLobbyStats playerLobbyStats = entry.getValue();
                         double distanceCovered =
                                 playerLobbyStats.distanceCovered;
@@ -164,6 +146,34 @@ public class LobbyStatsActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     throw new IOException(e);
                 }
+            }
+        });
+    }
+
+    private void createViewButtons() {
+        ImageButton homeActivityButton =
+                findViewById(R.id.home_button_lobby_stats);
+        homeActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent runningIntent =
+                        new Intent(LobbyStatsActivity.this,
+                                   HomeActivity.class);
+                startActivity(runningIntent);
+            }
+        });
+
+        ImageButton profileActivityButton =
+                findViewById(R.id.profile_image_button_lobby_stats);
+        String photoUrl = MainActivity.photoUrlPublic;
+        Glide.with(this).load(photoUrl).into(profileActivityButton);
+        profileActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent profileIntent =
+                        new Intent(LobbyStatsActivity.this,
+                                   ProfileActivity.class);
+                startActivity(profileIntent);
             }
         });
     }

@@ -46,7 +46,7 @@ import java.util.UUID;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class AddPlayerToLobbyTest {
+public class ViewLobbyStatsTest {
 
     @Rule
     public ActivityScenarioRule<MainActivity> mActivityScenarioRule =
@@ -61,14 +61,12 @@ public class AddPlayerToLobbyTest {
     private UiDevice device;
     private int clickCount = 0;
     private int NR_MAX_CLICKS = 5;
-
     @Before
     public void setUp() {
         device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
     }
-
     @Test
-    public void addPlayerToLobbyTest()
+    public void viewLobbyStatsTest()
             throws UiObjectNotFoundException, InterruptedException {
         ViewInteraction ic = onView(
                 allOf(withText("Sign in"),
@@ -165,61 +163,13 @@ public class AddPlayerToLobbyTest {
         materialButton6.perform(click());
         clickCount++;
 
-        ViewInteraction button3 = onView(
-                allOf(withId(R.id.add_player_button), withText("Add Player"),
-                      withParent(withParent(withId(android.R.id.content))),
+        ViewInteraction textView = onView(
+                allOf(withText("Area Claimed: 0.00km²\nKilometers ran: 0.00km"),
+                      withParent(allOf(withId(R.id.lobbyStatsLinearLayout),
+                                       withParent(IsInstanceOf.<View>instanceOf(
+                                               android.view.ViewGroup.class)))),
                       isDisplayed()));
-        button3.check(matches(isDisplayed()));
-
-        ViewInteraction materialButton7 = onView(
-                allOf(withId(R.id.add_player_button), withText("Add Player"),
-                      childAtPosition(
-                              childAtPosition(
-                                      withId(android.R.id.content),
-                                      0),
-                              2),
-                      isDisplayed()));
-        materialButton7.perform(click());
-        clickCount++;
-
-        ViewInteraction appCompatEditText2 = onView(
-                allOf(withId(R.id.add_player_form),
-                      childAtPosition(
-                              childAtPosition(
-                                      withClassName(
-                                              is("androidx.constraintlayout" +
-                                                         ".widget" +
-                                                         ".ConstraintLayout")),
-                                      0),
-                              0),
-                      isDisplayed()));
-        appCompatEditText2.perform(replaceText("mttrashbag@gmail.com"),
-                                  closeSoftKeyboard());
-
-        ViewInteraction button4 = onView(
-                allOf(withId(R.id.add_player_submit_button),
-                      withText("Add Player"),
-                      withParent(withParent(IsInstanceOf.<View>instanceOf(
-                              android.view.ViewGroup.class))),
-                      isDisplayed()));
-        button4.check(matches(isDisplayed()));
-
-        ViewInteraction materialButton8 = onView(
-                allOf(withId(R.id.add_player_submit_button),
-                      withText("Add Player"),
-                      childAtPosition(
-                              childAtPosition(
-                                      withClassName(
-                                              is("androidx.constraintlayout.widget.ConstraintLayout")),
-                                      0),
-                              1),
-                      isDisplayed()));
-        materialButton8.perform(click());
-        clickCount++;
-
-        onView(withText("Added player: mttrashbag@gmail.com"))
-                .inRoot(new ToastMatcher())
-                .check(matches(isDisplayed()));
+        textView.check(matches(isDisplayed()));
 
         assert clickCount <= NR_MAX_CLICKS;
 

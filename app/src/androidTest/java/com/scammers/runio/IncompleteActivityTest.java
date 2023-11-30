@@ -50,6 +50,8 @@ public class IncompleteActivityTest {
                     "android.permission.ACCESS_COARSE_LOCATION");
 
     private UiDevice device;
+    private int clickCount = 0;
+    private int NR_MAX_CLICKS = 5;
 
     @Before
     public void setUp() {
@@ -70,6 +72,7 @@ public class IncompleteActivityTest {
                               0),
                       isDisplayed()));
         id.perform(click());
+        clickCount++;
 
         // Wait for the account picker to appear
         device.wait(Until.hasObject(By.pkg("com.google.android.gms.auth")), 5000);
@@ -89,6 +92,7 @@ public class IncompleteActivityTest {
                               0),
                       isDisplayed()));
         materialButton2.perform(click());
+        clickCount++;
 
         ViewInteraction button = onView(
                 allOf(withId(R.id.stop_activity_button),
@@ -101,12 +105,15 @@ public class IncompleteActivityTest {
                               3),
                       isDisplayed()));
         button.perform(click());
+        clickCount++;
 
         ViewInteraction linearLayout = onView(
                 allOf(withParent(withParent(IsInstanceOf.<View>instanceOf(
                               android.widget.FrameLayout.class))),
                       isDisplayed()));
         linearLayout.check(matches(isDisplayed()));
+
+        assert clickCount <= NR_MAX_CLICKS;
     }
 
     private static Matcher<View> childAtPosition(

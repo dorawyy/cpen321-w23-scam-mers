@@ -1,5 +1,7 @@
 package com.scammers.runio;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,7 +28,7 @@ import okhttp3.Response;
 
 public class NewLobbyActivity extends AppCompatActivity {
 
-    final static String TAG = "NewLobby";
+    final static String TAG = "NewLobbyActivity";
 
     final static String CREATE_LOBBY_URL = "https://40.90.192.159:8081/lobby/";
 
@@ -106,8 +108,8 @@ public class NewLobbyActivity extends AppCompatActivity {
                                    new JSONObject(
                                        response.body()
                                                .string());
-                                   MainActivity.currentPlayer.lobbySet.add(
-                                   resBody.getString("_id"));
+                                   String lobbyId = resBody.getString("_id");
+                                   MainActivity.currentPlayer.lobbySet.add(lobbyId);
 
                                    RequestBody requestBody =
                                            RequestBody.create(
@@ -130,6 +132,7 @@ public class NewLobbyActivity extends AppCompatActivity {
                                                       Call call,
                                                       IOException e) {
                                                   e.printStackTrace();
+                                                  finish();
                                               }
 
                                               @Override
@@ -141,8 +144,23 @@ public class NewLobbyActivity extends AppCompatActivity {
                                                   throws
                                                   IOException {
                                               Log.d(TAG,
-                                                "Successfully added new" +
-                                                " lobby to player lobby set");
+                                                "Successfully added new lobby to player lobby set. lobbyId: " + lobbyId);
+                                              runOnUiThread(new Runnable() {
+                                                  @Override
+                                                  public void run() {
+                                                      Toast.makeText(
+                                                              NewLobbyActivity.this,
+                                                              "Created new lobby: " + newLobbyName,
+                                                              Toast.LENGTH_LONG).show();
+                                                  }
+                                              });
+                                              Intent resultIntent = new Intent();
+
+                                              resultIntent.setData(
+                                                      Uri.parse(lobbyId));
+//                                              resultIntent.putExtra("newLobbyId", lobbyId);
+                                              setResult(RESULT_OK, resultIntent);
+                                              finish();
                                           }
                                       });
                                } catch (JSONException e) {
@@ -158,12 +176,6 @@ public class NewLobbyActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     Log.d(TAG, "Error in creating JSON");
                 }
-
-                Toast.makeText(NewLobbyActivity.this,
-                               "Created new lobby: " + newLobbyName,
-                               Toast.LENGTH_LONG).show();
-
-                finish();
             }
         });
     }

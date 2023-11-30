@@ -1,6 +1,8 @@
 package com.scammers.runio;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -8,6 +10,10 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -27,98 +33,119 @@ public class LobbiesActivity extends AppCompatActivity {
 
     final static String TAG = "LobbiesActivity";
 
+    ActivityResultLauncher<Intent> startActivityIntent = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    String newLobbyId = result.getData().getDataString();
+                    createLobbyButton(newLobbyId);
+                }
+            }
+    );
+
     // ChatGPT usage: NO
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobbies);
 
+        createLobbyList();
+        createViewButtons();
+    }
+
+    private void createLobbyList() {
         if (MainActivity.currentPlayer != null) {
-        // Display player lobbies
-        for (String lobbyId : MainActivity.currentPlayer.lobbySet) {
-            // GET request to get Lobby info
-            String url = "https://40.90.192.159:8081/lobby/" + lobbyId +
-                    "/lobbyName";
-            Request getLobby = new Request.Builder()
-                    .url(url)
-                    .build();
-            MainActivity.client.newCall(getLobby).enqueue(new Callback() {
-                @Override
-                public void onFailure(@NonNull Call call,
-                                      @NonNull IOException e) {
-                    e.printStackTrace();
-                }
+            // Display player lobbies
+            for (String lobbyId : MainActivity.currentPlayer.lobbySet) {
+                createLobbyButton(lobbyId);
+            }
+        }
+    }
 
-                @Override
-                public void onResponse(@NonNull Call call,
-                                       @NonNull Response response)
-                        throws IOException {
-                    if (response.code() == 200) {
-                        String responseBody = response.body().string();
-                        JSONObject body = null;
-                        try {
-                            body = new JSONObject(responseBody);
+    private void createLobbyButton(String lobbyId) {
+        // GET request to get Lobby info
+        String url = "https://40.90.192.159:8081/lobby/" + lobbyId +
+                "/lobbyName";
+        Request getLobby = new Request.Builder()
+                .url(url)
+                .build();
+        MainActivity.client.newCall(getLobby).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call,
+                                  @NonNull IOException e) {
+                e.printStackTrace();
+            }
 
-                            // TODO Now display it
-                            LinearLayout parentLayout = findViewById(
-                                    R.id.lobbiesLinearLayout); // Replace
-                            // with your parent layout ID
+            @Override
+            public void onResponse(@NonNull Call call,
+                                   @NonNull Response response)
+                    throws IOException {
+                if (response.code() == 200) {
+                    String responseBody = response.body().string();
+                    JSONObject body = null;
+                    try {
+                        body = new JSONObject(responseBody);
 
-                            String lobbyName =
-                                    body.getString("lobbyName");
-                            Log.d(TAG,
-                                  "Creating this Lobby Button: " +
-                                          lobbyName);
+                        // TODO Now display it
+                        LinearLayout parentLayout = findViewById(
+                                R.id.lobbiesLinearLayout); // Replace
+                        // with your parent layout ID
 
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    // Create a new Button
-                                    Button button =
-                                            new Button(
-                                                    LobbiesActivity.this);
-                                    button.setText(lobbyName);
+                        String lobbyName =
+                                body.getString("lobbyName");
+                        Log.d(TAG,
+                              "Creating this Lobby Button: " +
+                                      lobbyName);
 
-                                    // Set any additional properties for the
-                                    // Button as needed
-                                    // button.setLayoutParams(new
-                                    // LinearLayout.LayoutParams(LinearLayout
-                                    // .LayoutParams.WRAP_CONTENT,
-                                    // LinearLayout.LayoutParams.WRAP_CONTENT));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Create a new Button
+                                Button button =
+                                        new Button(
+                                                LobbiesActivity.this);
+                                button.setText(lobbyName);
 
-                                    // Add the Button to the parent layout
-                                    parentLayout.addView(button);
-                                    button.setOnClickListener(
-                                            new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(
-                                                        View view) {
-                                                    Intent lobbyIntent =
-                                                            new Intent(
-                                                                    LobbiesActivity.this,
-                                                                    LobbyActivity.class);
-                                                    lobbyIntent.putExtra(
-                                                            "lobbyId",
-                                                            lobbyId);
-                                                    startActivity(
-                                                            lobbyIntent);
-                                                }
-                                            });
-                                }
-                            });
+                                // Set any additional properties for the
+                                // Button as needed
+                                // button.setLayoutParams(new
+                                // LinearLayout.LayoutParams(LinearLayout
+                                // .LayoutParams.WRAP_CONTENT,
+                                // LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                                // Add the Button to the parent layout
+                                parentLayout.addView(button);
+                                button.setOnClickListener(
+                                        new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(
+                                                    View view) {
+                                                Intent lobbyIntent =
+                                                        new Intent(
+                                                                LobbiesActivity.this,
+                                                                LobbyActivity.class);
+                                                lobbyIntent.putExtra(
+                                                        "lobbyId",
+                                                        lobbyId);
+                                                startActivity(
+                                                        lobbyIntent);
+                                            }
+                                        });
+                            }
+                        });
 
 
-                        } catch (JSONException e) {
-                            throw new IOException(e);
-                        }
-                    } else {
-                        Log.d(TAG, "Lobby not registered in DB");
+                    } catch (JSONException e) {
+                        throw new IOException(e);
                     }
+                } else {
+                    Log.d(TAG, "Lobby not registered in DB");
                 }
-            });
-        }
-        }
+            }
+        });
+    }
 
+    private void createViewButtons() {
         ImageButton homeActivityButton = findViewById(R.id.home_button_lobbies);
         homeActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,9 +178,11 @@ public class LobbiesActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent newLobbyIntent = new Intent(
-                            LobbiesActivity.this,
-                                         NewLobbyActivity.class);
-                startActivity(newLobbyIntent);
+                        LobbiesActivity.this,
+                        NewLobbyActivity.class);
+
+                startActivityIntent.launch(newLobbyIntent);
+//                startActivity(newLobbyIntent);
             }
         });
     }

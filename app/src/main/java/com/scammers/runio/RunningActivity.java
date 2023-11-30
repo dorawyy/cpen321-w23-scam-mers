@@ -1,6 +1,7 @@
 package com.scammers.runio;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -47,7 +48,7 @@ public class RunningActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        run = new Run(MainActivity.currentPlayer.getPlayerId());
+        run = new Run(MainActivity.currentPlayer.getPlayerId(), RunningActivity.this);
 
         ActivityRunningBinding binding =
                 ActivityRunningBinding.inflate(getLayoutInflater());

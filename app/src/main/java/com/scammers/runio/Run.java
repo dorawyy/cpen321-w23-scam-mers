@@ -1,5 +1,9 @@
 package com.scammers.runio;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -7,7 +11,11 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import okhttp3.Call;
@@ -18,6 +26,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class Run {
+
+    private final Context context;
 
     private final String playerId;
 
@@ -31,10 +41,15 @@ public class Run {
 
     ArrayList<LatLng> path;
 
+    double distanceRan;
+
+    double areaRan;
+
     // ChatGPT usage: NO
-    public Run(String playerId) {
+    public Run(String playerId, Context context) {
         this.playerId = playerId;
         this.path = new ArrayList<LatLng>();
+        this.context = context;
     }
 
     // ChatGPT usage: NO
@@ -124,8 +139,24 @@ public class Run {
             public void onResponse(@NonNull Call call,
                                    @NonNull Response response)
                     throws IOException {
-                Log.d("Run", "run response:" +
-                        response.body().string());
+                String responseBody = response.body().string();
+                try {
+                    JSONObject jsonObject = new JSONObject(responseBody);
+                    DecimalFormat df = new DecimalFormat("#.##");
+                    areaRan = Double.parseDouble(df.format(jsonObject.getDouble("area")));
+                    distanceRan = Double.parseDouble(df.format(jsonObject.getDouble("distance")));
+                    Log.d("Run", "run response:" + responseBody);
+                    Log.d("Run", "Area ran: " + areaRan + " km², Distance ran: " + distanceRan + " km");
+                    Intent finishIntent = new Intent(context, FinishActivity.class);
+                    finishIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    finishIntent.putParcelableArrayListExtra("path", path);
+                    finishIntent.putExtra("distanceRan", distanceRan);
+                    finishIntent.putExtra("areaRan", areaRan);
+                    context.startActivity(finishIntent);
+                } catch (JSONException e) {
+                    Log.e("Run", "Error parsing JSON", e);
+                    throw new RuntimeException(e);
+                }
             }
         });
 

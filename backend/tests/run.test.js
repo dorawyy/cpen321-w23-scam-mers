@@ -1,6 +1,7 @@
 import {jest} from '@jest/globals'
 import request from 'supertest';
-import { app, client, playersCollection, lobbiesCollection } from '../app.js';
+import { app } from '../app.js';
+import { lobbiesCollection, playersCollection } from '../helpers/mongodb.js';
 
 jest.mock('mongodb');
 
@@ -59,7 +60,7 @@ describe('Testing POST Player Run', () => {
     // jest.spyOn(playersCollection, 'findOne').mockImplementation(mockedFindOne);
     
 
-    const response = await request(app).post(`/player/${playerId}/run/`).send(playerRun);
+    const response = await request(app).post(`/run/player/${playerId}`).send(playerRun);
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({ message: "Run seccessfully recorded" });
   });
@@ -164,7 +165,7 @@ describe('Testing POST Player Run', () => {
     // jest.spyOn(playersCollection, 'findOne').mockImplementation(mockedFindOne);
     
 
-    const response = await request(app).post(`/player/${playerId}/run/`).send(playerRun);
+    const response = await request(app).post(`/run/player/${playerId}`).send(playerRun);
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({ message: "Run seccessfully recorded" });
   });
@@ -310,7 +311,7 @@ describe('Testing POST Player Run', () => {
     const mockedFindOneLobby = jest.fn().mockReturnValue(mockedLobby);
     jest.spyOn(playersCollection, 'findOne').mockImplementation(mockedFindOne);
     jest.spyOn(lobbiesCollection, 'findOne').mockImplementation(mockedFindOneLobby);
-    const response = await request(app).post(`/player/${playerId}/run/`).send(playerRun);
+    const response = await request(app).post(`/run/player/${playerId}`).send(playerRun);
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({ message: "Run seccessfully recorded" });
   });
@@ -329,7 +330,7 @@ describe('Testing POST Player Run', () => {
         {"latitude":49.270328333333325,"longitude":-123.25435166666666},
         {"latitude":49.270316666666666,"longitude":-123.25431333333333}
     ]
-    const response = await request(app).post(`/player/${playerId}/run/`).send(playerRun);
+    const response = await request(app).post(`/run/player/${playerId}`).send(playerRun);
     expect(response.statusCode).toBe(400);
     expect(response.body).toEqual({ error: 'Insufficient player run fields' });
   });
@@ -352,7 +353,7 @@ describe('Testing POST Player Run', () => {
         throw new Error('Mocked error');
     });
     jest.spyOn(playersCollection, 'findOne').mockImplementation(mockedFindOne);
-    const response = await request(app).post(`/player/${playerId}/run/`).send(playerRun);
+    const response = await request(app).post(`/run/player/${playerId}`).send(playerRun);
     expect(response.statusCode).toBe(500);
     expect(response.body).toEqual({ error: 'Server error' });
   });
@@ -502,7 +503,7 @@ describe('Testing POST Player Run', () => {
     jest.spyOn(lobbiesCollection, 'updateOne').mockImplementation(mockedUpdateOne);
     jest.spyOn(playersCollection, 'findOne').mockImplementation(mockedFindOne);
     jest.spyOn(lobbiesCollection, 'findOne').mockImplementation(mockedFindOneLobby);
-    const response = await request(app).post(`/player/${playerId}/run/`).send(playerRun);
+    const response = await request(app).post(`/run/player/${playerId}`).send(playerRun);
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({ message: "Run seccessfully recorded" });
   });
@@ -563,7 +564,7 @@ describe('Testing POST Player Run', () => {
     jest.spyOn(lobbiesCollection, 'updateOne').mockImplementation(mockedUpdateOne);
     jest.spyOn(playersCollection, 'findOne').mockImplementation(mockedFindOne);
     jest.spyOn(lobbiesCollection, 'findOne').mockImplementation(mockedFindOneLobby);
-    const response = await request(app).post(`/player/${playerId}/run/`).send(playerRun);
+    const response = await request(app).post(`/run/player/${playerId}`).send(playerRun);
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({ message: "Run seccessfully recorded" });
   });
@@ -614,7 +615,7 @@ describe('Testing POST Player Run', () => {
     jest.spyOn(lobbiesCollection, 'updateOne').mockImplementation(mockedUpdateOne);
     jest.spyOn(playersCollection, 'findOne').mockImplementation(mockedFindOne);
     jest.spyOn(lobbiesCollection, 'findOne').mockImplementation(mockedFindOneLobby);
-    const response = await request(app).post(`/player/${playerId}/run/`).send(playerRun);
+    const response = await request(app).post(`/run/player/${playerId}`).send(playerRun);
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({ message: "Run seccessfully recorded" });
   });

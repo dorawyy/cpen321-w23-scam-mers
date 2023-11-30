@@ -1,6 +1,8 @@
 import * as https from "https";
 import * as fs from "fs";
-import { app, client } from './app.js'
+import express from "express";
+import { client } from './helpers/mongodb.js'
+import { app } from "./app.js";
 
 // ChatGPT usage: YES
 const options = {
@@ -14,6 +16,14 @@ async function run(port){
   try{
     await client.connect();
     console.log('Successfully Connected to MongoDB');
+    // var app = express();
+
+    // app.use('/lobby', lobbyRoutes);
+    // app.use('/run', runRoutes);
+    // app.use('/player', playerRoutes);
+    // app.use('/', landingRoutes);
+    
+
     const server = https.createServer(options, app); // Use HTTPS server here
     server.listen(port, () => { // Listen on the default HTTPS port (443)
       var host = server.address().address;

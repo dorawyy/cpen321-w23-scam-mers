@@ -1,7 +1,7 @@
 import {jest} from '@jest/globals'
 import request from 'supertest';
-import { app, client, playersCollection } from '../app.js';
-import { MongoClient } from 'mongodb';
+import { app } from '../app.js';
+import { playersCollection } from '../helpers/mongodb.js';
 
 jest.mock('mongodb');
 

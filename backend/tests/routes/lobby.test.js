@@ -209,7 +209,7 @@ describe('Testing PUT Player into a Lobby Endpoint', () => {
         };
 
         const lobbyData = {playerSet: {}, availableColors: [-2290138]}
-        const playerData = {lobbySet: {}}
+        const playerData = {lobbySet: []}
 
         const mockedFindOneLobby = jest.fn().mockReturnValue(lobbyData);
         const mockedFindOnePlayer = jest.fn().mockReturnValue(playerData);
@@ -345,6 +345,173 @@ describe('Testing PUT Player into a Lobby Endpoint', () => {
         const response = await request(app)
         .put(`/lobby/${lobbyId}/player/${playerId}`)
         .send(playerStats)
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toEqual({ error: 'Server error' });
+    });
+});
+
+// ChatGPT usage: NO
+// Interface DELETE /lobby/:lobbyId/player/:playerId
+describe('Testing DELETE Player from a Lobby Endpoint', () => {
+    // ChatGPT usage: NO
+    test('Delete player from lobby', async () => {
+        const lobbyId = "000000000000000000000000"
+        const playerId = "000000000000000000000001"
+        const lobbyLeaderId = "000000000000000000000002"
+
+        const lobbyData = {
+            lobbyLeaderId: lobbyLeaderId, 
+            playerSet: {
+                "000000000000000000000001": {color: 1000}, 
+                "000000000000000000000002": {color: 2000}}, 
+            availableColors: [-2290138]}
+        const playerData = {lobbySet: ["000000000000000000000000"]}
+
+        const mockedFindOneLobby = jest.fn().mockReturnValue(lobbyData);
+        const mockedFindOnePlayer = jest.fn().mockReturnValue(playerData);
+        const mockedUpdateOneLobby = jest.fn().mockReturnValue(null);
+        const mockedUpdateOnePlayer = jest.fn().mockReturnValue(null);
+        jest.spyOn(lobbiesCollection, 'findOne').mockImplementation(mockedFindOneLobby);
+        jest.spyOn(playersCollection, 'findOne').mockImplementation(mockedFindOnePlayer);
+        jest.spyOn(lobbiesCollection, 'updateOne').mockImplementation(mockedUpdateOneLobby);
+        jest.spyOn(playersCollection, 'updateOne').mockImplementation(mockedUpdateOnePlayer);
+        const response = await request(app)
+        .delete(`/lobby/${lobbyId}/player/${playerId}`)
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toEqual({message: "Player removed"});
+    });
+// ChatGPT usage: NO
+    test('Delete player from lobby they are not in', async () => {
+        const lobbyId = "000000000000000000000000"
+        const playerId = "000000000000000000000001"
+        const lobbyLeaderId = "000000000000000000000002"
+
+        const lobbyData = {
+            lobbyLeaderId: lobbyLeaderId, 
+            playerSet: {
+                "000000000000000000000002": {color: 2000}}, 
+            availableColors: [-2290138]}
+        const playerData = {lobbySet: []}
+
+        const mockedFindOneLobby = jest.fn().mockReturnValue(lobbyData);
+        const mockedFindOnePlayer = jest.fn().mockReturnValue(playerData);
+        const mockedUpdateOneLobby = jest.fn().mockReturnValue(null);
+        const mockedUpdateOnePlayer = jest.fn().mockReturnValue(null);
+        jest.spyOn(lobbiesCollection, 'findOne').mockImplementation(mockedFindOneLobby);
+        jest.spyOn(playersCollection, 'findOne').mockImplementation(mockedFindOnePlayer);
+        jest.spyOn(lobbiesCollection, 'updateOne').mockImplementation(mockedUpdateOneLobby);
+        jest.spyOn(playersCollection, 'updateOne').mockImplementation(mockedUpdateOnePlayer);
+        const response = await request(app)
+        .delete(`/lobby/${lobbyId}/player/${playerId}`)
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toEqual({message: "This player is not a member of the lobby"});
+    });
+// ChatGPT usage: NO
+    test('Delete player from lobby with invalid lobbyId', async () => {
+        const lobbyId = "00000000000000000000000Z"
+        const playerId = "000000000000000000000001"
+        const lobbyLeaderId = "000000000000000000000002"
+
+        const lobbyData = {
+            lobbyLeaderId: lobbyLeaderId, 
+            playerSet: {
+                "000000000000000000000001": {color: 1000}, 
+                "000000000000000000000002": {color: 2000}}, 
+            availableColors: [-2290138]}
+        const playerData = {lobbySet: ["000000000000000000000000"]}
+
+        const mockedFindOneLobby = jest.fn().mockReturnValue(null);
+        const mockedFindOnePlayer = jest.fn().mockReturnValue(null);
+        const mockedUpdateOneLobby = jest.fn().mockReturnValue(null);
+        const mockedUpdateOnePlayer = jest.fn().mockReturnValue(null);
+        jest.spyOn(lobbiesCollection, 'findOne').mockImplementation(mockedFindOneLobby);
+        jest.spyOn(playersCollection, 'findOne').mockImplementation(mockedFindOnePlayer);
+        jest.spyOn(lobbiesCollection, 'updateOne').mockImplementation(mockedUpdateOneLobby);
+        jest.spyOn(playersCollection, 'updateOne').mockImplementation(mockedUpdateOnePlayer);
+        const response = await request(app)
+        .delete(`/lobby/${lobbyId}/player/${playerId}`)
+        expect(response.statusCode).toBe(400);
+        expect(response.body).toEqual({ error: 'Missing parameters' });
+    });
+
+    // ChatGPT usage: NO
+    test('Delete lobby leader from lobby', async () => {
+        const lobbyId = "000000000000000000000000"
+        const playerId = "000000000000000000000001"
+        const lobbyLeaderId = "000000000000000000000002"
+
+        const lobbyData = {
+            lobbyLeaderId: lobbyLeaderId, 
+            playerSet: {
+                "000000000000000000000001": {color: 1000}, 
+                "000000000000000000000002": {color: 2000}}, 
+            availableColors: [-2290138]}
+        const playerData = {lobbySet: ["000000000000000000000000"]}
+
+        const mockedFindOneLobby = jest.fn().mockReturnValue(lobbyData);
+        const mockedFindOnePlayer = jest.fn().mockReturnValue(playerData);
+        const mockedUpdateOneLobby = jest.fn().mockReturnValue(null);
+        const mockedUpdateOnePlayer = jest.fn().mockReturnValue(null);
+        jest.spyOn(lobbiesCollection, 'findOne').mockImplementation(mockedFindOneLobby);
+        jest.spyOn(playersCollection, 'findOne').mockImplementation(mockedFindOnePlayer);
+        jest.spyOn(lobbiesCollection, 'updateOne').mockImplementation(mockedUpdateOneLobby);
+        jest.spyOn(playersCollection, 'updateOne').mockImplementation(mockedUpdateOnePlayer);
+        const response = await request(app)
+        .delete(`/lobby/${lobbyId}/player/${lobbyLeaderId}`)
+        expect(response.statusCode).toBe(400);
+        expect(response.body).toEqual({error: "Removing lobby leader is not supported"});
+    });
+// ChatGPT usage: NO
+    test('Delete non-existent player from lobby', async () => {
+        const lobbyId = "000000000000000000000000"
+        const playerId = "000000000000000000000001"
+        const lobbyLeaderId = "000000000000000000000002"
+
+        const lobbyData = {
+            lobbyLeaderId: lobbyLeaderId, 
+            playerSet: {
+                "000000000000000000000001": {color: 1000}, 
+                "000000000000000000000002": {color: 2000}}, 
+            availableColors: [-2290138]}
+        const playerData = {lobbySet: ["000000000000000000000000"]}
+
+        const mockedFindOneLobby = jest.fn().mockReturnValue(null);
+        const mockedFindOnePlayer = jest.fn().mockReturnValue(null);
+        const mockedUpdateOneLobby = jest.fn().mockReturnValue(null);
+        const mockedUpdateOnePlayer = jest.fn().mockReturnValue(null);
+        jest.spyOn(lobbiesCollection, 'findOne').mockImplementation(mockedFindOneLobby);
+        jest.spyOn(playersCollection, 'findOne').mockImplementation(mockedFindOnePlayer);
+        jest.spyOn(lobbiesCollection, 'updateOne').mockImplementation(mockedUpdateOneLobby);
+        jest.spyOn(playersCollection, 'updateOne').mockImplementation(mockedUpdateOnePlayer);
+        const response = await request(app)
+        .delete(`/lobby/${lobbyId}/player/${playerId}`)
+        expect(response.statusCode).toBe(404);
+        expect(response.body).toEqual({ error: 'Player or lobby not found' });
+    });
+// ChatGPT usage: NO
+    test('Delete player from lobby with server error', async () => {
+        const lobbyId = "000000000000000000000000"
+        const playerId = "000000000000000000000001"
+        const lobbyLeaderId = "000000000000000000000002"
+
+        const mockedFindOneLobby = jest.fn(() => {
+            throw new Error('Mocked error');
+        });
+        const mockedFindOnePlayer = jest.fn(() => {
+            throw new Error('Mocked error');
+        });
+        const mockedUpdateOneLobby = jest.fn(() => {
+            throw new Error('Mocked error');
+        });
+        const mockedUpdateOnePlayer = jest.fn(() => {
+            throw new Error('Mocked error');
+        });
+        jest.spyOn(lobbiesCollection, 'findOne').mockImplementation(mockedFindOneLobby);
+        jest.spyOn(playersCollection, 'findOne').mockImplementation(mockedFindOnePlayer);
+        jest.spyOn(lobbiesCollection, 'updateOne').mockImplementation(mockedUpdateOneLobby);
+        jest.spyOn(playersCollection, 'updateOne').mockImplementation(mockedUpdateOnePlayer);
+        const response = await request(app)
+        .delete(`/lobby/${lobbyId}/player/${playerId}`)
         expect(response.statusCode).toBe(500);
         expect(response.body).toEqual({ error: 'Server error' });
     });

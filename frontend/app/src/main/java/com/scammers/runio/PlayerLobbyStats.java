@@ -15,6 +15,7 @@ public class PlayerLobbyStats {
     private static final int ALPHA_MASK_100 = (100 << 24) | 0xFFFFFF;
 
     public final String playerName;
+
     public final double distanceCovered;
 
     public final double totalArea;

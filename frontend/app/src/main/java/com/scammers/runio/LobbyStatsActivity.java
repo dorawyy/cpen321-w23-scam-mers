@@ -40,6 +40,7 @@ public class LobbyStatsActivity extends AppCompatActivity {
     final static String TAG = "LobbyStatsActivity";
 
     private Lobby currentLobby;
+
     private Button addPlayerButton;
 
     ActivityResultLauncher<Intent> startActivityIntent =

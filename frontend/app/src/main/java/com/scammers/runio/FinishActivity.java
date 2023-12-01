@@ -29,6 +29,7 @@ public class FinishActivity extends FragmentActivity
         implements OnMapReadyCallback {
 
     private final String TAG = "FinishActivity";
+
     ArrayList<LatLng> path;
 
     double distanceRan;
@@ -39,17 +40,6 @@ public class FinishActivity extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finish);
-
-//        path = getIntent().getParcelableArrayListExtra("path");
-//        distanceRan = getIntent().getDoubleExtra("distanceRan", 0.0);
-//        areaRan = getIntent().getDoubleExtra("areaRan", 0.0);
-//        Log.d(TAG, "Area: " + areaRan);
-//        Log.d(TAG, "Dist: " + distanceRan);
-//        String statsText = "You ran an area of " + areaRan + " km² and a
-//        distance of " + distanceRan + " km!";
-//        TextView textStats = findViewById(R.id.text_stats);
-//        textStats.setText(statsText);
-//        Log.d(TAG, "PATH: " + path);
 
         ImageButton homeActivityButton = findViewById(R.id.home_button_finish);
         homeActivityButton.setOnClickListener(new View.OnClickListener() {

@@ -105,12 +105,6 @@ public class LobbiesActivity extends AppCompatActivity {
                                                 LobbiesActivity.this);
                                 button.setText(lobbyName);
 
-                                // Set any additional properties for the
-                                // Button as needed
-                                // button.setLayoutParams(new
-                                // LinearLayout.LayoutParams(LinearLayout
-                                // .LayoutParams.WRAP_CONTENT,
-                                // LinearLayout.LayoutParams.WRAP_CONTENT));
 
             // Add the Button to the parent layout
             parentLayout.addView(button);

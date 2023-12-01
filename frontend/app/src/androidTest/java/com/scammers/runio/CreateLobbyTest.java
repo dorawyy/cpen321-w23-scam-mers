@@ -142,7 +142,7 @@ public class CreateLobbyTest {
                 allOf(withId(R.id.new_lobby_submit_button),
                       withText("Create Lobby"),
                       withParent(withParent(IsInstanceOf.<View>instanceOf(
-                              android.view.ViewGroup.class))),
+                              ViewGroup.class))),
                       isDisplayed()));
         button3.check(matches(not(isEnabled())));
 

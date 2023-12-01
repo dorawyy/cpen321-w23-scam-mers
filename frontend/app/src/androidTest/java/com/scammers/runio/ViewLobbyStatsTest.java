@@ -2,9 +2,11 @@ package com.scammers.runio;
 
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
@@ -58,17 +60,13 @@ public class ViewLobbyStatsTest {
                     "android.permission.ACCESS_COARSE_LOCATION");
 
     private UiDevice device;
-
     private int clickCount = 0;
-
     private int NR_MAX_CLICKS = 5;
-
+    private String testerName = "YOUR_NAME_HERE";
     @Before
     public void setUp() {
-        device = UiDevice.getInstance(InstrumentationRegistry
-                                              .getInstrumentation());
+        device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
     }
-
     @Test
     public void viewLobbyStatsTest()
             throws UiObjectNotFoundException, InterruptedException {
@@ -77,25 +75,17 @@ public class ViewLobbyStatsTest {
                       childAtPosition(
                               allOf(withId(R.id.sign_in_button),
                                     childAtPosition(
-                                        withClassName(
-                                                is(
-                                            "androidx" +
-                                                    ".constraintlayout" +
-                                                    ".widget" +
-                                                    ".ConstraintLayout")),
-                                        1)),
+                                            withClassName(
+                                                    is("androidx.constraintlayout.widget.ConstraintLayout")),
+                                            1)),
                               0),
                       isDisplayed()));
         ic.perform(click());
 
-        device.wait(Until.hasObject(By.pkg(
-                "com.google.android.gms.auth")), 5000);
+        device.wait(Until.hasObject(By.pkg("com.google.android.gms.auth")), 5000);
 
         UiObject
-                firstAccount = device.findObject(
-                        new UiSelector().resourceId(
-                            "com.google.android.gms:id/account_display_name")
-                                    .index(0));
+                firstAccount = device.findObject(new UiSelector().resourceId("com.google.android.gms:id/account_display_name").index(0));
         firstAccount.click();
 
         ViewInteraction materialButton2 = onView(
@@ -126,10 +116,10 @@ public class ViewLobbyStatsTest {
                       childAtPosition(
                               childAtPosition(
                                       withClassName(
-                                          is("androidx.constraintlayout" +
-                                                     ".widget" +
-                                                     ".ConstraintLayout")),
-                                  0),
+                                              is("androidx.constraintlayout" +
+                                                         ".widget" +
+                                                         ".ConstraintLayout")),
+                                      0),
                               0),
                       isDisplayed()));
         String randomText = UUID.randomUUID().toString();
@@ -142,10 +132,10 @@ public class ViewLobbyStatsTest {
                       childAtPosition(
                               childAtPosition(
                                       withClassName(
-                                          is("androidx.constraintlayout" +
-                                                     ".widget" +
-                                                     ".ConstraintLayout")),
-                                  0),
+                                              is("androidx.constraintlayout" +
+                                                         ".widget" +
+                                                         ".ConstraintLayout")),
+                                      0),
                               1),
                       isDisplayed()));
         materialButton4.perform(click());
@@ -176,10 +166,11 @@ public class ViewLobbyStatsTest {
         clickCount++;
 
         ViewInteraction textView = onView(
-                allOf(withText(containsString("Area Claimed: ")),
-                      withParent(allOf(withId(R.id.lobbyStatsLinearLayout),
-                                       withParent(IsInstanceOf.<View>instanceOf(
-                                               ViewGroup.class)))),
+                allOf(withText(
+                              testerName + "\nArea Claimed: 0" +
+                                      ".00km²\nKilometers ran: 0.00km"),
+                      withParent(
+                              withParent(withId(R.id.lobbyStatsLinearLayout))),
                       isDisplayed()));
         textView.check(matches(isDisplayed()));
 

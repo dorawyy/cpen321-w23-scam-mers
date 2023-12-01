@@ -3,9 +3,11 @@ package com.scammers.runio;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
@@ -35,6 +37,7 @@ import androidx.test.uiautomator.Until;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -58,6 +61,8 @@ public class CompleteActivityTest {
     private UiDevice device;
     private int clickCount = 0;
     private int NR_MAX_CLICKS = 5;
+    private String testArea = "1.74";
+    private String testDistance = "5.32";
 
     @Before
     public void setUp() throws IOException {
@@ -192,14 +197,12 @@ public class CompleteActivityTest {
         button.perform(click());
         clickCount++;
 
-        //TODO ADD CHECK HERE (CHECK Area covered/Distance ran textView)
-//        ViewInteraction linearLayout = onView(
-//                allOf(withParent(withParent(IsInstanceOf.<View>instanceOf(
-//                              android.widget.FrameLayout.class))),
-//                      isDisplayed()));
-//        linearLayout.check(matches(isDisplayed()));
+        SystemClock.sleep(15000);
 
-        assert clickCount <= NR_MAX_CLICKS;
+        ViewInteraction textView = onView(withText("You ran an area of " + testArea + " km² and a distance of " + testDistance + " km!"));
+        textView.check(matches(isDisplayed()));
+
+        assert clickCount <= NR_MAX_CLICKS;//1.74 5.32
     }
 
     private static Matcher<View> childAtPosition(

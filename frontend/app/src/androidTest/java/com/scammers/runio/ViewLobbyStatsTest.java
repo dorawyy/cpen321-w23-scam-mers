@@ -62,11 +62,13 @@ public class ViewLobbyStatsTest {
     private UiDevice device;
     private int clickCount = 0;
     private int NR_MAX_CLICKS = 5;
+
     @Before
     public void setUp() {
         device = UiDevice.getInstance(InstrumentationRegistry
                                               .getInstrumentation());
     }
+
     @Test
     public void viewLobbyStatsTest()
             throws UiObjectNotFoundException, InterruptedException {

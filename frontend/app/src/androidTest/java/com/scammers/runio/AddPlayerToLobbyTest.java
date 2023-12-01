@@ -2,11 +2,9 @@ package com.scammers.runio;
 
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
@@ -71,7 +69,8 @@ public class AddPlayerToLobbyTest {
 
     @Before
     public void setUp() {
-        device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        device = UiDevice.getInstance(InstrumentationRegistry
+                                              .getInstrumentation());
     }
 
     @Test
@@ -82,17 +81,20 @@ public class AddPlayerToLobbyTest {
                       childAtPosition(
                               allOf(withId(R.id.sign_in_button),
                                     childAtPosition(
-                                            withClassName(
-                                                    is("androidx.constraintlayout.widget.ConstraintLayout")),
-                                            1)),
+                                        withClassName(
+                                                is(
+                    "androidx.constraintlayout.widget.ConstraintLayout")),
+                                        1)),
                               0),
                       isDisplayed()));
         ic.perform(click());
 
-        device.wait(Until.hasObject(By.pkg("com.google.android.gms.auth")), 5000);
+        device.wait(Until.hasObject(By.pkg(
+                "com.google.android.gms.auth")), 5000);
 
         UiObject
-                firstAccount = device.findObject(new UiSelector().resourceId("com.google.android.gms:id/account_display_name").index(0));
+                firstAccount = device.findObject(new UiSelector()
+     .resourceId("com.google.android.gms:id/account_display_name").index(0));
         firstAccount.click();
 
         ViewInteraction materialButton2 = onView(

@@ -7,7 +7,6 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
@@ -37,7 +36,6 @@ import androidx.test.uiautomator.Until;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -121,7 +119,6 @@ public class CompleteActivityTest {
         materialButton2.perform(click());
         clickCount++;
 
-//        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         Context context = InstrumentationRegistry.getInstrumentation()
                                                  .getContext();
         LocationManager lm = (LocationManager) context
@@ -129,7 +126,7 @@ public class CompleteActivityTest {
         Criteria criteria = new Criteria();
         criteria.setAccuracy( Criteria.ACCURACY_FINE );
 
-        String mocLocationProvider = LocationManager.GPS_PROVIDER;//lm.getBestProvider( criteria, true );
+        String mocLocationProvider = LocationManager.GPS_PROVIDER;
 
         lm.addTestProvider(mocLocationProvider, false,
                            false,
@@ -140,7 +137,7 @@ public class CompleteActivityTest {
 
         //49.2522, -123.2465 (STARTING LAT / LONG)
         Location loc = new Location(mocLocationProvider);
-        Location mockLocation = new Location(mocLocationProvider); // a string
+        Location mockLocation = new Location(mocLocationProvider);
         mockLocation.setLatitude(49.2522);  // double
         mockLocation.setLongitude(-123.2465);
         mockLocation.setAltitude(loc.getAltitude());
@@ -155,8 +152,8 @@ public class CompleteActivityTest {
 
         //49.2620, -123.2578
         Location loc2 = new Location(mocLocationProvider);
-        Location mockLocation2 = new Location(mocLocationProvider); // a string
-        mockLocation2.setLatitude(49.2620);  // double
+        Location mockLocation2 = new Location(mocLocationProvider);
+        mockLocation2.setLatitude(49.2620);
         mockLocation2.setLongitude(-123.2578);
         mockLocation2.setAltitude(loc2.getAltitude());
         mockLocation2.setTime(System.currentTimeMillis());
@@ -170,7 +167,7 @@ public class CompleteActivityTest {
 
         //49.2667, -123.2382
         Location loc3 = new Location(mocLocationProvider);
-        Location mockLocation3 = new Location(mocLocationProvider); // a string
+        Location mockLocation3 = new Location(mocLocationProvider);
         mockLocation3.setLatitude(49.2667);  // double
         mockLocation3.setLongitude(-123.2382);
         mockLocation3.setAltitude(loc3.getAltitude());

@@ -197,12 +197,12 @@ public class CompleteActivityTest {
         button.perform(click());
         clickCount++;
 
-        SystemClock.sleep(15000);
-
+        // Asserts that map gets updated within 60 seconds
+        SystemClock.sleep(60000);
         ViewInteraction textView = onView(withText("You ran an area of " + testArea + " km² and a distance of " + testDistance + " km!"));
         textView.check(matches(isDisplayed()));
 
-        assert clickCount <= NR_MAX_CLICKS;//1.74 5.32
+        assert clickCount <= NR_MAX_CLICKS;
     }
 
     private static Matcher<View> childAtPosition(

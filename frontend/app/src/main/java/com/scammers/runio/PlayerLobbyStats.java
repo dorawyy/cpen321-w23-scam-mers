@@ -43,7 +43,8 @@ public class PlayerLobbyStats {
     // ChatGPT usage: Partial
     public PlayerLobbyStats(JSONObject playerStatsJSON) throws JSONException {
         this.playerName = playerStatsJSON.getString("playerName");
-        this.distanceCovered = playerStatsJSON.getDouble("distanceCovered");
+        this.distanceCovered = playerStatsJSON.getDouble(
+                "distanceCovered");
         this.totalArea = playerStatsJSON.getDouble("totalArea");
         this.color = playerStatsJSON.getInt("color");
         this.lands = new ArrayList<>();

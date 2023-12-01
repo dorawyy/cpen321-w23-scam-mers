@@ -1,7 +1,6 @@
 package com.scammers.runio;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -48,7 +47,8 @@ public class RunningActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        run = new Run(MainActivity.currentPlayer.getPlayerId(), RunningActivity.this);
+        run = new Run(MainActivity.currentPlayer.getPlayerId(),
+                      RunningActivity.this);
 
         ActivityRunningBinding binding =
                 ActivityRunningBinding.inflate(getLayoutInflater());
@@ -98,12 +98,12 @@ public class RunningActivity extends FragmentActivity
                     keepRunningButton =
                             popupView.findViewById(R.id.keep_running_button);
                     keepRunningButton.setOnClickListener(
-                            new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    stopWarningPopup.dismiss();
-                                }
-                            });
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            stopWarningPopup.dismiss();
+                        }
+                    });
 
                     confirmStopActivityButton = popupView.findViewById(
                             R.id.confirm_stop_activity_button);
@@ -137,11 +137,11 @@ public class RunningActivity extends FragmentActivity
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         if (ActivityCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                           android.Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
+                       android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -157,7 +157,7 @@ public class RunningActivity extends FragmentActivity
         LocationManager locationManager =
                 (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                                               2500, 0, this);
+                                   2500, 0, this);
         polylineOptions = new PolylineOptions()
                 .width(10)
                 .color(ContextCompat.getColor(this, R.color.gpsBlue));

@@ -23,6 +23,7 @@ public class HelloWorldEspressoTest {
 
     @Test
     public void listGoesOverTheFold() {
-        Espresso.onView(withText("Welcome to RunIO!")).check(matches(isDisplayed()));
+        Espresso.onView(withText("Welcome to RunIO!"))
+                .check(matches(isDisplayed()));
     }
 }

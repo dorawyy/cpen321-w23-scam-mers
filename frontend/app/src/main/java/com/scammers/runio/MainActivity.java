@@ -88,33 +88,33 @@ public class MainActivity extends AppCompatActivity {
         FirebaseMessaging.getInstance().getToken()
                          .addOnCompleteListener(
                                  new OnCompleteListener<String>() {
-                                     @Override
-                                     public void onComplete(
-                                             @NonNull Task<String> task) {
-                                         if (!task.isSuccessful()) {
-                                             Log.w(TAG,
+                             @Override
+                             public void onComplete(
+                                     @NonNull Task<String> task) {
+                                 if (!task.isSuccessful()) {
+                                     Log.w(TAG,
                                            "Fetching FCM registration" +
-                                                           " token failed",
-                                                   task.getException());
-                                             return;
-                                         }
+                                                   " token failed",
+                                           task.getException());
+                                     return;
+                                 }
 
-                                         // Get new FCM registration token
-                                         fcmToken = task.getResult();
-                                         Log.d(TAG, "FCM Token: "
-                                                 + fcmToken);
-                                     }
-                                 });
+                                 // Get new FCM registration token
+                                 fcmToken = task.getResult();
+                                 Log.d(TAG, "FCM Token: "
+                                         + fcmToken);
+                             }
+                         });
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(
-                GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(
+            GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(
             "749392990960-mlcvsjnsc9l7n46i8ppqhmbm86auosoh.apps" +
-                        ".googleusercontent.com")
-                .requestEmail()
-                .build();
+                    ".googleusercontent.com")
+            .requestEmail()
+            .build();
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
@@ -219,8 +219,9 @@ public class MainActivity extends AppCompatActivity {
                                     // Handle the successful response here
                                     try {
                                         currentPlayer.setPlayerId(
-                                            new JSONObject(response.body()
-                                           .string()).getString("_id"));
+                                    new JSONObject(response.body()
+                                                           .string()).getString(
+                                            "_id"));
                                         RunIOMessagingService.updateToken();
                                     } catch (JSONException e) {
                                         throw new IOException(e);
@@ -243,13 +244,13 @@ public class MainActivity extends AppCompatActivity {
                             currentPlayer = new Player(body);
                             RunIOMessagingService.updateToken();
                             Log.d(TAG,
-                              "Player Class:" + currentPlayer.playerEmail +
-                                      currentPlayer.playerPhotoUrl +
-                                      currentPlayer.playerDisplayName +
-                                      " lobbySet: " +
-                                      currentPlayer.lobbySet + "distance:" +
-                                      currentPlayer.totalDistanceRan +
-                                      "area:" + currentPlayer.totalAreaRan);
+                          "Player Class:" + currentPlayer.playerEmail +
+                                  currentPlayer.playerPhotoUrl +
+                                  currentPlayer.playerDisplayName +
+                                  " lobbySet: " +
+                                  currentPlayer.lobbySet + "distance:" +
+                                  currentPlayer.totalDistanceRan +
+                                  "area:" + currentPlayer.totalAreaRan);
                         } catch (JSONException e) {
                             throw new IOException(e);
                         }

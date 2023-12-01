@@ -95,15 +95,15 @@ public class RunIOMessagingService extends FirebaseMessagingService {
         // Create the pending intent
         PendingIntent pendingIntent =
                 stackBuilder.getPendingIntent(0,
-                                    PendingIntent.FLAG_UPDATE_CURRENT |
-                                            PendingIntent.FLAG_IMMUTABLE);
+                                      PendingIntent.FLAG_UPDATE_CURRENT |
+                                              PendingIntent.FLAG_IMMUTABLE);
 
         // Create a notification channel (required for Android Oreo and above)
         String channelId = "channel_id";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel =
                     new NotificationChannel(channelId, "Channel Name",
-                                        NotificationManager.IMPORTANCE_DEFAULT);
+                                    NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManager notificationManager =
                     getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);

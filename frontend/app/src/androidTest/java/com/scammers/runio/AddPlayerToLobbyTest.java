@@ -117,12 +117,12 @@ public class AddPlayerToLobbyTest {
                 allOf(withId(R.id.new_lobby_name_form),
                       childAtPosition(
                               childAtPosition(
-                                      withClassName(
-                                              is("androidx.constraintlayout" +
-                                                         ".widget" +
-                                                         ".ConstraintLayout")),
-                                      0),
-                              0),
+                                  withClassName(
+                                          is("androidx.constraintlayout" +
+                                                     ".widget" +
+                                                     ".ConstraintLayout")),
+                                  0),
+                          0),
                       isDisplayed()));
         String randomText = UUID.randomUUID().toString();
         appCompatEditText.perform(replaceText(randomText),
@@ -133,11 +133,11 @@ public class AddPlayerToLobbyTest {
                       withText("Create Lobby"),
                       childAtPosition(
                               childAtPosition(
-                                      withClassName(
-                                              is("androidx.constraintlayout" +
-                                                         ".widget" +
-                                                         ".ConstraintLayout")),
-                                      0),
+                                  withClassName(
+                                          is("androidx.constraintlayout" +
+                                                     ".widget" +
+                                                     ".ConstraintLayout")),
+                                  0),
                               1),
                       isDisplayed()));
         materialButton4.perform(click());
@@ -188,11 +188,11 @@ public class AddPlayerToLobbyTest {
                 allOf(withId(R.id.add_player_form),
                       childAtPosition(
                               childAtPosition(
-                                      withClassName(
-                                              is("androidx.constraintlayout" +
-                                                         ".widget" +
-                                                         ".ConstraintLayout")),
-                                      0),
+                                  withClassName(
+                                          is("androidx.constraintlayout" +
+                                                     ".widget" +
+                                                     ".ConstraintLayout")),
+                                  0),
                               0),
                       isDisplayed()));
         appCompatEditText2.perform(replaceText(testEmail),
@@ -210,18 +210,19 @@ public class AddPlayerToLobbyTest {
                 allOf(withId(R.id.add_player_submit_button),
                       withText("Add Player"),
                       childAtPosition(
-                              childAtPosition(
-                                      withClassName(
-                                              is("androidx.constraintlayout.widget.ConstraintLayout")),
-                                      0),
-                              1),
+                          childAtPosition(
+                                  withClassName(
+                                      is("androidx.constraintlayout" +
+                                                 ".widget.ConstraintLayout")),
+                                  0),
+                          1),
                       isDisplayed()));
         materialButton8.perform(click());
         clickCount++;
 
         ViewInteraction textView = onView(
                 allOf(withText(
-                              testName + "\nArea Claimed: 0.00km²\nKilometers ran: 0.00km"),
+                  testName + "\nArea Claimed: 0.00km²\nKilometers ran: 0.00km"),
                       withParent(allOf(withId(R.id.lobbyStatsLinearLayout),
                                        withParent(IsInstanceOf.<View>instanceOf(
                                                android.view.ViewGroup.class)))),

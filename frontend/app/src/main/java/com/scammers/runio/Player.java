@@ -41,7 +41,8 @@ public class Player {
     public Player(JSONObject playerJSON) throws JSONException {
         this.playerEmail = playerJSON.getString("playerEmail");
         this.playerPhotoUrl = playerJSON.getString("playerPhotoUrl");
-        this.playerDisplayName = playerJSON.getString("playerDisplayName");
+        this.playerDisplayName = playerJSON.getString(
+                "playerDisplayName");
         this.playerId = playerJSON.getString("_id");
         this.totalAreaRan = playerJSON.getDouble("totalAreaRan");
         this.totalDistanceRan = playerJSON.getDouble("totalDistanceRan");

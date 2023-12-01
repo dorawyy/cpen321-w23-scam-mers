@@ -73,10 +73,10 @@ public class HomeActivity extends AppCompatActivity {
     // ChatGPT usage: NO
     private void checkPermissions() {
         if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                      android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+                         android.Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "We got location thanks!",
                            Toast.LENGTH_LONG)
@@ -90,91 +90,91 @@ public class HomeActivity extends AppCompatActivity {
                            "Our application requires to have access to your " +
                                    "location.")
                    .setNegativeButton("REFUSE",
-                                      new DialogInterface.OnClickListener() {
-                                          @Override
-                                          public void onClick(
-                                              DialogInterface dialogInterface,
-                                                  int i) {
-                                              Log.d(TAG,
-                                            "NOT checking permissions" +
-                                                    " !!!!");
-                                              dialogInterface.dismiss(); //
-                                              // Dismiss the dialog
-
-                                          }
-                                      })
-                   .setPositiveButton("AGREE",
-                      new DialogInterface.OnClickListener() {
-                      public void onClick(
-                              DialogInterface dialogInterface,
-                              int i) {
-                          // Perform action when the OK
-                          // button is clicked
-                          Log.d(TAG,
-                                "checking permissions " +
-                                        "!!!!");
-                      if (ActivityCompat.shouldShowRequestPermissionRationale(
-                          HomeActivity.this,
-                          android.Manifest.permission.ACCESS_COARSE_LOCATION)
-                          ||
-                          ActivityCompat.shouldShowRequestPermissionRationale(
-                                  HomeActivity.this,
-                          android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-                              new AlertDialog.Builder(
-                                      HomeActivity.this)
-                              .setTitle(
-                                      "Need Location Permissions")
-                              .setMessage(
-                                      "We need location permissions to " +
-                                              "mark your location on map")
-                              .setNegativeButton(
-                                      "CANCEL",
-                                      new DialogInterface.OnClickListener() {
+                              new DialogInterface.OnClickListener() {
                                   @Override
                                   public void onClick(
                                           DialogInterface dialogInterface,
                                           int i) {
-                                      Toast.makeText(
-                                           HomeActivity.this,
-                                           "We need location " +
-                                                   "permissions to run",
-                                           Toast.LENGTH_LONG)
-                                           .show();
-                                      dialogInterface.dismiss();
+                                      Log.d(TAG,
+                                            "NOT checking permissions" +
+                                                    " !!!!");
+                                      dialogInterface.dismiss(); //
+                                      // Dismiss the dialog
+
                                   }
                               })
-                              .setPositiveButton(
-                                      "OK",
-                              new DialogInterface.OnClickListener() {
-                                  @Override
-                                  public void onClick(
+                   .setPositiveButton("AGREE",
+          new DialogInterface.OnClickListener() {
+              public void onClick(
+                      DialogInterface dialogInterface,
+                      int i) {
+                  // Perform action when the OK
+                  // button is clicked
+                  Log.d(TAG,
+                        "checking permissions " +
+                                "!!!!");
+                  if (ActivityCompat.shouldShowRequestPermissionRationale(
+                          HomeActivity.this,
+              android.Manifest.permission.ACCESS_COARSE_LOCATION)
+              ||
+              ActivityCompat.shouldShowRequestPermissionRationale(
+                      HomeActivity.this,
+                      android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+          new AlertDialog.Builder(
+                  HomeActivity.this)
+                  .setTitle(
+                          "Need Location Permissions")
+                  .setMessage(
+                          "We need location permissions to " +
+                                  "mark your location on map")
+                  .setNegativeButton(
+                          "CANCEL",
+                          new DialogInterface.OnClickListener() {
+                              @Override
+                              public void onClick(
                                       DialogInterface dialogInterface,
-                                          int i) {
-                                      ActivityCompat.requestPermissions(
+                                      int i) {
+                                  Toast.makeText(
+                                               HomeActivity.this,
+                                               "We need location " +
+                                                       "permissions to run",
+                                               Toast.LENGTH_LONG)
+                                       .show();
+                                  dialogInterface.dismiss();
+                              }
+                          })
+                  .setPositiveButton(
+                          "OK",
+                          new DialogInterface.OnClickListener() {
+                              @Override
+                              public void onClick(
+                                      DialogInterface dialogInterface,
+                                      int i) {
+                                  ActivityCompat.requestPermissions(
                                           HomeActivity.this,
                                       new String[]{
-                                      android.Manifest.permission.
-                                              ACCESS_COARSE_LOCATION,
-                                      android.Manifest.permission.
-                                              ACCESS_FINE_LOCATION},
+                                              android.Manifest.permission.
+                                                      ACCESS_COARSE_LOCATION,
+                                              android.Manifest.permission.
+                                                      ACCESS_FINE_LOCATION},
                                       1);
-                                  }
-                              })
+                              }
+                          })
                               .create()
                               .show();
-                              } else {
-                                  ActivityCompat.requestPermissions(
-                                  HomeActivity.this,
-                                  new String[]{
-                                          android.Manifest.permission.
-                                                  ACCESS_COARSE_LOCATION,
-                                          Manifest.permission.
-                                                  ACCESS_FINE_LOCATION},
-                                  1);
-                              }
-                              dialogInterface.dismiss(); // Dismiss the dialog
-                          }
-                      });
+                  } else {
+                      ActivityCompat.requestPermissions(
+                              HomeActivity.this,
+                              new String[]{
+                                      android.Manifest.permission.
+                                              ACCESS_COARSE_LOCATION,
+                                      Manifest.permission.
+                                              ACCESS_FINE_LOCATION},
+                              1);
+                  }
+                  dialogInterface.dismiss(); // Dismiss the dialog
+              }
+          });
 
             // Creating and showing the alert dialog
             AlertDialog dialog = builder.create();

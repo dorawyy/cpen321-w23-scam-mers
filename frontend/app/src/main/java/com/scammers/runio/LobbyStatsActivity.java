@@ -27,14 +27,11 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -45,28 +42,38 @@ public class LobbyStatsActivity extends AppCompatActivity {
     private Lobby currentLobby;
     private Button addPlayerButton;
 
-    ActivityResultLauncher<Intent> startActivityIntent = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                Log.d(TAG, "CALLBACK OF ADD PLAYER. Result: " + result.getResultCode());
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    try {
-                        Log.d(TAG, "RESULT CODE WAS OK");
-                        Log.d(TAG, "RECEIVED JSON: " + result.getData().getDataString());
-                        JSONObject invitedPlayerJSON =
-                                new JSONObject(result.getData().getDataString());
-                        PlayerLobbyStats playerStats = new PlayerLobbyStats(invitedPlayerJSON);
-                        String invitedPlayerId = result.getData().getStringExtra("invitedPlayerId");
-                        Map.Entry<String, PlayerLobbyStats> entry = new AbstractMap.SimpleEntry<>(invitedPlayerId, playerStats);
-                        createPlayerStatsText(entry, true);
-                    } catch (JSONException e) {
-                        Log.e(TAG, "Malformed JSON could not be parse");
-                        throw new RuntimeException(e);
-                    }
+    ActivityResultLauncher<Intent> startActivityIntent =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        Log.d(TAG, "CALLBACK OF ADD PLAYER. Result: " +
+                                result.getResultCode());
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            try {
+                                Log.d(TAG, "RESULT CODE WAS OK");
+                                Log.d(TAG, "RECEIVED JSON: " +
+                                        result.getData().getDataString());
+                                JSONObject invitedPlayerJSON =
+                                        new JSONObject(result.getData()
+                                                             .getDataString());
+                                PlayerLobbyStats playerStats =
+                                        new PlayerLobbyStats(invitedPlayerJSON);
+                                String invitedPlayerId = result.getData()
+                                               .getStringExtra(
+                                                       "invitedPlayerId");
+                                Map.Entry<String, PlayerLobbyStats> entry =
+                                        new AbstractMap.SimpleEntry<>(
+                                                invitedPlayerId, playerStats);
+                                createPlayerStatsText(entry, true);
+                            } catch (JSONException e) {
+                                Log.e(TAG,
+                                      "Malformed JSON could not be parse");
+                                throw new RuntimeException(e);
+                            }
 
-                }
-            }
-    );
+                        }
+                    }
+            );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,24 +120,31 @@ public class LobbyStatsActivity extends AppCompatActivity {
                         addPlayerButton.setVisibility(View.INVISIBLE);
                     } else {
                         addPlayerButton.setOnClickListener(
-                                new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        Intent addPlayerIntent = new Intent(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent addPlayerIntent = new Intent(
                                         LobbyStatsActivity.this,
-                                                AddPlayerActivity.class);
-                                        addPlayerIntent.putExtra(
-                                            "lobbyIdAddPlayer", lobbyId);
-                                        startActivityIntent.launch(addPlayerIntent);
-                                    }
-                                });
+                                        AddPlayerActivity.class);
+                                addPlayerIntent.putExtra(
+                                        "lobbyIdAddPlayer", lobbyId);
+                                startActivityIntent.launch(
+                                        addPlayerIntent);
+                            }
+                        });
                     }
-                    List<Map.Entry<String, PlayerLobbyStats>> playerList = new ArrayList<>(currentLobby.playerMap.entrySet());
-                    playerList.sort((p1, p2) -> Double.compare(p2.getValue().totalArea, p1.getValue().totalArea));
+                    List<Map.Entry<String, PlayerLobbyStats>> playerList =
+                            new ArrayList<>(currentLobby.playerMap.entrySet());
+                    playerList.sort(
+                            (p1, p2) -> Double.compare(p2.getValue().totalArea,
+                                                   p1.getValue().totalArea));
 
                     // Display playerStats in screen
-                    for (Map.Entry<String, PlayerLobbyStats> entry : playerList) {
-                        boolean showDelete = isAdmin && !(entry.getValue().playerName.equals(MainActivity.currentPlayer.playerDisplayName));
+                    for (Map.Entry<String, PlayerLobbyStats> entry :
+                            playerList) {
+                        boolean showDelete = isAdmin &&
+                                !(entry.getValue().playerName.equals(
+                                MainActivity.currentPlayer.playerDisplayName));
                         createPlayerStatsText(entry, showDelete);
                     }
                 } catch (JSONException e) {
@@ -168,7 +182,8 @@ public class LobbyStatsActivity extends AppCompatActivity {
         });
     }
 
-    private void createPlayerStatsText(Map.Entry<String, PlayerLobbyStats> entry, boolean showDelete) {
+    private void createPlayerStatsText(
+            Map.Entry<String, PlayerLobbyStats> entry, boolean showDelete) {
         PlayerLobbyStats playerLobbyStats = entry.getValue();
         double distanceCovered =
                 playerLobbyStats.distanceCovered;
@@ -183,7 +198,8 @@ public class LobbyStatsActivity extends AppCompatActivity {
             // ChatGPT usage: YES
             @Override
             public void run() {
-                LinearLayout linearLayout = new LinearLayout(LobbyStatsActivity.this);
+                LinearLayout linearLayout =
+                        new LinearLayout(LobbyStatsActivity.this);
                 linearLayout.setBackgroundColor(color);
 
                 // Create a new TextView
@@ -210,13 +226,15 @@ public class LobbyStatsActivity extends AppCompatActivity {
                         getResources().getDisplayMetrics().density;
                 int paddingInPixels =
                         (int) (paddingInDp * scale);
-                int rightPadding = getResources().getDisplayMetrics().widthPixels / 4;
+                int rightPadding =
+                        getResources().getDisplayMetrics().widthPixels / 4;
                 textView.setPadding(paddingInPixels,
                                     paddingInPixels,
                                     rightPadding,
                                     paddingInPixels);
                 linearLayout.addView(textView);
-                textView.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+                textView.getLayoutParams().height =
+                        ViewGroup.LayoutParams.MATCH_PARENT;
 
                 if (showDelete) {
                     createRemovePlayerButton(entry.getKey(), linearLayout);
@@ -227,7 +245,8 @@ public class LobbyStatsActivity extends AppCompatActivity {
         });
     }
 
-    private void createRemovePlayerButton(String playerId, LinearLayout parent) {
+    private void createRemovePlayerButton(String playerId,
+                                          LinearLayout parent) {
         Button removePlayerButton = new Button(LobbyStatsActivity.this);
         removePlayerButton.setText("X");
         removePlayerButton.setTextSize(30);
@@ -235,13 +254,16 @@ public class LobbyStatsActivity extends AppCompatActivity {
         removePlayerButton.setGravity(Gravity.CENTER);
 
         parent.addView(removePlayerButton);
-        removePlayerButton.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+        removePlayerButton.getLayoutParams().height =
+                ViewGroup.LayoutParams.MATCH_PARENT;
 
         removePlayerButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        String url = "https://40.90.192.159:8081/lobby/" + currentLobby.getLobbyId() + "/player/" + playerId;
+                        String url = "https://40.90.192.159:8081/lobby/" +
+                                currentLobby.getLobbyId() + "/player/" +
+                                playerId;
                         Request request = new Request.Builder()
                                 .url(url)
                                 .delete()
@@ -255,17 +277,18 @@ public class LobbyStatsActivity extends AppCompatActivity {
                                         e.printStackTrace();
                                     }
 
-                                    @Override
-                                    public void onResponse(@NonNull Call call,
-                                                           @NonNull
-                                                           Response response)
-                                            throws IOException {
-                                        if (response.isSuccessful()) {
-                                            runOnUiThread(
-                                                    () -> ((ViewGroup)parent.getParent()).removeView(parent));
-                                        }
-                                    }
-                                });
+                            @Override
+                            public void onResponse(@NonNull Call call,
+                                                   @NonNull
+                                                   Response response)
+                                    throws IOException {
+                                if (response.isSuccessful()) {
+                                    runOnUiThread(
+                            () -> ((ViewGroup) parent.getParent()).removeView(
+                                    parent));
+                                }
+                            }
+                        });
                     }
                 });
     }

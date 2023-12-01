@@ -64,7 +64,8 @@ public class AddPlayerActivity extends AppCompatActivity {
                .enqueue(new Callback() {
                    @Override
                    public void onFailure(@NonNull Call call,
-                                         @NonNull IOException e) {
+                                         @NonNull
+                                         IOException e) {
                        e.printStackTrace();
                    }
 
@@ -121,10 +122,14 @@ public class AddPlayerActivity extends AppCompatActivity {
                                      "Player add url:" +
                                              putPlayerUrl);
                                Gson gson = new Gson();
-                               String invitedPlayerName = gson.fromJson(responseBody, Player.class).playerDisplayName;
+                               String invitedPlayerName =
+                                       gson.fromJson(
+                                               responseBody,
+                                               Player.class).playerDisplayName;
                                PlayerLobbyStats
                                        invitedPlayerStats =
-                                       new PlayerLobbyStats(invitedPlayerName);
+                                       new PlayerLobbyStats(
+                                               invitedPlayerName);
 
                                RequestBody requestBody =
                                        RequestBody.create(
@@ -137,59 +142,70 @@ public class AddPlayerActivity extends AppCompatActivity {
                                                .put(requestBody)
                                                .build();
                                MainActivity.client.newCall(
-                                                   addPlayerReq)
-                                  .enqueue(
-                                      new Callback() {
-                                          @Override
-                                          public void onFailure(
-                                                  @NonNull
-                                                  Call call,
-                                                  @NonNull
-                                                  IOException e) {
-                                              e.printStackTrace();
-                                              finish();
-                                          }
+               addPlayerReq)
+              .enqueue(
+                      new Callback() {
+                          @Override
+                          public void onFailure(
+                                  @NonNull
+                                  Call call,
+                                  @NonNull
+                                  IOException e) {
+                              e.printStackTrace();
+                              finish();
+                          }
 
-                                          @Override
-                                          public void onResponse(
-                                                  @NonNull
-                                                  Call call,
-                                                  @NonNull
-                                                  Response response)
-                                                  throws
-                                                  IOException {
-                                              if (response.isSuccessful()) {
-                                                  //Handlesuccessfulresponse
-                                                  Log.d(TAG,
-                                                        "Player added");
-                                                  runOnUiThread(
-                                                  new Runnable() {
-                                                  @Override
-                                                  public void run() {
-                                                      // Update UI elements
-                                                      Toast.makeText(
+                          @Override
+                          public void onResponse(
+                                  @NonNull
+                                  Call call,
+                                  @NonNull
+                                  Response response)
+                                  throws
+                                  IOException {
+                              if (response.isSuccessful()) {
+                                  //Handlesuccessfulresponse
+                                  Log.d(TAG,
+                                        "Player added");
+                                  runOnUiThread(
+                          new Runnable() {
+                              @Override
+                              public void run() {
+                                  // Update UI elements
+                                  Toast.makeText(
                                                AddPlayerActivity.this,
-                                                   "Added player: " +
+                                               "Added player: " +
                                                        invitedPlayerEmail,
-                                                       Toast.LENGTH_LONG)
-                                                   .show();
-                                                  }
-                                                  });
-                                                  Intent resultIntent = new Intent();
-                                                  Log.d(TAG, "INVITED PLAYER: " + gson.toJson(invitedPlayerStats));
-                                                  resultIntent.setData(
-                                                          Uri.parse(gson.toJson(invitedPlayerStats)));
-                                                  resultIntent.putExtra("invitedPlayerId", invitedPlayer.getPlayerId());
-                                                  setResult(RESULT_OK, resultIntent);
-                                                  finish();
-                                              } else {
-                                                  // Handle error response
-                                                  Log.d(TAG,
-                                            "Error inviting player: " +
+                                               Toast.LENGTH_LONG)
+                                       .show();
+                              }
+                          });
+                                  Intent
+                                          resultIntent =
+                                          new Intent();
+                                  Log.d(TAG,
+                                        "INVITED PLAYER: " +
+                                                gson.toJson(
+                                                        invitedPlayerStats));
+                                  resultIntent.setData(
+                                          Uri.parse(
+                                                  gson.toJson(
+                                                          invitedPlayerStats)));
+                                  resultIntent.putExtra(
+                                          "invitedPlayerId",
+                                          invitedPlayer.getPlayerId());
+                                  setResult(
+                                          RESULT_OK,
+                                          resultIntent);
+                                  finish();
+                              } else {
+                                  // Handle error response
+                                  Log.d(TAG,
+                                        "Error inviting player: " +
                                                 response);
-                                              }
-                                          }
-                                      });
+                              }
+                          }
+                      });
                            } catch (JSONException e) {
                                throw new IOException(e);
                            }

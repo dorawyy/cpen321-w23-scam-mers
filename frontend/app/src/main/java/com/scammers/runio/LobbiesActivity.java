@@ -2,7 +2,6 @@ package com.scammers.runio;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,8 +9,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -33,15 +30,17 @@ public class LobbiesActivity extends AppCompatActivity {
 
     final static String TAG = "LobbiesActivity";
 
-    ActivityResultLauncher<Intent> startActivityIntent = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    String newLobbyId = result.getData().getDataString();
-                    createLobbyButton(newLobbyId);
-                }
-            }
-    );
+    ActivityResultLauncher<Intent> startActivityIntent =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            String newLobbyId =
+                                    result.getData().getDataString();
+                            createLobbyButton(newLobbyId);
+                        }
+                    }
+            );
 
     // ChatGPT usage: NO
     @Override
@@ -113,24 +112,24 @@ public class LobbiesActivity extends AppCompatActivity {
                                 // .LayoutParams.WRAP_CONTENT,
                                 // LinearLayout.LayoutParams.WRAP_CONTENT));
 
-                                // Add the Button to the parent layout
-                                parentLayout.addView(button);
-                                button.setOnClickListener(
-                                        new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(
-                                                    View view) {
-                                                Intent lobbyIntent =
-                                                        new Intent(
-                                                                LobbiesActivity.this,
-                                                                LobbyActivity.class);
-                                                lobbyIntent.putExtra(
-                                                        "lobbyId",
-                                                        lobbyId);
-                                                startActivity(
-                                                        lobbyIntent);
-                                            }
-                                        });
+            // Add the Button to the parent layout
+            parentLayout.addView(button);
+            button.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(
+                                View view) {
+                            Intent lobbyIntent =
+                                    new Intent(
+                                            LobbiesActivity.this,
+                                            LobbyActivity.class);
+                            lobbyIntent.putExtra(
+                                    "lobbyId",
+                                    lobbyId);
+                            startActivity(
+                                    lobbyIntent);
+                        }
+                    });
                             }
                         });
 

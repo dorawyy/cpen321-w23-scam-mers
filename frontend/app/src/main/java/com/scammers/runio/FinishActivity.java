@@ -1,8 +1,5 @@
 package com.scammers.runio;
 
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,6 +11,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,7 +45,8 @@ public class FinishActivity extends FragmentActivity
 //        areaRan = getIntent().getDoubleExtra("areaRan", 0.0);
 //        Log.d(TAG, "Area: " + areaRan);
 //        Log.d(TAG, "Dist: " + distanceRan);
-//        String statsText = "You ran an area of " + areaRan + " km² and a distance of " + distanceRan + " km!";
+//        String statsText = "You ran an area of " + areaRan + " km² and a
+//        distance of " + distanceRan + " km!";
 //        TextView textStats = findViewById(R.id.text_stats);
 //        textStats.setText(statsText);
 //        Log.d(TAG, "PATH: " + path);
@@ -87,13 +88,14 @@ public class FinishActivity extends FragmentActivity
                         .findFragmentById(R.id.finish_map);
         mapFragment.getMapAsync(this);
     }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         if (ActivityCompat.checkSelfPermission(this,
-                                               android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                           android.Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this,
-                                                   android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                   android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
                         PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -127,11 +129,14 @@ public class FinishActivity extends FragmentActivity
                 .strokeWidth(5)
                 .geodesic(true);
         googleMap.addPolygon(polygonOptions);
-        distanceRan = getIntent().getDoubleExtra("distanceRan", 0.0);
+        distanceRan = getIntent().getDoubleExtra("distanceRan",
+                                                 0.0);
         areaRan = getIntent().getDoubleExtra("areaRan", 0.0);
         Log.d(TAG, "Area: " + areaRan);
         Log.d(TAG, "Dist: " + distanceRan);
-        String statsText = "You ran an area of " + areaRan + " km² and a distance of " + distanceRan + " km!";
+        String statsText =
+                "You ran an area of " + areaRan + " km² and a distance of " +
+                        distanceRan + " km!";
         TextView textStats = findViewById(R.id.text_stats);
         textStats.setText(statsText);
     }

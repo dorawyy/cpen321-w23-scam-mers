@@ -66,7 +66,8 @@ public class CompleteActivityTest {
 
     @Before
     public void setUp() throws IOException {
-        device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        device = UiDevice.getInstance(InstrumentationRegistry
+                                              .getInstrumentation());
         String s = device.getCurrentPackageName();
         device.executeShellCommand(
                 "appops set " + s + " android:mock_location allow"
@@ -80,21 +81,27 @@ public class CompleteActivityTest {
                 allOf(withText("Sign in"),
                       childAtPosition(
                               allOf(withId(R.id.sign_in_button),
-                                    childAtPosition(
-                                            withClassName(
-                                                    is("androidx.constraintlayout.widget.ConstraintLayout")),
-                                            1)),
-                              0),
+                                childAtPosition(
+                                        withClassName(
+                                                is("androidx" +
+                                                       ".constraintlayout" +
+                                                       ".widget" +
+                                                       ".ConstraintLayout")),
+                                        1)),
+                          0),
                       isDisplayed()));
         id.perform(click());
         clickCount++;
 
         // Wait for the account picker to appear
-        device.wait(Until.hasObject(By.pkg("com.google.android.gms.auth")), 5000);
+        device.wait(Until.hasObject(By.pkg(
+                "com.google.android.gms.auth")), 5000);
 
         // Find and click on the first Google account
         UiObject
-                firstAccount = device.findObject(new UiSelector().resourceId("com.google.android.gms:id/account_display_name").index(0));
+                firstAccount = device.findObject(new UiSelector()
+                 .resourceId("com.google.android.gms:id/account_display_name")
+                 .index(0));
         firstAccount.click();
 
         ViewInteraction materialButton2 = onView(
@@ -110,15 +117,20 @@ public class CompleteActivityTest {
         clickCount++;
 
 //        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        Context context = InstrumentationRegistry.getInstrumentation().getContext();
-        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        Context context = InstrumentationRegistry.getInstrumentation()
+                                                 .getContext();
+        LocationManager lm = (LocationManager) context
+                .getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         criteria.setAccuracy( Criteria.ACCURACY_FINE );
 
         String mocLocationProvider = LocationManager.GPS_PROVIDER;//lm.getBestProvider( criteria, true );
 
-        lm.addTestProvider(mocLocationProvider, false, false,
-                           false, false, true, true, true, 1, 2);
+        lm.addTestProvider(mocLocationProvider, false,
+                           false,
+                           false, false,
+                           true, true,
+                           true, 1, 2);
         lm.setTestProviderEnabled(mocLocationProvider, true);
 
         //49.2522, -123.2465 (STARTING LAT / LONG)
@@ -130,7 +142,8 @@ public class CompleteActivityTest {
         mockLocation.setTime(System.currentTimeMillis());
         mockLocation.setAccuracy(1);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            mockLocation.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+            mockLocation.setElapsedRealtimeNanos(SystemClock.
+                                                     elapsedRealtimeNanos());
         }
         lm.setTestProviderLocation( mocLocationProvider, mockLocation);
         SystemClock.sleep(10000);
@@ -144,7 +157,8 @@ public class CompleteActivityTest {
         mockLocation2.setTime(System.currentTimeMillis());
         mockLocation2.setAccuracy(1);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            mockLocation2.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+            mockLocation2.setElapsedRealtimeNanos(SystemClock.
+                                                      elapsedRealtimeNanos());
         }
         lm.setTestProviderLocation( mocLocationProvider, mockLocation2);
         SystemClock.sleep(10000);
@@ -158,7 +172,8 @@ public class CompleteActivityTest {
         mockLocation3.setTime(System.currentTimeMillis());
         mockLocation3.setAccuracy(1);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            mockLocation3.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+            mockLocation3.setElapsedRealtimeNanos(SystemClock.
+                                                      elapsedRealtimeNanos());
         }
         lm.setTestProviderLocation( mocLocationProvider, mockLocation3);
         SystemClock.sleep(10000);
@@ -172,14 +187,16 @@ public class CompleteActivityTest {
         mockLocation4.setTime(System.currentTimeMillis());
         mockLocation4.setAccuracy(1);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            mockLocation4.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+            mockLocation4.setElapsedRealtimeNanos(SystemClock.
+                                                      elapsedRealtimeNanos());
         }
         lm.setTestProviderLocation( mocLocationProvider, mockLocation4);
         SystemClock.sleep(10000);
 
         //BACK TO INITIAL POINT
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            mockLocation.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+            mockLocation.setElapsedRealtimeNanos(SystemClock.
+                                                     elapsedRealtimeNanos());
         }
         lm.setTestProviderLocation( mocLocationProvider, mockLocation);
         SystemClock.sleep(10000);
@@ -199,7 +216,8 @@ public class CompleteActivityTest {
 
         // Asserts that map gets updated within 60 seconds
         SystemClock.sleep(60000);
-        ViewInteraction textView = onView(withText("You ran an area of " + testArea + " km² and a distance of " + testDistance + " km!"));
+        ViewInteraction textView = onView(withText("You ran an area of "
+           + testArea + " km² and a distance of " + testDistance + " km!"));
         textView.check(matches(isDisplayed()));
 
         assert clickCount <= NR_MAX_CLICKS;

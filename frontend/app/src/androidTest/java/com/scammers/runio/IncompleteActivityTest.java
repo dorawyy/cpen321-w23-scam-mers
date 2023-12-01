@@ -55,7 +55,8 @@ public class IncompleteActivityTest {
 
     @Before
     public void setUp() {
-        device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        device = UiDevice.getInstance(InstrumentationRegistry
+                                              .getInstrumentation());
     }
 
     @Test
@@ -66,20 +67,25 @@ public class IncompleteActivityTest {
                       childAtPosition(
                               allOf(withId(R.id.sign_in_button),
                                     childAtPosition(
-                                            withClassName(
-                                                    is("androidx.constraintlayout.widget.ConstraintLayout")),
-                                            1)),
+                                        withClassName(
+                                                is("androidx" +
+                                                       ".constraintlayout" +
+                                                       ".widget" +
+                                                       ".ConstraintLayout")),
+                                        1)),
                               0),
                       isDisplayed()));
         id.perform(click());
         clickCount++;
 
         // Wait for the account picker to appear
-        device.wait(Until.hasObject(By.pkg("com.google.android.gms.auth")), 5000);
+        device.wait(Until.hasObject(By.pkg(
+                "com.google.android.gms.auth")), 5000);
 
         // Find and click on the first Google account
         UiObject
-                firstAccount = device.findObject(new UiSelector().resourceId("com.google.android.gms:id/account_display_name").index(0));
+                firstAccount = device.findObject(new UiSelector()
+        .resourceId("com.google.android.gms:id/account_display_name").index(0));
         firstAccount.click();
 
         ViewInteraction materialButton2 = onView(

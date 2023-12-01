@@ -48,8 +48,8 @@ public class ProfileActivity extends AppCompatActivity {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(
                 GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(
-                        "749392990960-mlcvsjnsc9l7n46i8ppqhmbm86auosoh.apps" +
-                                ".googleusercontent.com")
+            "749392990960-mlcvsjnsc9l7n46i8ppqhmbm86auosoh.apps" +
+                    ".googleusercontent.com")
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
@@ -125,15 +125,23 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void signOut() {
         mGoogleSignInClient.signOut()
-                           .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                               @Override
-                               public void onComplete(@NonNull Task<Void> task) {
-                                   Intent mainIntent =
-                                           new Intent(ProfileActivity.this, MainActivity.class);
-                                   mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                   startActivity(mainIntent);
-                                   finish();
-                               }
-                           });
+       .addOnCompleteListener(this,
+                  new OnCompleteListener<Void>() {
+                      @Override
+                      public void onComplete(
+                              @NonNull
+                              Task<Void> task) {
+                          Intent mainIntent =
+                                  new Intent(
+                                          ProfileActivity.this,
+                                          MainActivity.class);
+                          mainIntent.addFlags(
+                                  Intent.FLAG_ACTIVITY_NEW_TASK |
+                                          Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                          startActivity(
+                                  mainIntent);
+                          finish();
+                      }
+                  });
     }
 }

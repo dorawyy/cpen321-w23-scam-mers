@@ -64,7 +64,8 @@ public class CreateLobbyTest {
 
     @Before
     public void setUp() {
-        device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        device = UiDevice.getInstance(InstrumentationRegistry.
+                                              getInstrumentation());
     }
 
     @Test
@@ -73,18 +74,23 @@ public class CreateLobbyTest {
                 allOf(withText("Sign in"),
                       childAtPosition(
                               allOf(withId(R.id.sign_in_button),
-                                    childAtPosition(
-                                            withClassName(
-                                                    is("androidx.constraintlayout.widget.ConstraintLayout")),
-                                            1)),
-                              0),
+                                childAtPosition(
+                                        withClassName(
+                                                is("androidx" +
+                                                       ".constraintlayout" +
+                                                       ".widget" +
+                                                       ".ConstraintLayout")),
+                                        1)),
+                          0),
                       isDisplayed()));
         id.perform(click());
 
-        device.wait(Until.hasObject(By.pkg("com.google.android.gms.auth")), 5000);
+        device.wait(Until.hasObject(By.pkg(
+                "com.google.android.gms.auth")), 5000);
 
         UiObject
-                firstAccount = device.findObject(new UiSelector().resourceId("com.google.android.gms:id/account_display_name").index(0));
+                firstAccount = device.findObject(new UiSelector()
+        .resourceId("com.google.android.gms:id/account_display_name").index(0));
         firstAccount.click();
 
 
@@ -143,10 +149,10 @@ public class CreateLobbyTest {
                       childAtPosition(
                               childAtPosition(
                                       withClassName(
-                                              is("androidx.constraintlayout" +
-                                                         ".widget" +
-                                                         ".ConstraintLayout")),
-                                      0),
+                                      is("androidx.constraintlayout" +
+                                                 ".widget" +
+                                                 ".ConstraintLayout")),
+                              0),
                               0),
                       isDisplayed()));
         String randomText = UUID.randomUUID().toString();
@@ -159,10 +165,10 @@ public class CreateLobbyTest {
                       childAtPosition(
                               childAtPosition(
                                       withClassName(
-                                              is("androidx.constraintlayout" +
-                                                         ".widget" +
-                                                         ".ConstraintLayout")),
-                                      0),
+                                          is("androidx.constraintlayout" +
+                                                     ".widget" +
+                                                     ".ConstraintLayout")),
+                                  0),
                               1),
                       isDisplayed()));
         materialButton4.perform(click());

@@ -92,7 +92,7 @@ public class LobbyActivity extends AppCompatActivity
                 // Go to new lobby stats intent
                 Intent lobbyStatsIntent =
                         new Intent(LobbyActivity.this,
-                                                     LobbyStatsActivity.class);
+                                   LobbyStatsActivity.class);
                 lobbyStatsIntent.putExtra("lobbyStatsId", lobbyId);
                 startActivity(lobbyStatsIntent);
             }
@@ -135,11 +135,11 @@ public class LobbyActivity extends AppCompatActivity
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         if (ActivityCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                       android.Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
+                       android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding

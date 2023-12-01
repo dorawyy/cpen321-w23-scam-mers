@@ -1,7 +1,5 @@
 package com.scammers.runio;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -74,8 +72,6 @@ public class Run {
     }
 
 
-
-
     // ChatGPT usage: YES
     public static double distance(LatLng c1, LatLng c2) {
         // Convert LatLng objects to radians
@@ -143,13 +139,20 @@ public class Run {
                 try {
                     JSONObject jsonObject = new JSONObject(responseBody);
                     DecimalFormat df = new DecimalFormat("#.##");
-                    areaRan = Double.parseDouble(df.format(jsonObject.getDouble("area")));
-                    distanceRan = Double.parseDouble(df.format(jsonObject.getDouble("distance")));
+                    areaRan = Double.parseDouble(
+                            df.format(jsonObject.getDouble("area")));
+                    distanceRan = Double.parseDouble(
+                            df.format(jsonObject.getDouble("distance")));
                     Log.d("Run", "run response:" + responseBody);
-                    Log.d("Run", "Area ran: " + areaRan + " km², Distance ran: " + distanceRan + " km");
-                    Intent finishIntent = new Intent(context, FinishActivity.class);
-                    finishIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    finishIntent.putParcelableArrayListExtra("path", path);
+                    Log.d("Run",
+                          "Area ran: " + areaRan + " km², Distance ran: " +
+                                  distanceRan + " km");
+                    Intent finishIntent =
+                            new Intent(context, FinishActivity.class);
+                    finishIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                                              Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    finishIntent.putParcelableArrayListExtra(
+                            "path", path);
                     finishIntent.putExtra("distanceRan", distanceRan);
                     finishIntent.putExtra("areaRan", areaRan);
                     context.startActivity(finishIntent);

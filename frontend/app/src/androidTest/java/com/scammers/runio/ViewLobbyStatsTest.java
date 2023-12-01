@@ -2,11 +2,9 @@ package com.scammers.runio;
 
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
@@ -60,7 +58,9 @@ public class ViewLobbyStatsTest {
                     "android.permission.ACCESS_COARSE_LOCATION");
 
     private UiDevice device;
+
     private int clickCount = 0;
+
     private int NR_MAX_CLICKS = 5;
 
     @Before
@@ -179,7 +179,7 @@ public class ViewLobbyStatsTest {
                 allOf(withText(containsString("Area Claimed: ")),
                       withParent(allOf(withId(R.id.lobbyStatsLinearLayout),
                                        withParent(IsInstanceOf.<View>instanceOf(
-                                               android.view.ViewGroup.class)))),
+                                               ViewGroup.class)))),
                       isDisplayed()));
         textView.check(matches(isDisplayed()));
 

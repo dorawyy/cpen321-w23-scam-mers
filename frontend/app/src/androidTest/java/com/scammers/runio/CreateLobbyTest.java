@@ -134,7 +134,7 @@ public class CreateLobbyTest {
         ViewInteraction editText = onView(
                 allOf(withId(R.id.new_lobby_name_form),
                       withParent(withParent(IsInstanceOf.<View>instanceOf(
-                              android.view.ViewGroup.class))),
+                              ViewGroup.class))),
                       isDisplayed()));
         editText.check(matches(isDisplayed()));
 
@@ -181,7 +181,7 @@ public class CreateLobbyTest {
                 allOf(withText(randomText),
                       withParent(allOf(withId(R.id.lobbiesLinearLayout),
                                        withParent(IsInstanceOf.<View>instanceOf(
-                                               android.view.ViewGroup.class)))),
+                                               ViewGroup.class)))),
                       isDisplayed()));
         button4.check(matches(isDisplayed()));
 

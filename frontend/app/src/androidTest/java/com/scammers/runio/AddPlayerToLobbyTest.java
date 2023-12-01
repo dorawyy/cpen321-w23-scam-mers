@@ -209,7 +209,7 @@ public class AddPlayerToLobbyTest {
                 allOf(withId(R.id.add_player_submit_button),
                       withText("Add Player"),
                       withParent(withParent(IsInstanceOf.<View>instanceOf(
-                              android.view.ViewGroup.class))),
+                              ViewGroup.class))),
                       isDisplayed()));
         button4.check(matches(isDisplayed()));
 
@@ -232,7 +232,7 @@ public class AddPlayerToLobbyTest {
                   testName + "\nArea Claimed: 0.00km²\nKilometers ran: 0.00km"),
                       withParent(allOf(withId(R.id.lobbyStatsLinearLayout),
                                        withParent(IsInstanceOf.<View>instanceOf(
-                                               android.view.ViewGroup.class)))),
+                                               ViewGroup.class)))),
                       isDisplayed()));
         textView.check(matches(withText(
                 testName + "\nArea Claimed: 0.00km²\nKilometers ran: 0.00km")));

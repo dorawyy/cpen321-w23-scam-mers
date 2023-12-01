@@ -59,8 +59,7 @@
             android:label="@string/title_activity_maps" />
         <activity
             android:name=".FinishActivity"
-            android:exported="false"
-            android:label="@string/title_activity_maps" />
+            android:exported="false" />
         <activity
             android:name=".HomeActivity"
             android:exported="false" /> <!-- the old map api keyt works idk why my new one doesnt wanna work -->

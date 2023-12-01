@@ -59,10 +59,15 @@ public class AddPlayerToLobbyTest {
                     "android.permission.ACCESS_COARSE_LOCATION");
 
     private UiDevice device;
+
     private int clickCount = 0;
+
     private int NR_MAX_CLICKS = 5;
+
     private String testEmail = "testuser123@gmail.com";
+
     private String testName = "Rubinson Julius";
+
 
     @Before
     public void setUp() {

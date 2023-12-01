@@ -59,10 +59,15 @@ public class CompleteActivityTest {
                     "android.permission.ACCESS_COARSE_LOCATION");
 
     private UiDevice device;
+
     private int clickCount = 0;
+
     private int NR_MAX_CLICKS = 5;
+
     private String testArea = "1.74";
+
     private String testDistance = "5.32";
+
 
     @Before
     public void setUp() throws IOException {

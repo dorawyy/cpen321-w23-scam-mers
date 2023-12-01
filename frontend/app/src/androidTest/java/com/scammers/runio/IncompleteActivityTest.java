@@ -50,8 +50,11 @@ public class IncompleteActivityTest {
                     "android.permission.ACCESS_COARSE_LOCATION");
 
     private UiDevice device;
+
     private int clickCount = 0;
+
     private int NR_MAX_CLICKS = 5;
+
 
     @Before
     public void setUp() {

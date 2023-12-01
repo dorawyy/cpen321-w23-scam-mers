@@ -1,6 +1,5 @@
 import * as https from "https";
 import * as fs from "fs";
-import express from "express";
 import { client } from './helpers/mongodb.js'
 import { app } from "./app.js";
 

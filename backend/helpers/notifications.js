@@ -50,6 +50,7 @@ export async function notifyLobby(playerId) {
   } catch {
   }
   for (const playerId in playerIds) {
+    console.log(playerId)
     try {
       let player_fcmToken = playerIds[playerId];
       sendNotification(player_fcmToken, runner.playerDisplayName + " just completed a run!", "Keep running to catch up. 🏃🔥");

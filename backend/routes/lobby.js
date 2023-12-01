@@ -9,6 +9,7 @@ router.use(bodyParser.json()); // Add this line to enable JSON body parsing
 
 // ChatGPT usage: NO
 router.post('/', async (req, res) => {
+  console.log("post lobby");
     try {
       const lobbyData = req.body;
       const requiredFields = ['lobbyName', 'lobbyLeaderId', 'playerSet'];

@@ -179,6 +179,7 @@ public class AddPlayerActivity extends AppCompatActivity {
                                                   Log.d(TAG, "INVITED PLAYER: " + gson.toJson(invitedPlayerStats));
                                                   resultIntent.setData(
                                                           Uri.parse(gson.toJson(invitedPlayerStats)));
+                                                  resultIntent.putExtra("invitedPlayerId", invitedPlayer.getPlayerId());
                                                   setResult(RESULT_OK, resultIntent);
                                                   finish();
                                               } else {

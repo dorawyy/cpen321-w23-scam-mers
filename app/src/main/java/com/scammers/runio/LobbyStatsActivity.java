@@ -2,9 +2,12 @@ package com.scammers.runio;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -22,6 +25,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,6 +34,7 @@ import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -37,6 +42,7 @@ public class LobbyStatsActivity extends AppCompatActivity {
 
     final static String TAG = "LobbyStatsActivity";
 
+    private Lobby currentLobby;
     private Button addPlayerButton;
 
     ActivityResultLauncher<Intent> startActivityIntent = registerForActivityResult(
@@ -50,7 +56,9 @@ public class LobbyStatsActivity extends AppCompatActivity {
                         JSONObject invitedPlayerJSON =
                                 new JSONObject(result.getData().getDataString());
                         PlayerLobbyStats playerStats = new PlayerLobbyStats(invitedPlayerJSON);
-                        createPlayerStatsText(playerStats);
+                        String invitedPlayerId = result.getData().getStringExtra("invitedPlayerId");
+                        Map.Entry<String, PlayerLobbyStats> entry = new AbstractMap.SimpleEntry<>(invitedPlayerId, playerStats);
+                        createPlayerStatsText(entry, true);
                     } catch (JSONException e) {
                         Log.e(TAG, "Malformed JSON could not be parse");
                         throw new RuntimeException(e);
@@ -94,12 +102,14 @@ public class LobbyStatsActivity extends AppCompatActivity {
                 try {
                     JSONObject responseBody =
                             new JSONObject(response.body().string());
-                    Lobby currentLobby = new Lobby(responseBody);
+                    currentLobby = new Lobby(responseBody);
                     TextView textView =
                             findViewById(R.id.lobby_name_lobby_stats);
                     textView.setText(currentLobby.lobbyName);
-                    if (!currentLobby.lobbyLeaderId.equals(
-                            MainActivity.currentPlayer.getPlayerId())) {
+
+                    boolean isAdmin = currentLobby.lobbyLeaderId.equals(
+                            MainActivity.currentPlayer.getPlayerId());
+                    if (!isAdmin) {
                         addPlayerButton.setVisibility(View.INVISIBLE);
                     } else {
                         addPlayerButton.setOnClickListener(
@@ -120,7 +130,8 @@ public class LobbyStatsActivity extends AppCompatActivity {
 
                     // Display playerStats in screen
                     for (Map.Entry<String, PlayerLobbyStats> entry : playerList) {
-                        createPlayerStatsText(entry.getValue());
+                        boolean showDelete = isAdmin && !(entry.getValue().playerName.equals(MainActivity.currentPlayer.playerDisplayName));
+                        createPlayerStatsText(entry, showDelete);
                     }
                 } catch (JSONException e) {
                     throw new IOException(e);
@@ -157,7 +168,8 @@ public class LobbyStatsActivity extends AppCompatActivity {
         });
     }
 
-    private void createPlayerStatsText(PlayerLobbyStats playerLobbyStats) {
+    private void createPlayerStatsText(Map.Entry<String, PlayerLobbyStats> entry, boolean showDelete) {
+        PlayerLobbyStats playerLobbyStats = entry.getValue();
         double distanceCovered =
                 playerLobbyStats.distanceCovered;
         double totalArea = playerLobbyStats.totalArea;
@@ -171,6 +183,9 @@ public class LobbyStatsActivity extends AppCompatActivity {
             // ChatGPT usage: YES
             @Override
             public void run() {
+                LinearLayout linearLayout = new LinearLayout(LobbyStatsActivity.this);
+                linearLayout.setBackgroundColor(color);
+
                 // Create a new TextView
                 TextView textView =
                         new TextView(LobbyStatsActivity.this);
@@ -187,23 +202,71 @@ public class LobbyStatsActivity extends AppCompatActivity {
                                                  distanceCovered) +
                                          "km");
                 textView.setTextSize(20);
-                textView.setBackgroundColor(color);
 
                 // Set padding
                 int paddingInDp =
-                        16; // Convert your padding in dp to
-                // pixels
+                        16; // Convert your padding in dp to pixels
                 float scale =
                         getResources().getDisplayMetrics().density;
                 int paddingInPixels =
-                        (int) (paddingInDp * scale + 0.5f);
+                        (int) (paddingInDp * scale);
+                int rightPadding = getResources().getDisplayMetrics().widthPixels / 4;
                 textView.setPadding(paddingInPixels,
                                     paddingInPixels,
-                                    paddingInPixels,
+                                    rightPadding,
                                     paddingInPixels);
+                linearLayout.addView(textView);
+                textView.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
 
-                parentLayout.addView(textView);
+                if (showDelete) {
+                    createRemovePlayerButton(entry.getKey(), linearLayout);
+                }
+
+                parentLayout.addView(linearLayout);
             }
         });
+    }
+
+    private void createRemovePlayerButton(String playerId, LinearLayout parent) {
+        Button removePlayerButton = new Button(LobbyStatsActivity.this);
+        removePlayerButton.setText("X");
+        removePlayerButton.setTextSize(30);
+        removePlayerButton.setBackgroundColor(Color.TRANSPARENT);
+        removePlayerButton.setGravity(Gravity.CENTER);
+
+        parent.addView(removePlayerButton);
+        removePlayerButton.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+
+        removePlayerButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String url = "https://40.90.192.159:8081/lobby/" + currentLobby.getLobbyId() + "/player/" + playerId;
+                        Request request = new Request.Builder()
+                                .url(url)
+                                .delete()
+                                .build();
+                        MainActivity.client.newCall(request).enqueue(
+                                new Callback() {
+                                    @Override
+                                    public void onFailure(@NonNull Call call,
+                                                          @NonNull
+                                                          IOException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    @Override
+                                    public void onResponse(@NonNull Call call,
+                                                           @NonNull
+                                                           Response response)
+                                            throws IOException {
+                                        if (response.isSuccessful()) {
+                                            runOnUiThread(
+                                                    () -> ((ViewGroup)parent.getParent()).removeView(parent));
+                                        }
+                                    }
+                                });
+                    }
+                });
     }
 }

@@ -158,7 +158,7 @@ public class Run {
                     context.startActivity(finishIntent);
                 } catch (JSONException e) {
                     Log.e("Run", "Error parsing JSON", e);
-                    throw new RuntimeException(e);
+
                 }
             }
         });

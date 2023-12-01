@@ -67,9 +67,6 @@ public class FinishActivity extends FragmentActivity
                 startActivity(profileIntent);
             }
         });
-//        ActivityFinishBinding binding =
-//                ActivityFinishBinding.inflate(getLayoutInflater());
-//        setContentView(binding.getRoot());
 
         // Obtain the SupportMapFragment and get notified when the map is
         // ready to be used.

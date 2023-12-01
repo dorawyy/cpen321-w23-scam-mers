@@ -68,8 +68,9 @@ public class LobbyStatsActivity extends AppCompatActivity {
                                 createPlayerStatsText(entry, true);
                             } catch (JSONException e) {
                                 Log.e(TAG,
-                                      "Malformed JSON could not be parse");
-                                throw new RuntimeException(e);
+                                      "Malformed JSON could not be parse"
+                                              + e);
+
                             }
 
                         }

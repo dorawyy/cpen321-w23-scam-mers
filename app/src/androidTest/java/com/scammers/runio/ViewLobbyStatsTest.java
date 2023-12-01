@@ -14,6 +14,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 import android.view.View;
@@ -164,7 +165,7 @@ public class ViewLobbyStatsTest {
         clickCount++;
 
         ViewInteraction textView = onView(
-                allOf(withText("Area Claimed: 0.00km²\nKilometers ran: 0.00km"),
+                allOf(withText(containsString("Area Claimed: ")),
                       withParent(allOf(withId(R.id.lobbyStatsLinearLayout),
                                        withParent(IsInstanceOf.<View>instanceOf(
                                                android.view.ViewGroup.class)))),

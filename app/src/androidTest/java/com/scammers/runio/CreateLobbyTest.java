@@ -7,10 +7,12 @@ import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
 
@@ -133,7 +135,8 @@ public class CreateLobbyTest {
                       withParent(withParent(IsInstanceOf.<View>instanceOf(
                               android.view.ViewGroup.class))),
                       isDisplayed()));
-        button3.check(matches(isDisplayed()));
+        button3.check(matches(not(isEnabled())));
+
 
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.new_lobby_name_form),

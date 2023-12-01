@@ -89,15 +89,15 @@ describe('Testing GET Lobby Endpoint', () => {
         const lobbyData = {
             "_id": lobbyId,
             "availableColors": [
-                -8452552,
-                -10596446,
-                -10701928,
-                -12632257,
+                -845255,
+                -105964,
+                -107019,
+                -126322,
                 -658873,
                 -892141,
-                -1486101,
-                -8848794,
-                -13465411
+                -148610,
+                -884879,
+                -134652
             ],
             "lobbyName": "Test Lobby",
             "lobbyLeaderId": "000000000000000000000001",

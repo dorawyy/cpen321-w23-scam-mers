@@ -64,7 +64,7 @@ public class AddPlayerToLobbyTest {
 
     private String testEmail = "testuser123@gmail.com";
 
-    private String testName = "Rubinson Julius";
+    private String testName = "John Johnson";
 
 
     @Before
@@ -148,7 +148,7 @@ public class AddPlayerToLobbyTest {
                               1),
                       isDisplayed()));
         materialButton4.perform(click());
-
+        SystemClock.sleep(2000);
         ViewInteraction button = onView(
                 allOf(withText(randomText),
                       isDisplayed()));

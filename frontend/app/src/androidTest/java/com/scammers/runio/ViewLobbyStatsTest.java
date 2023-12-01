@@ -147,7 +147,7 @@ public class ViewLobbyStatsTest {
                               1),
                       isDisplayed()));
         materialButton4.perform(click());
-
+        SystemClock.sleep(2000);
         ViewInteraction button = onView(
                 allOf(withText(randomText),
                       isDisplayed()));

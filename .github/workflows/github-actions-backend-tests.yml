@@ -15,4 +15,4 @@ jobs:
           node-version: 18.18.0
       - run: cd backend && npm install
       - run: cd backend && echo "${{ secrets.FIREBASE_ADMIN_SDK_KEY }}" > ./runio-401718-firebase-adminsdk-ezjsi-797731a4a0.js
-      - run: cd backend && npm test
+      - run: cd backend && npm test:coverage

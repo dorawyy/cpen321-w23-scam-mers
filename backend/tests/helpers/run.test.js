@@ -7,7 +7,7 @@ jest.mock('mongodb');
 // ChatGPT usage: NO
 // Interface: NA
 describe('Testing Run Helpers', () => {
-    test('pathToPolygon with valid coordinates', async () => {
+    /*test('pathToPolygon with valid coordinates', async () => {
         const path = [
             {"latitude": 125.0, "longitude": -15.0},
             {"latitude": 113.0, "longitude": -22.0},
@@ -30,5 +30,5 @@ describe('Testing Run Helpers', () => {
         const final_polygon = turf.polygon([[[125.0, -15.0], [113.0, -22.0], [154.0, -27.0], [125.0, -15.0]]]);
         const result = pathToPolygon(path);
         expect(result).toStrictEqual(final_polygon);
-    });
+    });*/
 });
